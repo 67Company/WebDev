@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\kimoe\\Desktop\\school\\jaar2sem1\\webDev\\WebDev\\backend\\calender-backend\\calender-backend.csproj": {}
+    "C:\\Users\\julia\\Documents\\Coding Projects\\WebDev\\backend\\calender-backend\\calender-backend.csproj": {}
   },
   "projects": {
-    "C:\\Users\\kimoe\\Desktop\\school\\jaar2sem1\\webDev\\WebDev\\backend\\calender-backend\\calender-backend.csproj": {
+    "C:\\Users\\julia\\Documents\\Coding Projects\\WebDev\\backend\\calender-backend\\calender-backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\kimoe\\Desktop\\school\\jaar2sem1\\webDev\\WebDev\\backend\\calender-backend\\calender-backend.csproj",
+        "projectUniqueName": "C:\\Users\\julia\\Documents\\Coding Projects\\WebDev\\backend\\calender-backend\\calender-backend.csproj",
         "projectName": "calender-backend",
-        "projectPath": "C:\\Users\\kimoe\\Desktop\\school\\jaar2sem1\\webDev\\WebDev\\backend\\calender-backend\\calender-backend.csproj",
-        "packagesPath": "C:\\Users\\kimoe\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\kimoe\\Desktop\\school\\jaar2sem1\\webDev\\WebDev\\backend\\calender-backend\\obj\\",
+        "projectPath": "C:\\Users\\julia\\Documents\\Coding Projects\\WebDev\\backend\\calender-backend\\calender-backend.csproj",
+        "packagesPath": "C:\\Users\\julia\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\julia\\Documents\\Coding Projects\\WebDev\\backend\\calender-backend\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\kimoe\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\julia\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -38,7 +38,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.300"
+        "SdkAnalysisLevel": "9.0.200"
       },
       "frameworks": {
         "net9.0": {
@@ -62,7 +62,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.305/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.200/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
