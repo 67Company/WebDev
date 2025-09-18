@@ -1,38 +1,51 @@
-.App {
-  text-align: center;
+:root {
+  --bg-color: #ffffff;
+  --card-color: rgb(167, 167, 167);
+  --text-color: #000000;
+  --card-text-color: rgb(200, 200, 200);
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.dark-mode {
+  --bg-color: #121212;
+  --card-color: rgb(167, 167, 167);
+  --text-color: #ffffff;
+  --card-text-color: #121212;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+/* Apply variables everywhere */
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.App-footer {
+  margin-top: auto;           /* stays at the bottom */
+  font-size: 14px;
+  color: #999;
+  padding: 10px 40px;
   display: flex;
-  flex-direction: column;
+  justify-content: center;    /* centers text container */
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  position: relative;
 }
 
-.App-link {
-  color: #61dafb;
+.footer-content {
+  width: 100%;
+  display: flex;
+  justify-content: center;    /* centers the text */
+  align-items: center;
+  position: relative;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.footer-content p {
+  margin: 0;
+  text-align: center;
+  flex: 1;                    /* allow text to take up remaining space */
 }
+
+.footer-content .theme-toggle-wrapper {
+  position: absolute;
+  right: 0;                   /* place ThemeToggle to the right */
+}
+
