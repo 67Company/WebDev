@@ -1,15 +1,16 @@
 public class Employee()
 {
     public int Id { get; set; }
-    public string Email { get; set; }
-    public string PasswordHash { get; set; }
+    public string Email { get; set; } = "Email_Missing";
+    public string PasswordHash { get; set; } = "Hash_Missing";
     public bool Admin { get; set; } = false;
     public int MeetingsAttended { get; set; } = 0;
-    public int TeamAmount { get; set; } = 0;
+    public int LargestTeamSize { get; set; } = 0;
     public int TotalMeetingTime { get; set; } = 0; // in hours
     public int EventsAttended { get; set; } = 0;
     public int EventsOrganized { get; set; } = 0;
-      public int CompanyId { get; set; }
+    public int RoomsBooked { get; set; } = 0;
+    public int CompanyId { get; set; }
 }
 
 public class EmployeeDTO
@@ -31,4 +32,5 @@ public class EmployeeStatsDTO
     public int TotalMeetingTime { get; set; } // in hours
     public int EventsAttended { get; set; }
     public int EventsOrganized { get; set; }
+    public int RoomsBooked { get; set; }
 }
