@@ -2,6 +2,8 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import "./App.css";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import Calendar from "./pages/Calendar";
+import adtjeKratje from "./media/adtje_kratje.png";
 import ThemeToggle from "./components/ThemeToggle";
 
 function App() {
@@ -9,7 +11,9 @@ function App() {
     <Router>
       <div className="App">
         <header className="App-header">
-          <h1 className="App-title">Welcome to My App</h1>
+          <Link to="/">
+            <img className="Logoimg" src={adtjeKratje} alt="Logo" />
+          </Link>
           <Link to="/login">
             <button className="login-button">Login</button>
           </Link>
@@ -18,6 +22,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/calendar" element={<Calendar />} />
         </Routes>
 
       <footer className="App-footer">

@@ -1,13 +1,13 @@
 :root {
   --bg-color: #ffffff;
-  --card-color: rgb(167, 167, 167);
+  --card-color: #a7a7a7;
   --text-color: #000000;
-  --card-text-color: rgb(200, 200, 200);
+  --card-text-color: #ffffff;
 }
 
 .dark-mode {
   --bg-color: #121212;
-  --card-color: rgb(167, 167, 167);
+  --card-color: #a7a7a7;
   --text-color: #ffffff;
   --card-text-color: #121212;
 }
@@ -49,3 +49,14 @@ body {
   right: 0;                   /* place ThemeToggle to the right */
 }
 
+.App-Title {
+  font-size: 24px;
+  margin: 0;
+  color: var(--text-color);
+  transition: color 0.3s ease;
+}
+
+.Logoimg {
+  height: 100px;
+  width: auto;
+}
