@@ -1,0 +1,17 @@
+services:
+  backend:
+    build:
+      context: ./backend/calender-backend
+      dockerfile: Dockerfile
+    ports:
+      - "5000:8080" # host:container
+    environment:
+      - ASPNETCORE_URLS=http://0.0.0.0:8080
+      - ASPNETCORE_ENVIRONMENT=Development
+
+  frontend:
+    build:
+      context: ./frontend/calender-app
+      dockerfile: Dockerfile
+    ports:
+      - "5173:80" # Nginx serves on 80; map host 5173 to container 80
