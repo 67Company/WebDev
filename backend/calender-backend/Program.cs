@@ -1,3 +1,5 @@
+using CompanyApp;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -13,6 +15,8 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+DatabaseInitializer.Initialize();
+
 app.UseHttpsRedirection();
 app.UseRouting();
 
@@ -25,5 +29,5 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
-
 app.Run();
+
