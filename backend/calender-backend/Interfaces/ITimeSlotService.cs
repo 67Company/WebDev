@@ -1,6 +1,6 @@
-public interface ITimeSlotService
+public interface ITimeslotService
 {
-    Task<IEnumerable<TimeSlot>> GetAllTimeSlotsAsync();
-    Task<TimeSlot> GetTimeSlotByIdAsync(int id);
-    Task<TimeSlot> GetTimeSlotbByTimeAsync(DateTime startTime);
+    Task<IEnumerable<Timeslot>> GetAllTimeSlotsAsync();
+    Task<Timeslot> GetTimeSlotByIdAsync(int id);
+    Task<Timeslot> GetTimeSlotbByTimeAsync(DateTime startTime);
 }
