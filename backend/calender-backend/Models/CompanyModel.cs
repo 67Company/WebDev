@@ -1,4 +1,4 @@
-public class CompanyId
+public class Company
 {
     public int Id { get; set; }
     public string Name { get; set; } = "Name_Missing";
