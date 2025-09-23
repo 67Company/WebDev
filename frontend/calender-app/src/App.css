@@ -12,27 +12,40 @@
   --card-text-color: #121212;
 }
 
+.App-header {
+  background: rgb(167, 167, 167);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0px 20px;
+  box-sizing: border-box;
+  position: relative;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  max-height: 10vh;
+}
+
 /* Apply variables everywhere */
 body {
   background-color: var(--bg-color);
   color: var(--text-color);
   transition: background-color 0.3s ease, color 0.3s ease;
+  max-height: 85vh;
 }
 
 .App-footer {
   margin-top: auto;           /* stays at the bottom */
   font-size: 14px;
   color: #999;
-  padding: 10px 40px;
+  padding: 0px 40px;
   display: flex;
   justify-content: center;    /* centers text container */
   align-items: center;
   position: relative;
+  max-height: 5vh;
 }
 
 .footer-content {
   width: 100%;
-  display: flex;
   justify-content: center;    /* centers the text */
   align-items: center;
   position: relative;
@@ -41,12 +54,12 @@ body {
 .footer-content p {
   margin: 0;
   text-align: center;
-  flex: 1;                    /* allow text to take up remaining space */
 }
 
 .footer-content .theme-toggle-wrapper {
   position: absolute;
   right: 0;                   /* place ThemeToggle to the right */
+  padding-bottom: 30px;
 }
 
 .App-Title {

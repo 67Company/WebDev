@@ -2,7 +2,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 90vh; /* full screen height */
+  height: 80vh; /* full screen height */
   background: var(--bg-color);
   transition: background-color 0.3s ease, color 0.3s ease;
 }

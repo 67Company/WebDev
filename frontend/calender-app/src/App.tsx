@@ -27,10 +27,10 @@ function App() {
 
       <footer className="App-footer">
         <div className="footer-content">
-          <p>© {new Date().getFullYear()} Team Adtje Kratje.</p>
           <div className="theme-toggle-wrapper">
             <ThemeToggle />
           </div>
+          <p>© {new Date().getFullYear()} Team Adtje Kratje.</p>
         </div>
       </footer>
 
