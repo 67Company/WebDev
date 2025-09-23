@@ -1,4 +1,4 @@
-public class Timeslot //slots of 30 min
+public class TimeSlot //slots of 30 min
 {
     public int Id { get; set; }
     public DateTime StartTime { get; set; }
