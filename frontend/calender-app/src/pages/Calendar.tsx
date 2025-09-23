@@ -25,7 +25,7 @@ const Calendar: React.FC = () => {
 
   return (
     <main className="calendar-container">
-      <LocalizationProvider dateAdapter={AdapterDateFns}>
+      {/* <LocalizationProvider dateAdapter={AdapterDateFns}>
         <DateCalendar onChange={handleDayClick} />
       </LocalizationProvider>
 
@@ -41,7 +41,8 @@ const Calendar: React.FC = () => {
             Close
           </Button>
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
+      
     </main>
   );
 };

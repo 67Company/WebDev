@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@mui/lab": "^7.0.0-beta.17",
+    "dom": "^0.0.3",
+    "react": "^19.1.1",
+    "react-router-dom": "^7.9.1",
+    "router": "^2.2.0"
+  }
+}
