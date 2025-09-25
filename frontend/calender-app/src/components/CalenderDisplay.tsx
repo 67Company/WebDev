@@ -121,8 +121,28 @@ const CalendarDisplay: React.FC = () => {
 
   const weekDays = viewMode === "week" ? getWeekDays(currentDate) : [currentDate];
 
+  // Handle mouse events to prevent page scrolling
+  const handleMouseEnter = () => {
+    document.body.style.overflow = 'hidden';
+  };
+
+  const handleMouseLeave = () => {
+    document.body.style.overflow = 'auto';
+  };
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, []);
+
   return (
-    <div className="calendar-container">
+    <div 
+      className="calendar-container"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       {/* Header */}
       <div className="calendar-header">
         <div className="calendar-navigation">
@@ -184,70 +204,85 @@ const CalendarDisplay: React.FC = () => {
 
       {/* Calendar Grid */}
       <div className="calendar-grid">
-        {/* Time Column */}
-        <div className="time-column">
-          <div className="time-header"></div>
-          {hours.map(hour => (
-            <div key={hour} className="time-slot">
-              {hour > 0 && <span className="time-label">{formatTime(hour)}</span>}
+        {/* Sticky Header Row */}
+        <div className="calendar-sticky-header">
+          {/* Time Header Cell */}
+          <div className="time-header-cell"></div>
+          
+          {/* Day Headers */}
+          {weekDays.map((day, dayIndex) => (
+            <div key={dayIndex} className="day-column">
+              <div className={`day-header ${isToday(day) ? "today" : ""}`}>
+                <div className="day-name">
+                  {day.toLocaleDateString("en-US", { weekday: "short" })}
+                </div>
+                <div className="day-number">
+                  {day.getDate()}
+                </div>
+              </div>
             </div>
           ))}
         </div>
 
-        {/* Days Columns */}
-        {weekDays.map((day, dayIndex) => (
-          <div key={dayIndex} className="day-column">
-            <div className={`day-header ${isToday(day) ? "today" : ""}`}>
-              <div className="day-name">
-                {day.toLocaleDateString("en-US", { weekday: "short" })}
-              </div>
-              <div className="day-number">
-                {day.getDate()}
-              </div>
-            </div>
-            
-            <div className="day-timeline">
-              {/* Hour grid lines */}
+        {/* Scrollable Calendar Body */}
+        <div className="calendar-scrollable-body">
+          <div className="calendar-content">
+            {/* Time Column */}
+            <div className="time-column">
               {hours.map(hour => (
-                <div key={hour} className="hour-line"></div>
-              ))}
-              
-              {/* Current time indicator */}
-              {isToday(day) && (
-                <div 
-                  className="current-time-line"
-                  style={{ top: `${getCurrentTimePosition()}px` }}
-                >
-                  <div className="current-time-dot"></div>
+                <div key={hour} className="time-slot">
+                  {hour > 0 && <span className="time-label">{formatTime(hour)}</span>}
                 </div>
-              )}
-              
-              {/* Events */}
-              {getEventsForDate(day).map(event => {
-                const { top, height } = getEventPosition(event);
-                return (
-                  <div
-                    key={event.id}
-                    className="event"
-                    style={{
-                      top: `${top}px`,
-                      height: `${height}px`,
-                      backgroundColor: event.color,
-                    }}
-                  >
-                    <div className="event-title">{event.title}</div>
-                    <div className="event-time">
-                      {event.start.toLocaleTimeString("en-US", { 
-                        hour: "2-digit", 
-                        minute: "2-digit" 
-                      })}
-                    </div>
-                  </div>
-                );
-              })}
+              ))}
             </div>
+
+            {/* Days Columns */}
+            {weekDays.map((day, dayIndex) => (
+              <div key={dayIndex} className="day-column-body">
+                <div className="day-timeline">
+                  {/* Hour grid lines */}
+                  {hours.map(hour => (
+                    <div key={hour} className="hour-line"></div>
+                  ))}
+                  
+                  {/* Current time indicator */}
+                  {isToday(day) && (
+                    <div 
+                      className="current-time-line"
+                      style={{ top: `${getCurrentTimePosition()}px` }}
+                    >
+                      <div className="current-time-dot"></div>
+                    </div>
+                  )}
+                  
+                  {/* Events */}
+                  {getEventsForDate(day).map(event => {
+                    const { top, height } = getEventPosition(event);
+                    return (
+                      <div
+                        key={event.id}
+                        className="event"
+                        style={{
+                          top: `${top}px`,
+                          height: `${height}px`,
+                          backgroundColor: event.color,
+                        }}
+                      >
+                        <div className="event-title">{event.title}</div>
+                        <div className="event-time">
+                          {event.start.toLocaleTimeString("en-US", { 
+                            hour: "2-digit", 
+                            minute: "2-digit" 
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
       </div>
     </div>
   );
