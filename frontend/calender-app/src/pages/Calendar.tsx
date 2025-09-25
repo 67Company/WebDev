@@ -11,6 +11,7 @@ import {
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import CalendarDisplay from "../components/CalenderDisplay";
 
 const Calendar: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -25,6 +26,7 @@ const Calendar: React.FC = () => {
 
   return (
     <main className="calendar-container">
+      <CalendarDisplay/>
       {/* <LocalizationProvider dateAdapter={AdapterDateFns}>
         <DateCalendar onChange={handleDayClick} />
       </LocalizationProvider>
