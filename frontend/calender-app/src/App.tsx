@@ -4,6 +4,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Calendar from "./pages/Calendar";
 import adtjeKratje from "./media/adtje_kratje.png";
+import Settings from "./pages/Settings";
 import ThemeToggle from "./components/ThemeToggle";
 
 function App() {
@@ -23,13 +24,11 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/calendar" element={<Calendar />} />
+          <Route path="/settings" element={<Settings />} />
         </Routes>
 
       <footer className="App-footer">
         <div className="footer-content">
-          <div className="theme-toggle-wrapper">
-            <ThemeToggle />
-          </div>
           <p>© {new Date().getFullYear()} Team Adtje Kratje.</p>
         </div>
       </footer>

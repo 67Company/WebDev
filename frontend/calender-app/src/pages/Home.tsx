@@ -17,6 +17,9 @@ const Home: React.FC = () => {
       <section className="overview-card">
         <h2>⚙️ Settings</h2>
         <p>Manage your preferences and configurations.</p>
+        <Link to="/Settings">
+        <Button variant="contained">Click for more</Button>
+        </Link>
       </section>
 
       <section className="overview-card">

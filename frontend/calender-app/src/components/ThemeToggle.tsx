@@ -26,4 +26,7 @@ const ThemeToggle = () => {
   );
 };
 
+          {/* <div className="theme-toggle-wrapper">
+            <ThemeToggle />
+          </div> */}
 export default ThemeToggle;
