@@ -1,3 +1,5 @@
+using calender_backend.Models;
+
 public interface ITimeslotService
 {
     Task<IEnumerable<Timeslot>> GetAllTimeSlotsAsync();

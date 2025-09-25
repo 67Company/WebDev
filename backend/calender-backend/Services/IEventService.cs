@@ -1,3 +1,5 @@
+using calender_backend.Models;
+
 public class EventService : IEventService
 {
     private readonly string _connectionString = "Data Source=event.db";

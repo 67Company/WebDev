@@ -1,3 +1,4 @@
+namespace calender_backend.Models;
 public class Event
 {
     public int Id { get; set; }
@@ -9,6 +10,9 @@ public class Event
     public string Location { get; set; } = "Location_Missing";
     public int Capacity { get; set; }
     public int CompanyId { get; set; }
+
+    public Company Company { get; set; } = null!;
+    public ICollection<Attendee> Attendees { get; set; } = new List<Attendee>();
 }
 
 public class EventDTO

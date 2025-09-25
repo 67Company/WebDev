@@ -1,3 +1,5 @@
+using calender_backend.Models;
+
 public class TimeslotService : ITimeslotService
 {
     private readonly string _connectionString = "Data Source=timeslot.db";
@@ -11,12 +13,12 @@ public class TimeslotService : ITimeslotService
         throw new NotImplementedException();
     }
 
-    public Task<Timeslot> GetTimeSlotByIdAsync(int id)
+    public Task<Timeslot?> GetTimeSlotByIdAsync(int id)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Timeslot> GetTimeSlotbByTimeAsync(DateTime startTime)
+    public Task<Timeslot?> GetTimeSlotbByTimeAsync(DateTime startTime)
     {
         throw new NotImplementedException();
     }

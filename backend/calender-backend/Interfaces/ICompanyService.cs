@@ -1,3 +1,5 @@
+using calender_backend.Models;
+
 public interface ICompanyService
 {
     Task<Company> GetCompanyByIdAsync(int id);

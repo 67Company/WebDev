@@ -1,3 +1,5 @@
+using calender_backend.Models;
+
 public class CompanyService : ICompanyService
 {
     private readonly string _connectionString = "Data Source=company.db";

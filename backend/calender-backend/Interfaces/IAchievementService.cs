@@ -1,3 +1,5 @@
+using calender_backend.Models;
+
 public interface IAchievementService
 {
     Task<IEnumerable<Achievement>> GetAllAchievementsAsync(int companyId);

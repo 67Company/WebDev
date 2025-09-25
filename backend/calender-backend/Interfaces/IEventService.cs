@@ -1,3 +1,5 @@
+using calender_backend.Models;
+
 public interface IEventService
 {
     Task<IEnumerable<Event>> GetAllEventsAsync();
