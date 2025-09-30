@@ -1,3 +1,5 @@
+using calender_backend.Models;
+
 public interface IReservationService
 {
     Task<IEnumerable<Reservation>> GetAllReservationsAsync();

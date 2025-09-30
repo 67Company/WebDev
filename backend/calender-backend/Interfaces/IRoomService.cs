@@ -1,3 +1,5 @@
+using calender_backend.Models;
+
 public interface IRoomService
 {
     Task<IEnumerable<RoomDTO>> GetAllRoomsAsync(int companyId);

@@ -1,3 +1,5 @@
+using calender_backend.Models;
+
 public class AchievementService : IAchievementService
 {
     private readonly string _connectionString = "Data Source=achievement.db";
@@ -16,7 +18,7 @@ public class AchievementService : IAchievementService
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<Achievement>> GetAllAchievementsAsync()
+    public Task<IEnumerable<Achievement>> GetAllAchievementsAsync(int companyId)
     {
         throw new NotImplementedException();
     }

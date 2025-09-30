@@ -1,3 +1,5 @@
+using calender_backend.Models;
+
 public class ReservationService : IReservationService
 {
     private readonly string _connectionString = "Data Source=reservation.db";

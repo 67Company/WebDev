@@ -1,3 +1,5 @@
+using calender_backend.Models;
+
 public class RoomService : IRoomService
 {
     private readonly string _connectionString = "Data Source=room.db";
@@ -16,22 +18,22 @@ public class RoomService : IRoomService
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<Room>> GetAllRoomsAsync()
+    public Task<IEnumerable<RoomDTO>> GetAllRoomsAsync(int companyId)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Room> GetRoomByIdAsync(int id)
+    public Task<RoomDTO?> GetRoomByIdAsync(int id)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Room> GetRoomByNameAsync(string name)
+    public Task<RoomDTO?> GetRoomByNameAsync(string name, int companyId)
     {
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<Room>> GetRoomsByCapacityAsync(int capacity)
+    public Task<IEnumerable<RoomDTO>> GetRoomsByCapacityAsync(int capacity, int companyId)
     {
         throw new NotImplementedException();
     }

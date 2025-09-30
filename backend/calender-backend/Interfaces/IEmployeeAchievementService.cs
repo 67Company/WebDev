@@ -1,3 +1,5 @@
+using calender_backend.Models;
+
 public interface IEmployeeAchievementService
 {
     Task<bool> AssignAchievementToEmployeeAsync(int employeeId, int achievementId);

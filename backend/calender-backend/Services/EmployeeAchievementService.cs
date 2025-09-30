@@ -1,3 +1,5 @@
+using calender_backend.Models;
+
 public class EmployeeAchievementService : IEmployeeAchievementService
 {
     private readonly string _connectionString = "Data Source=employeeAchievements.db";

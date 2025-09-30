@@ -1,3 +1,4 @@
+namespace calender_backend.Models;
 public class Achievement()
 {
     public int Id { get; set; }
@@ -7,6 +8,9 @@ public class Achievement()
     public string StatToTrack { get; set; } = "Field_Missing"; // e.g., "RoomsBooked", "MeetingsAttended"
     public int Threshold { get; set; }
     public int CompanyId { get; set; }
+
+    public Company Company { get; set; } = null!;
+    public ICollection<EmployeeAchievement> EmployeeAchievements { get; set; } = new List<EmployeeAchievement>();
 }
 
 public class AchievementDTO
