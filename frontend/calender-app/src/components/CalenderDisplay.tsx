@@ -205,27 +205,27 @@ const CalendarDisplay: React.FC = () => {
       {/* Calendar Grid */}
       <div className="calendar-grid">
         {/* Sticky Header Row */}
-        <div className="calendar-sticky-header">
-          {/* Time Header Cell */}
-          <div className="time-header-cell"></div>
-          
-          {/* Day Headers */}
-          {weekDays.map((day, dayIndex) => (
-            <div key={dayIndex} className="day-column">
-              <div className={`day-header ${isToday(day) ? "today" : ""}`}>
-                <div className="day-name">
-                  {day.toLocaleDateString("en-US", { weekday: "short" })}
-                </div>
-                <div className="day-number">
-                  {day.getDate()}
+        <div className="calendar-scrollable-body">
+          {/* Scrollable Calendar Body */}
+          <div className="calendar-sticky-header">
+            {/* Time Header Cell */}
+            <div className="time-header-cell"></div>
+            
+            {/* Day Headers */}
+            {weekDays.map((day, dayIndex) => (
+              <div key={dayIndex} className="day-column">
+                <div className={`day-header ${isToday(day) ? "today" : ""}`}>
+                  <div className="day-name">
+                    {day.toLocaleDateString("en-US", { weekday: "short" })}
+                  </div>
+                  <div className="day-number">
+                    {day.getDate()}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
 
-        {/* Scrollable Calendar Body */}
-        <div className="calendar-scrollable-body">
           <div className="calendar-content">
             {/* Time Column */}
             <div className="time-column">
