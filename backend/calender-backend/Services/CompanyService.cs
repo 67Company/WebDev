@@ -1,35 +1,57 @@
+using calender_backend.Data;
 using calender_backend.Models;
 
 public class CompanyService : ICompanyService
 {
-    private readonly string _connectionString = "Data Source=company.db";
-
-    public CompanyService()
+    public readonly CalenderContext _context;
+    public CompanyService(CalenderContext context)
     {
+        _context = context;
     }
 
-    public Task<Company> GetCompanyByIdAsync(int id)
+    public async Task<Company?> GetCompanyByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        Company? company = await _context.Companies.FindAsync(id);
+        return company;
     }
 
-    public Task<bool> CreateCompanyAsync(Company company)
+    public async Task<bool> CreateCompanyAsync(Company company)
     {
-        throw new NotImplementedException();
+        bool isCreated = await _context.Companies.AddAsync(company) != null;
+        _context.SaveChanges();
+        return isCreated;
     }
 
-    public Task<bool> UpdateCompanyInfoAsync(int id, Company company)
+    public async Task<bool> UpdateCompanyInfoAsync(int id, Company company)
     {
-        throw new NotImplementedException();
+        bool isUpdated = _context.Companies.Update(company) != null;
+        _context.SaveChanges();
+        return isUpdated;
     }
 
-    public Task<bool> SoftDeleteCompanyAsync(int id)
+    public async Task<bool> SoftDeleteCompanyAsync(int id)
     {
-        throw new NotImplementedException();
+        bool isDeleted = false;
+        Company? company = await _context.Companies.FindAsync(id);
+        if (company != null)
+        {
+            company.IsActive = false;
+            isDeleted = _context.Companies.Update(company) != null;
+            _context.SaveChanges();
+        }
+        return isDeleted;
     }
 
-    public Task<bool> HardDeleteCompanyAsync(int id)
+    public async Task<bool> HardDeleteCompanyAsync(int id)
     {
-        throw new NotImplementedException();
+        bool isDeleted = false;
+        Company? company = await _context.Companies.FindAsync(id);
+        if (company != null && !company.IsActive)
+        {
+            _context.Companies.Remove(company);
+            isDeleted = true;
+            _context.SaveChanges();
+        }
+        return isDeleted;
     }
-} //eventually
+}

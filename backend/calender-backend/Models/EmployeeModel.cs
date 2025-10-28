@@ -12,6 +12,7 @@ namespace calender_backend.Models;
         public int EventsOrganized { get; set; } = 0;
         public int RoomsBooked { get; set; } = 0;
         public int CompanyId { get; set; }
+        public bool IsDeleted { get; set;} = false; // For soft deletion, when hard deleted clear database of relations
 
         public Company Company { get; set; } = null!;
         public ICollection<Attendee> Attendances { get; set; } = new List<Attendee>();

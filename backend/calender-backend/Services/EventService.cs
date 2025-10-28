@@ -1,35 +1,51 @@
+using calender_backend.Data;
 using calender_backend.Models;
+using SQLitePCL;
 
 public class EventService : IEventService
 {
-    private readonly string _connectionString = "Data Source=event.db";
+    private readonly CalenderContext _context;
 
-    public EventService()
+    public EventService(CalenderContext context)
     {
+        _context = context;
     }
 
-    public Task<IEnumerable<Event>> GetAllEventsAsync()
+    public async Task<IEnumerable<Event>> GetAllEventsAsync()
     {
-        throw new NotImplementedException();
+        return _context.Events.ToList();
     }
 
-    public Task<Event> GetEventByIdAsync(int id)
+    public async Task<Event?> GetEventByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        Event? eventEntry = await _context.Events.FindAsync(id);
+        return eventEntry;
     }
 
-    public Task<bool> CreateEventAsync(Event newEvent)
+    public async Task<bool> CreateEventAsync(Event newEvent)
     {
-        throw new NotImplementedException();
+        bool isCreated = await _context.Events.AddAsync(newEvent) != null;
+        _context.SaveChanges();
+        return isCreated;
     }
 
-    public Task<bool> UpdateEventAsync(int id, Event updatedEvent)
+    public async Task<bool> UpdateEventAsync(int id, Event updatedEvent)
     {
-        throw new NotImplementedException();
+        bool isUpdated = _context.Events.Update(updatedEvent) != null;
+        _context.SaveChanges();
+        return isUpdated;
     }
 
-    public Task<bool> DeleteEventAsync(int id)
+    public async Task<bool> DeleteEventAsync(int id)
     {
-        throw new NotImplementedException();
+        bool isDeleted = false;
+        Event? eventEntry = await _context.Events.FindAsync(id);
+        if (eventEntry != null)
+        {
+            _context.Events.Remove(eventEntry);
+            isDeleted = true;
+            _context.SaveChanges();
+        }
+        return isDeleted;
     }
 }
