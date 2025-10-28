@@ -1,25 +1,29 @@
+using calender_backend.Data;
 using calender_backend.Models;
 
 public class TimeslotService : ITimeslotService
 {
-    private readonly string _connectionString = "Data Source=timeslot.db";
-
-    public TimeslotService()
+    private readonly CalenderContext _context;
+    public TimeslotService(CalenderContext context)
     {
+        _context = context;
     }
 
-    public Task<IEnumerable<Timeslot>> GetAllTimeSlotsAsync()
+    public async Task<IEnumerable<Timeslot>> GetAllTimeSlotsAsync()
     {
-        throw new NotImplementedException();
+        return _context.Timeslots.ToList();
     }
 
-    public Task<Timeslot?> GetTimeSlotByIdAsync(int id)
+    public async Task<Timeslot?> GetTimeSlotByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        Timeslot? timeslot = await _context.Timeslots.FindAsync(id);
+        return timeslot;
     }
 
-    public Task<Timeslot?> GetTimeSlotbByTimeAsync(DateTime startTime)
+    public async Task<Timeslot?> GetTimeSlotbByTimeAsync(DateTime startTime)
     {
-        throw new NotImplementedException();
+        return _context.Timeslots
+            .Where(t => t.StartTime == startTime)
+            .FirstOrDefault();
     }
 }

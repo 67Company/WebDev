@@ -1,61 +1,193 @@
 using calender_backend.Models;
+using calender_backend.Data;
+using Microsoft.EntityFrameworkCore;
 
 public class EmployeeService : IEmployeeService
 {
     
-    private readonly string _connectionString = "Data Source=calendar.db";
+    private readonly CalenderContext _context;
 
-    public EmployeeService() //eventually pass in the SQL shit
+    public EmployeeService(CalenderContext context) //eventually pass in the SQL shit
     {
+        _context = context;
     }
 
-    public Task<bool> CreateEmployeeAsync(Employee employee)
+    public async Task<bool> CreateEmployeeAsync(Employee employee)
     {
-        throw new NotImplementedException();
+        bool isCreated = false;
+        Employee? Employee = await _context.Employees.FirstOrDefaultAsync(e => e.Email == employee.Email);
+        if (Employee != null)
+        {
+            return isCreated; // Employee with the same email already exists
+        } else {
+            isCreated = await _context.Employees.AddAsync(employee) != null;
+            _context.SaveChanges();
+        }
+        return isCreated;
     }
 
-    public Task<bool> SoftDeleteEmployeeAsync(int id)
+    public async Task<bool> SoftDeleteEmployeeAsync(int id)
     {
-        throw new NotImplementedException();
+        bool isDeleted = false;
+        Employee? employee = await _context.Employees.FindAsync(id);
+        if (employee != null)
+        {
+            employee.IsDeleted = true;
+            isDeleted = _context.Employees.Update(employee) != null;
+            _context.SaveChanges();
+        }
+        return isDeleted;
     }
 
-    public Task<bool> HardDeleteEmployeeAsync(int id)
+    public async Task<bool> HardDeleteEmployeeAsync(int id)
     {
-        throw new NotImplementedException();
+        bool isDeleted = false;
+        Employee? employee = await _context.Employees.FindAsync(id);
+        if (employee != null && employee.IsDeleted)
+        {
+            _context.Employees.Remove(employee);
+            isDeleted = true;
+            _context.SaveChanges();
+        }
+        return isDeleted;
     }
 
-    public Task<IEnumerable<Employee>> GetAllEmployeesAsync()
+    public async Task<IEnumerable<Employee>> GetAllEmployeesAsync()
     {
-        throw new NotImplementedException();
+        return _context.Employees.Where(e => !e.IsDeleted).ToList();
     }
 
-    public Task<Employee> GetEmployeeByIdAsync(int id)
+    public async Task<Employee?> GetEmployeeByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        Employee? employee = await _context.Employees.FirstOrDefaultAsync(e => e.Id == id && !e.IsDeleted);
+        return employee;
     }
 
-    public Task<Employee> GetEmployeeByEmailAsync(string email)
+    public async Task<Employee> GetEmployeeByEmailAsync(string email)
     {
-        throw new NotImplementedException();
+        Employee? employee = await _context.Employees.FirstOrDefaultAsync(e => e.Email == email && !e.IsDeleted);
+        return employee!;
     }
 
-    public Task<EmployeeStatsDTO> GetEmployeeStatsAsync(int id)
+    public async Task<EmployeeStatsDTO?> GetEmployeeStatsAsync(int id)
     {
-        throw new NotImplementedException();
+        Employee? employee = await _context.Employees.FirstOrDefaultAsync(e => e.Id == id && !e.IsDeleted);
+        if (employee == null)
+        {
+            return null!;
+        }
+
+        EmployeeStatsDTO stats = new EmployeeStatsDTO
+        {
+            MeetingsAttended = employee.MeetingsAttended,
+            TeamAmount = employee.LargestTeamSize,
+            TotalMeetingTime = employee.TotalMeetingTime,
+            EventsAttended =  employee.EventsAttended,
+            EventsOrganized = employee.EventsOrganized,
+            RoomsBooked = employee.RoomsBooked
+        };
+
+        return stats;
     }
 
-    public Task<bool> IncrementEmployeeStatAsync(string statName, int id)
+    public async Task<bool> IncrementEmployeeStatAsync(string statName, int id, int incrementBy = 1)
     {
-        throw new NotImplementedException();
+        bool isIncremented = false;
+        Employee? employee = await _context.Employees.FindAsync(id);
+
+        switch (statName.ToLower())
+        {
+            case "meetingsattended":
+                employee!.MeetingsAttended += incrementBy;
+                isIncremented = true;
+                break;
+            case "largestteamsize":
+                employee!.LargestTeamSize += incrementBy;
+                isIncremented = true;
+                break;
+            case "totalmeetingtime":
+                employee!.TotalMeetingTime += incrementBy;
+                isIncremented = true;
+                break;
+            case "eventsattended":
+                employee!.EventsAttended += incrementBy;
+                isIncremented = true;
+                break;
+            case "eventsorganized":
+                employee!.EventsOrganized += incrementBy;
+                isIncremented = true;
+                break;
+            case "roomsbooked":
+                employee!.RoomsBooked += incrementBy;
+                isIncremented = true;
+                break;
+            default:
+                isIncremented = false;
+                break;
+        }
+        return isIncremented;
     }
     
-    public Task<bool> DecrementEmployeeStatAsync(string statName, int id)
+    public async Task<bool> DecrementEmployeeStatAsync(string statName, int id, int decrementBy = 1)
     {
-        throw new NotImplementedException();
+        bool isDecremented = false;
+        Employee? employee = await _context.Employees.FindAsync(id);
+
+        switch (statName.ToLower())
+        {
+            case "meetingsattended":
+                if (employee!.MeetingsAttended > 0)
+                {
+                    employee.MeetingsAttended -= decrementBy;
+                    isDecremented = true;
+                }
+                break;
+            case "largestteamsize":
+                if (employee!.LargestTeamSize > 0)
+                {
+                    employee.LargestTeamSize -= decrementBy;
+                    isDecremented = true;
+                }
+                break;
+            case "totalmeetingtime":
+                if (employee!.TotalMeetingTime > 0)
+                {
+                    employee.TotalMeetingTime -= decrementBy;
+                    isDecremented = true;
+                }
+                break;
+            case "eventsattended":
+                if (employee!.EventsAttended > 0)
+                {
+                    employee.EventsAttended -= decrementBy;
+                    isDecremented = true;
+                }
+                break;
+            case "eventsorganized":
+                if (employee!.EventsOrganized > 0)
+                {
+                    employee.EventsOrganized -= decrementBy;
+                    isDecremented = true;
+                }
+                break;
+            case "roomsbooked":
+                if (employee!.RoomsBooked > 0)
+                {
+                    employee.RoomsBooked -= decrementBy;
+                    isDecremented = true;
+                }
+                break;
+            default:
+                isDecremented = false;
+                break;
+        }
+        return isDecremented;
     }
 
-    public Task<bool> UpdateEmployeeAsync(int id, Employee employee)
+    public async Task<bool> UpdateEmployeeAsync(int id, Employee employee)
     {
-        throw new NotImplementedException();
+        bool isUpdated = _context.Employees.Update(employee) != null;
+        _context.SaveChanges();
+        return isUpdated;
     }
 }

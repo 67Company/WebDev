@@ -1,35 +1,50 @@
 using calender_backend.Models;
+using calender_backend.Data;
 
 public class AchievementService : IAchievementService
 {
-    private readonly string _connectionString = "Data Source=achievement.db";
+    private readonly CalenderContext _context;
 
-    public AchievementService()
+    public AchievementService(CalenderContext context)
     {
+        _context = context;
     }
 
-    public Task<bool> CreateAchievementAsync(Achievement achievement)
+    public async Task<bool> CreateAchievementAsync(Achievement achievement)
     {
-        throw new NotImplementedException();
+        bool isCreated = await _context.Achievements.AddAsync(achievement) != null;
+        _context.SaveChanges();
+        return isCreated;
     }
 
-    public Task<bool> DeleteAchievementAsync(int id)
+    public async Task<bool> DeleteAchievementAsync(int id)
     {
-        throw new NotImplementedException();
+        bool isDeleted = false;
+        Achievement? achievement = await _context.Achievements.FindAsync(id);
+        if (achievement != null)
+        {
+            _context.Achievements.Remove(achievement);
+            isDeleted = true;
+            _context.SaveChanges();
+        }
+        return isDeleted;
     }
 
-    public Task<IEnumerable<Achievement>> GetAllAchievementsAsync(int companyId)
+    public async Task<IEnumerable<Achievement>> GetAllAchievementsAsync(int companyId)
     {
-        throw new NotImplementedException();
+        return _context.Achievements.Where(a => a.CompanyId == companyId).ToList();
     }
 
-    public Task<Achievement> GetAchievementByIdAsync(int id)
+    public async Task<Achievement?> GetAchievementByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        Achievement? achievement = await _context.Achievements.FindAsync(id);
+        return achievement;
     }
 
-    public Task<bool> UpdateAchievementAsync(int id, Achievement achievement)
+    public async Task<bool> UpdateAchievementAsync(int id, Achievement achievement)
     {
-        throw new NotImplementedException();
+        bool isUpdated = _context.Achievements.Update(achievement) != null;
+        _context.SaveChanges();
+        return isUpdated;
     }
 }

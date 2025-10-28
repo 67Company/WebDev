@@ -1,30 +1,63 @@
+using calender_backend.Data;
 using calender_backend.Models;
+using Microsoft.EntityFrameworkCore;
 
 public class EmployeeAchievementService : IEmployeeAchievementService
 {
-    private readonly string _connectionString = "Data Source=employeeAchievements.db";
+    private readonly CalenderContext _context;
 
-    public EmployeeAchievementService()
+    public EmployeeAchievementService(CalenderContext context)
     {
+        _context = context;
     }
 
-    public Task<bool> AssignAchievementToEmployeeAsync(int employeeId, int achievementId)
+    public async Task<bool> AssignAchievementToEmployeeAsync(int employeeId, int achievementId)
     {
-        throw new NotImplementedException();
+        bool isAssigned = false;
+        var employee = await _context.Employees.FindAsync(employeeId);
+        var achievement = await _context.Achievements.FindAsync(achievementId);
+        if (employee != null && achievement != null)
+        {
+            var employeeAchievement = new EmployeeAchievement
+            {
+                EmployeeId = employeeId,
+                AchievementId = achievementId,
+            };
+            isAssigned = await _context.EmployeeAchievements.AddAsync(employeeAchievement) != null;
+            _context.SaveChanges();
+        }
+        return isAssigned;
     }
 
-    public Task<bool> RemoveAchievementFromEmployeeAsync(int employeeId, int achievementId)
+    public async Task<bool> RemoveAchievementFromEmployeeAsync(int employeeId, int achievementId)
     {
-        throw new NotImplementedException();
+        bool isRemoved = false;
+        var employeeAchievement = _context.EmployeeAchievements
+            .FirstOrDefault(ea => ea.EmployeeId == employeeId && ea.AchievementId == achievementId);
+        if (employeeAchievement != null)
+        {
+            _context.EmployeeAchievements.Remove(employeeAchievement);
+            isRemoved = true;
+            _context.SaveChanges();
+        }
+        return isRemoved;
     }
 
-    public Task<IEnumerable<Achievement>> GetAchievementsByEmployeeIdAsync(int employeeId)
+    public async Task<IEnumerable<Achievement>> GetAchievementsByEmployeeIdAsync(int employeeId)
     {
-        throw new NotImplementedException();
+        var achievements = await _context.EmployeeAchievements
+            .Where(ea => ea.EmployeeId == employeeId)
+            .Select(ea => ea.Achievement)
+            .ToListAsync();
+        return achievements;
     }
 
-    public Task<IEnumerable<Employee>> GetEmployeesByAchievementIdAsync(int achievementId)
+    public async Task<IEnumerable<Employee>> GetEmployeesByAchievementIdAsync(int achievementId)
     {
-        throw new NotImplementedException();
+        var employees = await _context.EmployeeAchievements
+            .Where(ea => ea.AchievementId == achievementId)
+            .Select(ea => ea.Employee)
+            .ToListAsync();
+        return employees;
     }
 }

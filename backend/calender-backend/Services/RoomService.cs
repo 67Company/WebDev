@@ -1,45 +1,91 @@
+using calender_backend.Data;
 using calender_backend.Models;
 
 public class RoomService : IRoomService
 {
-    private readonly string _connectionString = "Data Source=room.db";
+    private readonly CalenderContext _context;
 
-    public RoomService()
+    public RoomService(CalenderContext context)
     {
+        _context = context;
     }
 
-    public Task<bool> CreateRoomAsync(Room room)
+    public async Task<bool> CreateRoomAsync(Room room)
     {
-        throw new NotImplementedException();
+        bool isCreated = await _context.Rooms.AddAsync(room) != null;
+        _context.SaveChanges();
+        return isCreated;
     }
 
-    public Task<bool> DeleteRoomAsync(int id)
+    public async Task<bool> DeleteRoomAsync(int id)
     {
-        throw new NotImplementedException();
+        bool isDeleted = false;
+        Room? room = await _context.Rooms.FindAsync(id);
+        if (room != null)
+        {
+            _context.Rooms.Remove(room);
+            isDeleted = true;
+            _context.SaveChanges();
+        }
+        return isDeleted;
     }
 
-    public Task<IEnumerable<RoomDTO>> GetAllRoomsAsync(int companyId)
+    public async Task<IEnumerable<RoomDTO>> GetAllRoomsAsync(int companyId)
     {
-        throw new NotImplementedException();
+        return _context.Rooms
+            .Where(r => r.CompanyId == companyId)
+            .Select(r => new RoomDTO
+            {
+                Id = r.Id,
+                Name = r.Name,
+                Capacity = r.Capacity,
+            })
+            .ToList();
     }
 
-    public Task<RoomDTO?> GetRoomByIdAsync(int id)
+    public async Task<RoomDTO?> GetRoomByIdAsync(int id)
     {
-        throw new NotImplementedException();
+       return _context.Rooms
+            .Where(r => r.Id == id)
+            .Select(r => new RoomDTO
+            {
+                Id = r.Id,
+                Name = r.Name,
+                Capacity = r.Capacity,
+            })
+            .FirstOrDefault();
     }
 
-    public Task<RoomDTO?> GetRoomByNameAsync(string name, int companyId)
+    public async Task<RoomDTO?> GetRoomByNameAsync(string name, int companyId)
     {
-        throw new NotImplementedException();
+        return _context.Rooms
+            .Where(r => r.Name == name && r.CompanyId == companyId)
+            .Select(r => new RoomDTO
+            {
+                Id = r.Id,
+                Name = r.Name,
+                Capacity = r.Capacity,
+            })
+            .FirstOrDefault();
     }
 
-    public Task<IEnumerable<RoomDTO>> GetRoomsByCapacityAsync(int capacity, int companyId)
+    public async Task<IEnumerable<RoomDTO>> GetRoomsByCapacityAsync(int capacity, int companyId)
     {
-        throw new NotImplementedException();
+        return _context.Rooms
+            .Where(r => r.Capacity >= capacity && r.CompanyId == companyId)
+            .Select(r => new RoomDTO
+            {
+                Id = r.Id,
+                Name = r.Name,
+                Capacity = r.Capacity,
+            })
+            .ToList();
     }
 
-    public Task<bool> UpdateRoomAsync(int id, Room room)
+    public async Task<bool> UpdateRoomAsync(int id, Room room)
     {
-        throw new NotImplementedException();
+        bool isUpdated = _context.Rooms.Update(room) != null;
+        _context.SaveChanges();
+        return isUpdated;
     }
 }

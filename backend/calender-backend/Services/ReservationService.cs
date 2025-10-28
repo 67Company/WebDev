@@ -1,55 +1,65 @@
+using calender_backend.Data;
 using calender_backend.Models;
+using Microsoft.EntityFrameworkCore;
 
 public class ReservationService : IReservationService
 {
-    private readonly string _connectionString = "Data Source=reservation.db";
+    private readonly CalenderContext _context;
 
-    public ReservationService()
+    public ReservationService(CalenderContext context)
     {
+        _context = context;
     }
 
-    public Task<IEnumerable<Reservation>> GetAllReservationsAsync()
+    public async Task<IEnumerable<Reservation>> GetAllReservationsAsync()
     {
-        throw new NotImplementedException();
+        return _context.Reservations.ToList();
     }
 
-    public Task<Reservation> GetReservationByIdAsync(int id)
+    public async Task<Reservation?> GetReservationByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        Reservation? reservation = await _context.Reservations.FindAsync(id);
+        return reservation;
     }
 
-    public Task<bool> CreateReservationAsync(Reservation reservation)
+    public async Task<bool> CreateReservationAsync(Reservation reservation)
     {
-        throw new NotImplementedException();
+        bool isCreated = await _context.Reservations.AddAsync(reservation) != null;
+        _context.SaveChanges();
+        return isCreated;
     }
 
-    public Task<bool> UpdateReservationAsync(int id, Reservation updatedReservation)
+    public async Task<bool> UpdateReservationAsync(int id, Reservation updatedReservation)
     {
-        throw new NotImplementedException();
+        bool isUpdated = _context.Reservations.Update(updatedReservation) != null;
+        _context.SaveChanges();
+        return isUpdated;
     }
 
-    public Task<bool> CancelReservationAsync(int employeeId, int roomId, DateTime startTime)
+    public async Task<bool> CancelReservationAsync(int employeeId, int roomId, DateTime date)
     {
-        throw new NotImplementedException();
+        Reservation? reservation = await _context.Reservations.FirstOrDefaultAsync(r => r.EmployeeId == employeeId && r.RoomId == roomId && r.Date == date);
+        if (reservation != null)
+        {
+            _context.Reservations.Remove(reservation);
+            _context.SaveChanges();
+            return true;
+        }
+        return false;
     }
 
-    public Task<bool> DeleteReservationAsync(int id)
+    public async Task<IEnumerable<Reservation>> GetReservationsByEmployeeIdAsync(int employeeId)
     {
-        throw new NotImplementedException();
+        return _context.Reservations.Where(r => r.EmployeeId == employeeId).ToList();
     }
 
-    public Task<IEnumerable<Reservation>> GetReservationsByEmployeeIdAsync(int employeeId)
+    public async Task<IEnumerable<Reservation>> GetReservationsByRoomIdAsync(int roomId)
     {
-        throw new NotImplementedException();
+        return _context.Reservations.Where(r => r.RoomId == roomId).ToList();
     }
 
-    public Task<IEnumerable<Reservation>> GetReservationsByRoomIdAsync(int roomId)
+    public async Task<IEnumerable<Reservation>> GetReservationsByDateAsync(DateTime date)
     {
-        throw new NotImplementedException();
-    }
-
-    public Task<IEnumerable<Reservation>> GetReservationsByDateAsync(DateTime date)
-    {
-        throw new NotImplementedException();
+        return _context.Reservations.Where(r => r.Date.Date == date.Date).ToList();
     }
 }
