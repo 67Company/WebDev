@@ -1,0 +1,39 @@
+.calendar-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 2rem;
+  background: var(--bg-color);
+  min-height: 100vh;
+  font-family: 'Segoe UI', Roboto, sans-serif;
+  transition: background 0.3s ease;
+}
+
+.MuiDateCalendar-root {
+  background: var(--card-color);
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.MuiDialog-paper {
+  border-radius: 16px !important;
+  padding: 1rem;
+  background: var(--card-color);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2) !important;
+  transition: background 0.3s ease;
+}
+
+.MuiDialogTitle-root {
+  font-weight: bold;
+  color: #1976d2;
+}
+
+.MuiDialogContent-root p,
+.MuiTypography-root {
+  font-size: 1.1rem;
+  color: var(--text-color);
+  margin-top: 0.5rem;
+  transition: color 0.3s ease;
+}

@@ -1,38 +1,76 @@
-.App {
-  text-align: center;
+:root {
+  --bg-color: #ffffff;
+  --card-color: #a7a7a7;
+  --text-color: #000000;
+  --card-text-color: #ffffff;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.dark-mode {
+  --bg-color: #121212;
+  --card-color: #a7a7a7;
+  --text-color: #ffffff;
+  --card-text-color: #121212;
 }
 
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+  background: rgb(167, 167, 167);
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  padding: 0px 20px;
+  box-sizing: border-box;
+  position: relative;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  max-height: 10vh;
 }
 
-.App-link {
-  color: #61dafb;
+/* Apply variables everywhere */
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  max-height: 85vh;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.App-footer {
+  margin-top: auto;           /* stays at the bottom */
+  font-size: 14px;
+  color: #999;
+  padding: 0px 40px;
+  display: flex;
+  justify-content: center;    /* centers text container */
+  align-items: center;
+  position: relative;
+  max-height: 5vh;
+}
+
+.footer-content {
+  width: 100%;
+  justify-content: center;    /* centers the text */
+  align-items: center;
+  position: relative;
+}
+
+.footer-content p {
+  margin: 0;
+  text-align: center;
+}
+
+.footer-content .theme-toggle-wrapper {
+  position: absolute;
+  right: 0;                   /* place ThemeToggle to the right */
+  padding-bottom: 30px;
+}
+
+
+.App-Title {
+  font-size: 24px;
+  margin: 0;
+  color: var(--text-color);
+  transition: color 0.3s ease;
+}
+
+.Logoimg {
+  height: 100px;
+  width: auto;
 }
