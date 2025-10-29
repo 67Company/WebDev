@@ -23,33 +23,55 @@ const achievements: Achievement[] = [
   { id: 12, name: "Desk DJ", description: "Played music that boosted team morale.", progress: 55 },
 ];
 
+const PAGE_SIZE = 6;
+
 const AchievementPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const achievementsPerPage = 6;
+  const [sortMode, setSortMode] = useState<"high-low" | "low-high" | "high-low-completed-last">("high-low");
 
-  const totalPages = Math.ceil(achievements.length / achievementsPerPage);
-  const startIndex = (currentPage - 1) * achievementsPerPage;
-  const endIndex = startIndex + achievementsPerPage;
-  const currentAchievements = achievements.slice(startIndex, endIndex);
+  const sortedAchievements = [...achievements].sort((a, b) => {
+    if (sortMode === "high-low") return b.progress - a.progress;
+    if (sortMode === "low-high") return a.progress - b.progress;
+    if (sortMode === "high-low-completed-last") {
+      if (a.progress === 100 && b.progress !== 100) return 1;
+      if (b.progress === 100 && a.progress !== 100) return -1;
+      return b.progress - a.progress;
+    }
+    return 0;
+  });
 
-  const nextPage = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-  };
+  const totalPages = Math.ceil(sortedAchievements.length / PAGE_SIZE);
+  const startIndex = (currentPage - 1) * PAGE_SIZE;
+  const visibleAchievements = sortedAchievements.slice(startIndex, startIndex + PAGE_SIZE);
 
-  const prevPage = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
-  };
+  const nextPage = () => setCurrentPage((p) => Math.min(p + 1, totalPages));
+  const prevPage = () => setCurrentPage((p) => Math.max(p - 1, 1));
 
   return (
     <div className="achievement-page">
       <h1 className="achievement-title">✨ Your Achievements ✨</h1>
 
+      <div className="sort-controls">
+        {/* <label htmlFor="sort">Sort by: </label> */}
+        <select
+          id="sort"
+          value={sortMode}
+          onChange={(e) => {
+            setSortMode(e.target.value as any);
+            setCurrentPage(1);
+          }}
+        >
+          <option value="high-low">High to Low</option>
+          <option value="low-high">Low to High</option>
+          <option value="high-low-completed-last">High to Low (Completed Last)</option>
+        </select>
+      </div>
+
       <div className="achievements">
-        {currentAchievements.map((a) => (
+        {visibleAchievements.map((a) => (
           <div className="achievement-card" key={a.id}>
             <h2 className="achievement-name">{a.name}</h2>
             <p className="achievement-description">{a.description}</p>
-
             <div className="progress-container">
               <div
                 className="progress-bar"
@@ -59,7 +81,6 @@ const AchievementPage: React.FC = () => {
                 }}
               ></div>
             </div>
-
             <p className="achievement-progress">{a.progress}%</p>
           </div>
         ))}

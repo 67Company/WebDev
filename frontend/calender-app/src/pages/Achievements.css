@@ -84,6 +84,27 @@
   color: #444;
 }
 
+.sort-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+  font-family: "Inter", sans-serif;
+  color: #444;
+  gap: 0.5rem;
+}
+
+.sort-controls select {
+  background: #007bff;
+  color: #eaeaea;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 0.4rem 0.8rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
 .achievement-card {
   opacity: 0;
   transform: translateY(10px);
