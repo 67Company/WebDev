@@ -25,7 +25,9 @@ const Home: React.FC = () => {
       <section className="overview-card">
         <h2>👀 Achievements</h2>
         <p>Need help? Reach out to our support team anytime.</p>
+        <Link to="/Achievements">
         <Button variant="contained">Full list here</Button>
+        </Link>
       </section>
     </main>
   );
