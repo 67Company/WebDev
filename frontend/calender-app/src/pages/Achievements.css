@@ -70,6 +70,10 @@
   transition: background-color 0.3s ease;
 }
 
+.achievement-progress {
+  color: var(--text-color)
+}
+
 .pagination-btn:hover:not(:disabled) {
   background-color: #0056b3;
 }
