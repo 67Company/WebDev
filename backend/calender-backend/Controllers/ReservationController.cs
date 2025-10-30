@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using calender_backend.Models;
+using calender_backend.Data;
 
 namespace calender_backend.Controllers;
 
@@ -8,9 +10,9 @@ public class ReservationController : ControllerBase
 {
 	private readonly ReservationService _reservationService;
 
-	public ReservationController()
+	public ReservationController(CalenderContext context)
 	{
-		_reservationService = new ReservationService();
+		_reservationService = new ReservationService(context);
 	}
 
 	[HttpGet]

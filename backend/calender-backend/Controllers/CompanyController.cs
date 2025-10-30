@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using calender_backend.Models;
+using calender_backend.Data;
 
 namespace calender_backend.Controllers;
 
@@ -8,9 +10,9 @@ public class CompanyController : ControllerBase
 {
 	private readonly CompanyService _companyService;
 
-	public CompanyController()
+	public CompanyController(CalenderContext context)
 	{
-		_companyService = new CompanyService();
+		_companyService = new CompanyService(context);
 	}
 
 	[HttpGet("{id}")]
