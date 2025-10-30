@@ -15,10 +15,10 @@ public class AchievementController : ControllerBase
         _achievementService = new AchievementService(context);
     }
 
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<Achievement>>> GetAll()
+    [HttpGet("company/{companyId}")]
+    public async Task<ActionResult<IEnumerable<Achievement>>> GetAll(int companyId)
     {
-        var achievements = await _achievementService.GetAllAchievementsAsync();
+        var achievements = await _achievementService.GetAllAchievementsAsync(companyId);
         return Ok(achievements);
     }
 

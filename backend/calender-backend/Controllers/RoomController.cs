@@ -15,10 +15,10 @@ public class RoomController : ControllerBase
 		_roomService = new RoomService(context);
 	}
 
-	[HttpGet]
-	public async Task<ActionResult<IEnumerable<Room>>> GetAll()
+	[HttpGet("company/{companyId}")]
+	public async Task<ActionResult<IEnumerable<Room>>> GetAll(int companyId)
 	{
-		var rooms = await _roomService.GetAllRoomsAsync();
+		var rooms = await _roomService.GetAllRoomsAsync(companyId);
 		return Ok(rooms);
 	}
 
@@ -31,19 +31,19 @@ public class RoomController : ControllerBase
 		return Ok(room);
 	}
 
-	[HttpGet("name/{name}")]
-	public async Task<ActionResult<Room>> GetByName(string name)
+	[HttpGet("company/{companyId}/name/{name}")]
+	public async Task<ActionResult<Room>> GetByName(string name, int companyId)
 	{
-		var room = await _roomService.GetRoomByNameAsync(name);
+		var room = await _roomService.GetRoomByNameAsync(name, companyId);
 		if (room == null)
 			return NotFound();
 		return Ok(room);
 	}
 
-	[HttpGet("capacity/{capacity}")]
-	public async Task<ActionResult<IEnumerable<Room>>> GetByCapacity(int capacity)
+	[HttpGet("company/{companyId}/capacity/{capacity}")]
+	public async Task<ActionResult<IEnumerable<Room>>> GetByCapacity(int capacity, int companyId)
 	{
-		var rooms = await _roomService.GetRoomsByCapacityAsync(capacity);
+		var rooms = await _roomService.GetRoomsByCapacityAsync(capacity, companyId);
 		return Ok(rooms);
 	}
 

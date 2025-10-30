@@ -49,10 +49,10 @@ public class ReservationController : ControllerBase
 		return NoContent();
 	}
 
-	[HttpDelete("{id}")]
-	public async Task<ActionResult> Delete(int id)
+	[HttpDelete("room/{roomId}/employee/{employeeId}/date/{date}")]
+	public async Task<ActionResult> Delete(int roomId, int employeeId, DateTime date)
 	{
-		var result = await _reservationService.DeleteReservationAsync(id);
+		var result = await _reservationService.CancelReservationAsync(roomId, employeeId, date);
 		if (!result)
 			return NotFound();
 		return NoContent();
