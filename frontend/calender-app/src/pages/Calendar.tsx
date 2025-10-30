@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./Calendar.css";
+import CalendarDisplay from "../components/CalenderDisplay";
 import {
   Dialog,
   DialogTitle,
@@ -25,7 +26,7 @@ const Calendar: React.FC = () => {
 
   return (
     <main className="calendar-container">
-      <LocalizationProvider dateAdapter={AdapterDateFns}>
+      {/* <LocalizationProvider dateAdapter={AdapterDateFns}>
         <DateCalendar onChange={handleDayClick} />
       </LocalizationProvider>
 
@@ -41,7 +42,10 @@ const Calendar: React.FC = () => {
             Close
           </Button>
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
+      <div className="coming-soon">
+        <CalendarDisplay />
+      </div>
     </main>
   );
 };
