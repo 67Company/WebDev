@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using calender_backend.Models;
+using calender_backend.Data;
 
 namespace calender_backend.Controllers;
 
@@ -8,9 +10,9 @@ public class EmployeeController : ControllerBase
 {
 	private readonly EmployeeService _employeeService;
 
-	public EmployeeController()
+	public EmployeeController(CalenderContext context)
 	{
-		_employeeService = new EmployeeService();
+		_employeeService = new EmployeeService(context);
 	}
 
 	[HttpGet]

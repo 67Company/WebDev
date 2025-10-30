@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using calender_backend.Models;
+using calender_backend.Data;
 
 namespace calender_backend.Controllers;
 
@@ -8,9 +10,9 @@ public class TimeslotController : ControllerBase
 {
 	private readonly TimeslotService _timeslotService;
 
-	public TimeslotController()
+	public TimeslotController(CalenderContext context)
 	{
-		_timeslotService = new TimeslotService();
+		_timeslotService = new TimeslotService(context);
 	}
 
 	[HttpGet]

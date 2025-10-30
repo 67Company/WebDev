@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using calender_backend.Models;
+using calender_backend.Data;
 
 namespace calender_backend.Controllers;
 
@@ -8,9 +10,9 @@ public class EventController : ControllerBase
 {
     private readonly EventService _eventService;
 
-    public EventController()
+    public EventController(CalenderContext context)
     {
-        _eventService = new EventService();
+        _eventService = new EventService(context);
     }
 
     [HttpGet]

@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using calender_backend.Models;
+using calender_backend.Data;
 
 namespace calender_backend.Controllers;
 
@@ -8,9 +10,9 @@ public class RoomController : ControllerBase
 {
 	private readonly RoomService _roomService;
 
-	public RoomController()
+	public RoomController(CalenderContext context)
 	{
-		_roomService = new RoomService();
+		_roomService = new RoomService(context);
 	}
 
 	[HttpGet]

@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using calender_backend.Models;
+using calender_backend.Data;
 
 namespace calender_backend.Controllers;
 
@@ -8,9 +10,9 @@ public class AchievementController : ControllerBase
 {
     private readonly AchievementService _achievementService;
 
-    public AchievementController()
+    public AchievementController(CalenderContext context)
     {
-        _achievementService = new AchievementService();
+        _achievementService = new AchievementService(context);
     }
 
     [HttpGet]
