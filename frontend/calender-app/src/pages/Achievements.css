@@ -37,6 +37,13 @@
   line-height: 1.4;
 }
 
+.achievements-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 550px;
+}
+
 .progress-container {
   background: #eaeaea;
   border-radius: 9999px;
@@ -113,6 +120,11 @@
   opacity: 0;
   transform: translateY(10px);
   animation: fadeInUp 0.5s ease forwards;
+}
+
+.achievement-card.placeholder {
+  visibility: hidden;
+  pointer-events: none;
 }
 
 @keyframes fadeInUp {
