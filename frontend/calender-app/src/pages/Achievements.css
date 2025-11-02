@@ -1,0 +1,139 @@
+/* achievements.css */
+
+.achievements {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.achievement-card {
+  background: var(--card-color);
+  border: 1px solid rgba(230, 230, 230, 0.6);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.achievement-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.achievement-name {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.4rem;
+}
+
+.achievement-description {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+
+.achievements-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 550px;
+}
+
+.progress-container {
+  background: #eaeaea;
+  border-radius: 9999px;
+  height: 10px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  border-radius: inherit;
+  transition: width 0.6s ease;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2rem;
+  gap: 1rem;
+}
+
+.pagination-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.achievement-progress {
+  color: var(--text-color)
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-info {
+  font-size: 0.9rem;
+  color: #444;
+}
+
+.sort-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+  font-family: "Inter", sans-serif;
+  color: #444;
+  gap: 0.5rem;
+}
+
+.sort-controls select {
+  background: #007bff;
+  color: #eaeaea;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 0.4rem 0.8rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.achievement-card {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeInUp 0.5s ease forwards;
+}
+
+.achievement-card.placeholder {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

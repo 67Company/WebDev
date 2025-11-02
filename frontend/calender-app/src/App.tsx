@@ -6,6 +6,7 @@ import Calendar from "./pages/Calendar";
 import adtjeKratje from "./media/adtje_kratje.png";
 import Settings from "./pages/Settings";
 import ThemeToggle from "./components/ThemeToggle";
+import Achievements from "./pages/Achievements";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/achievements" element={<Achievements />} />
         </Routes>
 
       <footer className="App-footer">
