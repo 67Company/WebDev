@@ -9,7 +9,6 @@ builder.Services.AddDbContext<CalenderContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("CalenderDatabase")));
 builder.Services.AddControllersWithViews();
 
-// Add Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -37,8 +36,7 @@ if (app.Environment.IsDevelopment())
         c.RoutePrefix = "swagger";
     });
 }
-
-if (!app.Environment.IsDevelopment())
+else
 {
     app.UseExceptionHandler("/Home/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
