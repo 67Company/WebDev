@@ -18,14 +18,14 @@ public class CompanyService : ICompanyService
     public async Task<bool> CreateCompanyAsync(Company company)
     {
         bool isCreated = await _context.Companies.AddAsync(company) != null;
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return isCreated;
     }
 
     public async Task<bool> UpdateCompanyInfoAsync(int id, Company company)
     {
         bool isUpdated = _context.Companies.Update(company) != null;
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return isUpdated;
     }
 
@@ -37,7 +37,7 @@ public class CompanyService : ICompanyService
         {
             company.IsActive = false;
             isDeleted = _context.Companies.Update(company) != null;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
         return isDeleted;
     }
@@ -50,7 +50,7 @@ public class CompanyService : ICompanyService
         {
             _context.Companies.Remove(company);
             isDeleted = true;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
         return isDeleted;
     }

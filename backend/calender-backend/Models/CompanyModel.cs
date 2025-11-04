@@ -15,6 +15,6 @@ public class Company
 
 public class CompanyDTO
 {
-    public string Name { get; set; }
-    public string Key { get; set; }
+    public string Name { get; set; } = "Name_Missing";
+    public string Key { get; set; } = "Key_Missing";
 }

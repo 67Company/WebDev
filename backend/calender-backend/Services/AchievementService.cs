@@ -1,5 +1,6 @@
 using calender_backend.Models;
 using calender_backend.Data;
+using Microsoft.EntityFrameworkCore;
 
 public class AchievementService : IAchievementService
 {
@@ -13,7 +14,7 @@ public class AchievementService : IAchievementService
     public async Task<bool> CreateAchievementAsync(Achievement achievement)
     {
         bool isCreated = await _context.Achievements.AddAsync(achievement) != null;
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return isCreated;
     }
 
@@ -25,14 +26,14 @@ public class AchievementService : IAchievementService
         {
             _context.Achievements.Remove(achievement);
             isDeleted = true;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
         return isDeleted;
     }
 
     public async Task<IEnumerable<Achievement>> GetAllAchievementsAsync(int companyId)
     {
-        return _context.Achievements.Where(a => a.CompanyId == companyId).ToList();
+        return await _context.Achievements.Where(a => a.CompanyId == companyId).ToListAsync();
     }
 
     public async Task<Achievement?> GetAchievementByIdAsync(int id)
@@ -43,8 +44,8 @@ public class AchievementService : IAchievementService
 
     public async Task<bool> UpdateAchievementAsync(int id, Achievement achievement)
     {
-        bool isUpdated = _context.Achievements.Update(achievement) != null;
-        _context.SaveChanges();
+        bool isUpdated =  _context.Achievements.Update(achievement) != null;
+        await _context.SaveChangesAsync();
         return isUpdated;
     }
 }

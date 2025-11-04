@@ -15,9 +15,9 @@ public class Achievement()
 
 public class AchievementDTO
 {
-    public string Title { get; set; }
-    public string Description { get; set; }
+    public string Title { get; set; } = "Title_Missing";
+    public string Description { get; set; } = "Description_Missing";
     public string? Icon { get; set; }
-    public string StatToTrack { get; set; }
+    public string StatToTrack { get; set; } = "Field_Missing";
     public int Threshold { get; set; }
 }

@@ -24,7 +24,7 @@ public class EmployeeAchievementService : IEmployeeAchievementService
                 AchievementId = achievementId,
             };
             isAssigned = await _context.EmployeeAchievements.AddAsync(employeeAchievement) != null;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
         return isAssigned;
     }
@@ -38,7 +38,7 @@ public class EmployeeAchievementService : IEmployeeAchievementService
         {
             _context.EmployeeAchievements.Remove(employeeAchievement);
             isRemoved = true;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
         return isRemoved;
     }

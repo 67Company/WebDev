@@ -11,9 +11,9 @@ public class ReservationService : IReservationService
         _context = context;
     }
 
-    public async Task<IEnumerable<Reservation>> GetAllReservationsAsync()
+    public async Task<IEnumerable<Reservation>> GetAllReservationsAsync(int companyId)
     {
-        return _context.Reservations.ToList();
+        return await _context.Reservations.Where(r => r.CompanyId == companyId).ToListAsync();
     }
 
     public async Task<Reservation?> GetReservationByIdAsync(int id)
@@ -32,7 +32,7 @@ public class ReservationService : IReservationService
     public async Task<bool> UpdateReservationAsync(int id, Reservation updatedReservation)
     {
         bool isUpdated = _context.Reservations.Update(updatedReservation) != null;
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return isUpdated;
     }
 
@@ -42,24 +42,24 @@ public class ReservationService : IReservationService
         if (reservation != null)
         {
             _context.Reservations.Remove(reservation);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return true;
         }
         return false;
     }
 
-    public async Task<IEnumerable<Reservation>> GetReservationsByEmployeeIdAsync(int employeeId)
+    public async Task<IEnumerable<Reservation>> GetReservationsByEmployeeIdAsync(int employeeId, int companyId)
     {
-        return _context.Reservations.Where(r => r.EmployeeId == employeeId).ToList();
+        return await _context.Reservations.Where(r => r.EmployeeId == employeeId && r.CompanyId == companyId).ToListAsync();
     }
 
-    public async Task<IEnumerable<Reservation>> GetReservationsByRoomIdAsync(int roomId)
+    public async Task<IEnumerable<Reservation>> GetReservationsByRoomIdAsync(int roomId, int companyId)
     {
-        return _context.Reservations.Where(r => r.RoomId == roomId).ToList();
+        return await _context.Reservations.Where(r => r.RoomId == roomId && r.CompanyId == companyId).ToListAsync();
     }
 
-    public async Task<IEnumerable<Reservation>> GetReservationsByDateAsync(DateTime date)
+    public async Task<IEnumerable<Reservation>> GetReservationsByDateAsync(DateTime date, int companyId)
     {
-        return _context.Reservations.Where(r => r.Date.Date == date.Date).ToList();
+        return await _context.Reservations.Where(r => r.Date.Date == date.Date && r.CompanyId == companyId).ToListAsync();
     }
 }

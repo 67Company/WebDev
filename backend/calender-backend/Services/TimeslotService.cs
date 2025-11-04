@@ -1,5 +1,6 @@
 using calender_backend.Data;
 using calender_backend.Models;
+using Microsoft.EntityFrameworkCore;
 
 public class TimeslotService : ITimeslotService
 {
@@ -11,7 +12,7 @@ public class TimeslotService : ITimeslotService
 
     public async Task<IEnumerable<Timeslot>> GetAllTimeSlotsAsync()
     {
-        return _context.Timeslots.ToList();
+        return await _context.Timeslots.ToListAsync();
     }
 
     public async Task<Timeslot?> GetTimeSlotByIdAsync(int id)
@@ -22,8 +23,8 @@ public class TimeslotService : ITimeslotService
 
     public async Task<Timeslot?> GetTimeSlotbByTimeAsync(DateTime startTime)
     {
-        return _context.Timeslots
+        return await _context.Timeslots
             .Where(t => t.StartTime == startTime)
-            .FirstOrDefault();
+            .FirstOrDefaultAsync();
     }
 }

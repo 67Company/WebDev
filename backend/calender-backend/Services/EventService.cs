@@ -1,6 +1,6 @@
 using calender_backend.Data;
 using calender_backend.Models;
-using SQLitePCL;
+using Microsoft.EntityFrameworkCore;
 
 public class EventService : IEventService
 {
@@ -11,9 +11,9 @@ public class EventService : IEventService
         _context = context;
     }
 
-    public async Task<IEnumerable<Event>> GetAllEventsAsync()
+    public async Task<IEnumerable<Event>> GetAllEventsAsync(int companyId)
     {
-        return _context.Events.ToList();
+        return await _context.Events.Where(x => x.CompanyId == companyId).ToListAsync();
     }
 
     public async Task<Event?> GetEventByIdAsync(int id)
@@ -25,14 +25,14 @@ public class EventService : IEventService
     public async Task<bool> CreateEventAsync(Event newEvent)
     {
         bool isCreated = await _context.Events.AddAsync(newEvent) != null;
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return isCreated;
     }
 
     public async Task<bool> UpdateEventAsync(int id, Event updatedEvent)
     {
         bool isUpdated = _context.Events.Update(updatedEvent) != null;
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return isUpdated;
     }
 
@@ -44,7 +44,7 @@ public class EventService : IEventService
         {
             _context.Events.Remove(eventEntry);
             isDeleted = true;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
         return isDeleted;
     }
