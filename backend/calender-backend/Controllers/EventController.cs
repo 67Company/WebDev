@@ -16,9 +16,9 @@ public class EventController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Event>>> GetAll()
+    public async Task<ActionResult<IEnumerable<Event>>> GetAll(int companyId)
     {
-        var events = await _eventService.GetAllEventsAsync();
+        var events = await _eventService.GetAllEventsAsync(companyId);
         return Ok(events);
     }
 

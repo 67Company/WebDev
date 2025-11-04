@@ -16,9 +16,9 @@ public class ReservationController : ControllerBase
 	}
 
 	[HttpGet]
-	public async Task<ActionResult<IEnumerable<Reservation>>> GetAll()
+	public async Task<ActionResult<IEnumerable<Reservation>>> GetAll(int companyId)
 	{
-		var reservations = await _reservationService.GetAllReservationsAsync();
+		var reservations = await _reservationService.GetAllReservationsAsync(companyId);
 		return Ok(reservations);
 	}
 
@@ -59,23 +59,23 @@ public class ReservationController : ControllerBase
 	}
 
 	[HttpGet("employee/{employeeId}")]
-	public async Task<ActionResult<IEnumerable<Reservation>>> GetByEmployee(int employeeId)
+	public async Task<ActionResult<IEnumerable<Reservation>>> GetByEmployee(int employeeId, int companyId)
 	{
-		var reservations = await _reservationService.GetReservationsByEmployeeIdAsync(employeeId);
+		var reservations = await _reservationService.GetReservationsByEmployeeIdAsync(employeeId, companyId);
 		return Ok(reservations);
 	}
 
 	[HttpGet("room/{roomId}")]
-	public async Task<ActionResult<IEnumerable<Reservation>>> GetByRoom(int roomId)
+	public async Task<ActionResult<IEnumerable<Reservation>>> GetByRoom(int roomId, int companyId)
 	{
-		var reservations = await _reservationService.GetReservationsByRoomIdAsync(roomId);
+		var reservations = await _reservationService.GetReservationsByRoomIdAsync(roomId, companyId);
 		return Ok(reservations);
 	}
 
 	[HttpGet("date/{date}")]
-	public async Task<ActionResult<IEnumerable<Reservation>>> GetByDate(DateTime date)
+	public async Task<ActionResult<IEnumerable<Reservation>>> GetByDate(DateTime date, int companyId)
 	{
-		var reservations = await _reservationService.GetReservationsByDateAsync(date);
+		var reservations = await _reservationService.GetReservationsByDateAsync(date, companyId);
 		return Ok(reservations);
 	}
 }

@@ -7,7 +7,7 @@ public class EmployeeService : IEmployeeService
     
     private readonly CalenderContext _context;
 
-    public EmployeeService(CalenderContext context) //eventually pass in the SQL shit
+    public EmployeeService(CalenderContext context)
     {
         _context = context;
     }
@@ -21,7 +21,7 @@ public class EmployeeService : IEmployeeService
             return isCreated; // Employee with the same email already exists
         } else {
             isCreated = await _context.Employees.AddAsync(employee) != null;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
         return isCreated;
     }
@@ -34,7 +34,7 @@ public class EmployeeService : IEmployeeService
         {
             employee.IsDeleted = true;
             isDeleted = _context.Employees.Update(employee) != null;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
         return isDeleted;
     }
@@ -47,14 +47,14 @@ public class EmployeeService : IEmployeeService
         {
             _context.Employees.Remove(employee);
             isDeleted = true;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
         return isDeleted;
     }
 
     public async Task<IEnumerable<Employee>> GetAllEmployeesAsync()
     {
-        return _context.Employees.Where(e => !e.IsDeleted).ToList();
+        return await _context.Employees.Where(e => !e.IsDeleted).ToListAsync();
     }
 
     public async Task<Employee?> GetEmployeeByIdAsync(int id)
@@ -63,10 +63,10 @@ public class EmployeeService : IEmployeeService
         return employee;
     }
 
-    public async Task<Employee> GetEmployeeByEmailAsync(string email)
+    public async Task<Employee?> GetEmployeeByEmailAsync(string email)
     {
         Employee? employee = await _context.Employees.FirstOrDefaultAsync(e => e.Email == email && !e.IsDeleted);
-        return employee!;
+        return employee;
     }
 
     public async Task<EmployeeStatsDTO?> GetEmployeeStatsAsync(int id)
@@ -74,7 +74,7 @@ public class EmployeeService : IEmployeeService
         Employee? employee = await _context.Employees.FirstOrDefaultAsync(e => e.Id == id && !e.IsDeleted);
         if (employee == null)
         {
-            return null!;
+            return null;
         }
 
         EmployeeStatsDTO stats = new EmployeeStatsDTO
@@ -92,7 +92,7 @@ public class EmployeeService : IEmployeeService
 
     public async Task<bool> IncrementEmployeeStatAsync(string statName, int id, int incrementBy = 1)
     {
-        bool isIncremented = false;
+        bool isIncremented;
         Employee? employee = await _context.Employees.FindAsync(id);
 
         switch (statName.ToLower())
@@ -187,7 +187,7 @@ public class EmployeeService : IEmployeeService
     public async Task<bool> UpdateEmployeeAsync(int id, Employee employee)
     {
         bool isUpdated = _context.Employees.Update(employee) != null;
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return isUpdated;
     }
 }

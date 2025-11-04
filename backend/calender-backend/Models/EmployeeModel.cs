@@ -23,13 +23,13 @@ namespace calender_backend.Models;
     public class EmployeeDTO
     {
         public int Id { get; set; }
-        public string Email { get; set; }
+        public string Email { get; set; } = "Email_Missing";
     }
 
     public class EmployeeLoginDTO
     {
-        public string Email { get; set; }
-        public string PasswordHash { get; set; }
+        public string Email { get; set; } = "Email_Missing";
+        public string PasswordHash { get; set; } = "Hash_Missing";
     }
 
     public class EmployeeStatsDTO
