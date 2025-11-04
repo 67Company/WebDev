@@ -1,6 +1,7 @@
 import React from "react";
 import "./Settings.css";
 import ThemeToggle from "../components/ThemeToggle";
+import AchievementButton from "../components/AchievementButton";
 
 const Settings: React.FC = () => {
   return (
@@ -14,6 +15,8 @@ const Settings: React.FC = () => {
           <ThemeToggle />
           <p>Switch between light and dark mode.</p>
         </div>
+      <AchievementButton/>
+
       </section>
     </main>
   );
