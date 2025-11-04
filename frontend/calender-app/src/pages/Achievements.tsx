@@ -8,6 +8,11 @@ interface Achievement {
   progress: number; // 0–100
 }
 
+const getProgressFromStorage = (key: string): number => {
+  const stored = localStorage.getItem(key);
+  return stored !== null ? parseInt(stored, 10) : 0;
+};
+
 const achievements: Achievement[] = [
   { id: 1, name: "Morning Bloom", description: "Started your day before 9 AM. You’re unstoppable.", progress: 75 },
   { id: 2, name: "Peaceful Focus", description: "Stayed focused for 30 minutes without distractions.", progress: 40 },
@@ -23,6 +28,7 @@ const achievements: Achievement[] = [
   { id: 12, name: "Desk DJ", description: "Played deephouse bangers that boosted team morale.", progress: 55 },
   { id: 13, name: "King Kebab", description: "Eat a kebab at your desk after a wild night out.", progress: 35 },
   { id: 14, name: "Let's not get political", description: "Defuse atleast 10 arguments about politics.", progress: 20 },
+  { id: 15, name: "Find the hidden button", description: "Find the hidden button on our site and press it", progress: getProgressFromStorage("achievementCount") * 10}
 ];
 
 const PAGE_SIZE = 6;
