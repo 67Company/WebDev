@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Achievements.css";
 
 interface Achievement {
@@ -13,7 +13,13 @@ const getProgressFromStorage = (key: string): number => {
   return stored !== null ? parseInt(stored, 10) : 0;
 };
 
-const achievements: Achievement[] = [
+const PAGE_SIZE = 6;
+
+const AchievementPage: React.FC = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [sortMode, setSortMode] = useState<"high-low" | "low-high" | "high-low-completed-last">("high-low");
+
+  const achievements: Achievement[] = [
   { id: 1, name: "Morning Bloom", description: "Started your day before 9 AM. You’re unstoppable.", progress: 75 },
   { id: 2, name: "Peaceful Focus", description: "Stayed focused for 30 minutes without distractions.", progress: 40 },
   { id: 3, name: "Little Victories", description: "Completed three small tasks that made a big difference.", progress: 100 },
@@ -29,14 +35,8 @@ const achievements: Achievement[] = [
   { id: 13, name: "King Kebab", description: "Eat a kebab at your desk after a wild night out.", progress: 35 },
   { id: 14, name: "Let's not get political", description: "Defuse atleast 10 arguments about politics.", progress: 20 },
   { id: 15, name: "Find the hidden button", description: "Find the hidden button on our site and press it", progress: getProgressFromStorage("achievementCount") * 10}
-];
-
-const PAGE_SIZE = 6;
-
-const AchievementPage: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [sortMode, setSortMode] = useState<"high-low" | "low-high" | "high-low-completed-last">("high-low");
-
+  ];
+  
   const sortedAchievements = [...achievements].sort((a, b) => {
     if (sortMode === "high-low") return b.progress - a.progress;
     if (sortMode === "low-high") return a.progress - b.progress;
