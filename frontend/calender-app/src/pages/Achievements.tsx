@@ -1,20 +1,30 @@
 import React, { useState } from "react";
 import "./Achievements.css";
-import sampicon from "../media/adtje_kratje.png";
 import beericon from "../media/beer.png";
+import trophyicon from "../media/trophy.png";
 
-interface Achievement {
-  Id: number;
-  Title: string;
-  Description: string;
-  Progress: number; // 0–100
-  Icon?: string;
-}
 
-const getProgressFromStorage = (key: string): number => {
-  const stored = localStorage.getItem(key);
-  return stored !== null ? parseInt(stored, 10) : 0;
+const createAchievement = (id: number, title: string, desc: string, stat: number, threshold: number, icon: any) => {
+  return {
+    Id: id,
+    Title: title,
+    Description: desc,
+    Stat: stat,
+    Threshold: threshold,
+    Progress: getProgressInPercent(stat, threshold),
+    Icon: icon
+  };
 };
+
+const getStatFromStorage = (key: string): number => {
+  const value = localStorage.getItem(key);
+  return value !== null ? parseInt(value) : 0;
+};
+
+const getProgressInPercent = (Num: number, Goal: number): number => {
+  if (Num >= Goal) return 100;
+  else return Math.floor((Num / Goal) * 100);
+}
 
 const PAGE_SIZE = 6;
 
@@ -22,22 +32,22 @@ const AchievementPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortMode, setSortMode] = useState<"high-low" | "low-high" | "high-low-completed-last">("high-low");
 
-  const achievements: Achievement[] = [
-  { Id: 1, Title: "Morning Bloom", Description: "Started your day before 9 AM. You’re unstoppable.", Progress: 75, Icon: beericon},
-  { Id: 2, Title: "Peaceful Focus", Description: "Stayed focused for 30 minutes without distractions.", Progress: 40, Icon: beericon },
-  { Id: 3, Title: "Little Victories", Description: "Completed three small tasks that made a big difference.", Progress: 100, Icon: beericon },
-  { Id: 4, Title: "Consistency Champ", Description: "Showed up three days in a row. Keep it going.", Progress: 60, Icon: beericon },
-  { Id: 5, Title: "Mindful Break", Description: "Took a break instead of scrolling endlessly.", Progress: 25, Icon: beericon },
-  { Id: 6, Title: "Task Tamer", Description: "Finished everything on your to-do list you tryhard.", Progress: 100, Icon: beericon },
-  { Id: 7, Title: "Beer sipping", Description: "Drinking an alcoholic bevvy during a meeting.", Progress: 50, Icon: beericon },
-  { Id: 8, Title: "Coworker Maxxing", Description: "Annoy your colleague for at least 10 hours.", Progress: 25, Icon: beericon },
-  { Id: 9, Title: "Minesweeping is life", Description: "Win 10 games of minesweeper during work hours.", Progress: 70, Icon: beericon },
-  { Id: 10, Title: "Email Ninja", Description: "Replied to all unread emails in one sitting, you fast boy.", Progress: 90, Icon: beericon },
-  { Id: 11, Title: "Power Napper", Description: "Successfully napped without oversleeping.", Progress: 100, Icon: beericon },
-  { Id: 12, Title: "Desk DJ", Description: "Played deephouse bangers that boosted team morale.", Progress: 55, Icon: beericon },
-  { Id: 13, Title: "King Kebab", Description: "Eat a kebab at your desk after a wild night out.", Progress: 35, Icon: beericon },
-  { Id: 14, Title: "Let's not get political", Description: "Defuse atleast 10 arguments about politics.", Progress: 20, Icon: beericon },
-  { Id: 15, Title: "Find the hidden button", Description: "Find the hidden button on our site and press it", Progress: getProgressFromStorage("achievementCount") * 10, Icon: beericon}
+  const achievements = [
+    createAchievement(1, "Morning Bloom", "Started your day before 9 AM. You’re unstoppable.", 75, 100, beericon),
+    createAchievement(2, "Peaceful Focus", "Stayed focused for 30 minutes without distractions.", 40, 100, beericon),
+    createAchievement(3, "Little Victories", "Completed three small tasks that made a big difference.", 100, 100, beericon),
+    createAchievement(4, "Consistency Champ", "Showed up three days in a row. Keep it going.", 60, 100, beericon),
+    createAchievement(5, "Mindful Break", "Took a break instead of scrolling endlessly.", 25, 100, beericon),
+    createAchievement(6, "Task Tamer", "Finished everything on your to-do list you tryhard.", 100, 100, trophyicon),
+    createAchievement(7, "Beer sipping", "Drinking an alcoholic bevvy during a meeting.", 50, 100, beericon),
+    createAchievement(8, "Coworker Maxxing", "Annoy your colleague for at least 10 hours.", 25, 100, beericon),
+    createAchievement(9, "Minesweeping is life", "Win 10 games of minesweeper during work hours.", 70, 100, beericon),
+    createAchievement(10, "Email Ninja", "Replied to all unread emails in one sitting, you fast boy.", 90, 100, beericon),
+    createAchievement(11, "Power Napper", "Successfully napped without oversleeping.", 100, 100, beericon),
+    createAchievement(12, "Desk DJ", "Played deephouse bangers that boosted team morale.", 55, 100, beericon),
+    createAchievement(13, "King Kebab", "Eat a kebab at your desk after a wild night out.", 35, 100, beericon),
+    createAchievement(14, "Let's not get political", "Defuse atleast 10 arguments about politics.", 20, 100, beericon),
+    createAchievement(15, "Find the hidden button", "Find the hidden button on our site and press it", getStatFromStorage("achievementCount"), 10, beericon)
   ];
   
   const sortedAchievements = [...achievements].sort((a, b) => {
