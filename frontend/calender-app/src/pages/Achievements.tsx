@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./Achievements.css";
+import sampicon from "../media/adtje_kratje.png";
+import beericon from "../media/beer.png";
 
 interface Achievement {
-  id: number;
-  name: string;
-  description: string;
-  progress: number; // 0–100
+  Id: number;
+  Title: string;
+  Description: string;
+  Progress: number; // 0–100
+  Icon?: string;
 }
 
 const getProgressFromStorage = (key: string): number => {
@@ -20,30 +23,30 @@ const AchievementPage: React.FC = () => {
   const [sortMode, setSortMode] = useState<"high-low" | "low-high" | "high-low-completed-last">("high-low");
 
   const achievements: Achievement[] = [
-  { id: 1, name: "Morning Bloom", description: "Started your day before 9 AM. You’re unstoppable.", progress: 75 },
-  { id: 2, name: "Peaceful Focus", description: "Stayed focused for 30 minutes without distractions.", progress: 40 },
-  { id: 3, name: "Little Victories", description: "Completed three small tasks that made a big difference.", progress: 100 },
-  { id: 4, name: "Consistency Champ", description: "Showed up three days in a row. Keep it going.", progress: 60 },
-  { id: 5, name: "Mindful Break", description: "Took a break instead of scrolling endlessly.", progress: 25 },
-  { id: 6, name: "Task Tamer", description: "Finished everything on your to-do list you tryhard.", progress: 100 },
-  { id: 7, name: "Beer sipping", description: "Drinking an alcoholic bevvy during a meeting.", progress: 50 },
-  { id: 8, name: "Coworker Maxxing", description: "Annoy your colleague for at least 10 hours.", progress: 25 },
-  { id: 9, name: "Minesweeping is life", description: "Win 10 games of minesweeper during work hours.", progress: 70 },
-  { id: 10, name: "Email Ninja", description: "Replied to all unread emails in one sitting, you fast boy.", progress: 90 },
-  { id: 11, name: "Power Napper", description: "Successfully napped without oversleeping.", progress: 100 },
-  { id: 12, name: "Desk DJ", description: "Played deephouse bangers that boosted team morale.", progress: 55 },
-  { id: 13, name: "King Kebab", description: "Eat a kebab at your desk after a wild night out.", progress: 35 },
-  { id: 14, name: "Let's not get political", description: "Defuse atleast 10 arguments about politics.", progress: 20 },
-  { id: 15, name: "Find the hidden button", description: "Find the hidden button on our site and press it", progress: getProgressFromStorage("achievementCount") * 10}
+  { Id: 1, Title: "Morning Bloom", Description: "Started your day before 9 AM. You’re unstoppable.", Progress: 75, Icon: beericon},
+  { Id: 2, Title: "Peaceful Focus", Description: "Stayed focused for 30 minutes without distractions.", Progress: 40, Icon: beericon },
+  { Id: 3, Title: "Little Victories", Description: "Completed three small tasks that made a big difference.", Progress: 100, Icon: beericon },
+  { Id: 4, Title: "Consistency Champ", Description: "Showed up three days in a row. Keep it going.", Progress: 60, Icon: beericon },
+  { Id: 5, Title: "Mindful Break", Description: "Took a break instead of scrolling endlessly.", Progress: 25, Icon: beericon },
+  { Id: 6, Title: "Task Tamer", Description: "Finished everything on your to-do list you tryhard.", Progress: 100, Icon: beericon },
+  { Id: 7, Title: "Beer sipping", Description: "Drinking an alcoholic bevvy during a meeting.", Progress: 50, Icon: beericon },
+  { Id: 8, Title: "Coworker Maxxing", Description: "Annoy your colleague for at least 10 hours.", Progress: 25, Icon: beericon },
+  { Id: 9, Title: "Minesweeping is life", Description: "Win 10 games of minesweeper during work hours.", Progress: 70, Icon: beericon },
+  { Id: 10, Title: "Email Ninja", Description: "Replied to all unread emails in one sitting, you fast boy.", Progress: 90, Icon: beericon },
+  { Id: 11, Title: "Power Napper", Description: "Successfully napped without oversleeping.", Progress: 100, Icon: beericon },
+  { Id: 12, Title: "Desk DJ", Description: "Played deephouse bangers that boosted team morale.", Progress: 55, Icon: beericon },
+  { Id: 13, Title: "King Kebab", Description: "Eat a kebab at your desk after a wild night out.", Progress: 35, Icon: beericon },
+  { Id: 14, Title: "Let's not get political", Description: "Defuse atleast 10 arguments about politics.", Progress: 20, Icon: beericon },
+  { Id: 15, Title: "Find the hidden button", Description: "Find the hidden button on our site and press it", Progress: getProgressFromStorage("achievementCount") * 10, Icon: beericon}
   ];
   
   const sortedAchievements = [...achievements].sort((a, b) => {
-    if (sortMode === "high-low") return b.progress - a.progress;
-    if (sortMode === "low-high") return a.progress - b.progress;
+    if (sortMode === "high-low") return b.Progress - a.Progress;
+    if (sortMode === "low-high") return a.Progress - b.Progress;
     if (sortMode === "high-low-completed-last") {
-      if (a.progress === 100 && b.progress !== 100) return 1;
-      if (b.progress === 100 && a.progress !== 100) return -1;
-      return b.progress - a.progress;
+      if (a.Progress === 100 && b.Progress !== 100) return 1;
+      if (b.Progress === 100 && a.Progress !== 100) return -1;
+      return b.Progress - a.Progress;
     }
     return 0;
   });
@@ -77,19 +80,23 @@ const AchievementPage: React.FC = () => {
       <div className="achievements-wrapper">
         <div className="achievements">
           {visibleAchievements.map((a) => (
-            <div className="achievement-card" key={a.id}>
-              <h2 className="achievement-name">{a.name}</h2>
-              <p className="achievement-description">{a.description}</p>
-              <div className="progress-container">
+            <div className="achievement-card" key={a.Id}>
+              <img
+              src={a.Icon || "/media/adtje_kratje.png"}
+              alt={a.Title}
+              className="achievement-icon"/>
+              <h2 className="achievement-name">{a.Title}</h2>
+              <p className="achievement-Description">{a.Description}</p>
+              <div className="Progress-container">
                 <div
-                  className="progress-bar"
+                  className="Progress-bar"
                   style={{
-                    width: `${a.progress}%`,
-                    backgroundColor: a.progress === 100 ? "#28a745" : "#007bff",
+                    width: `${a.Progress}%`,
+                    backgroundColor: a.Progress === 100 ? "#28a745" : "#007bff",
                   }}
                 ></div>
               </div>
-              <p className="achievement-progress">{a.progress}%</p>
+              <p className="achievement-Progress">{a.Progress}%</p>
             </div>
           ))}
 
