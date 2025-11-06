@@ -9,7 +9,7 @@ public class Achievement()
     public int Threshold { get; set; }
     public int CompanyId { get; set; }
 
-    public Company Company { get; set; } = null!;
+    public Company? Company { get; set; }
     public ICollection<EmployeeAchievement> EmployeeAchievements { get; set; } = new List<EmployeeAchievement>();
 }
 

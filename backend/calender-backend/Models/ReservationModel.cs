@@ -8,8 +8,8 @@ public class Reservation
     public int TimeslotId { get; set; }
     public int CompanyId { get; set; }
 
-    public Employee Employee { get; set; } = null!;
-    public Room Room { get; set; } = null!;
-    public Timeslot Timeslot { get; set; } = null!;
-    public Company Company { get; set; } = null!;
+    public Employee? Employee { get; set; }
+    public Room? Room { get; set; }
+    public Timeslot? Timeslot { get; set; }
+    public Company? Company { get; set; }
 }

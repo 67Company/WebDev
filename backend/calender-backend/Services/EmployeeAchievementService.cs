@@ -43,7 +43,7 @@ public class EmployeeAchievementService : IEmployeeAchievementService
         return isRemoved;
     }
 
-    public async Task<IEnumerable<Achievement>> GetAchievementsByEmployeeIdAsync(int employeeId)
+    public async Task<IEnumerable<Achievement?>> GetAchievementsByEmployeeIdAsync(int employeeId)
     {
         var achievements = await _context.EmployeeAchievements
             .Where(ea => ea.EmployeeId == employeeId)
@@ -52,7 +52,7 @@ public class EmployeeAchievementService : IEmployeeAchievementService
         return achievements;
     }
 
-    public async Task<IEnumerable<Employee>> GetEmployeesByAchievementIdAsync(int achievementId)
+    public async Task<IEnumerable<Employee?>> GetEmployeesByAchievementIdAsync(int achievementId)
     {
         var employees = await _context.EmployeeAchievements
             .Where(ea => ea.AchievementId == achievementId)

@@ -11,7 +11,7 @@ public class Event
     public int Capacity { get; set; }
     public int CompanyId { get; set; }
 
-    public Company Company { get; set; } = null!;
+    public Company? Company { get; set; }
     public ICollection<Attendee> Attendees { get; set; } = new List<Attendee>();
 }
 
