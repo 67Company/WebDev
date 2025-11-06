@@ -52,9 +52,10 @@ public class CompanyControllerTests : IClassFixture<WebApplicationFactory<Progra
         var company = await SeedCompany("FromSoftware", "DS3");
 
         var response = await _client.GetAsync($"/api/company/{company.Id}");
-
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
         var returnedCompany = await response.Content.ReadFromJsonAsync<Company>();
+
+        //ASSERT
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
         returnedCompany.Should().NotBeNull();
         returnedCompany!.Id.Should().Be(company.Id);
         returnedCompany.Name.Should().Be("FromSoftware");
@@ -67,6 +68,7 @@ public class CompanyControllerTests : IClassFixture<WebApplicationFactory<Progra
     {
         var response = await _client.GetAsync($"/api/company/9999");
 
+        //ASSERT
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
@@ -76,10 +78,64 @@ public class CompanyControllerTests : IClassFixture<WebApplicationFactory<Progra
         var newCompany = new Company
         {
             Name = "Team Cherry",
-            Key = "Skonger",
+            Key = "HKSS",
 
         };
 
         var response = await _client.PostAsJsonAsync<Company>("/api/company", newCompany);
+
+        //ASSERT
+        response.StatusCode.Should().Be(HttpStatusCode.Created);
+        var createdCompany = response.Content.ReadFromJsonAsync<Company>().Result;
+        createdCompany.Should().NotBeNull();
+        createdCompany!.Id.Should().BeGreaterThan(0);
+        createdCompany!.Name.Should().Be("Team Cherry");
+        createdCompany!.Key.Should().Be("HKSS");
+        createdCompany!.Active.Should().BeTrue();
+
+        var response = await _client.GetAsync($"/api/company/{createdCompany.Id}");
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
+    [Fact]
+    public async Task Update_ExistingCompany_ReturnNoContent()
+    {
+        var company = await SeedCompany("Activision", "CODMW");
+
+        var companyUpdate = new CompanyDto
+        {
+            Name = "Activision Blizzard",
+            Key = "CODMW2",
+        };
+
+        var response = await _client.PutAsJsonAsync<Company>($"/api/company/{company.Id}", company);
+
+        //ASSERT
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+
+        var getResponse = await _client.GetAsync($"/api/company/{company.Id}");
+        var updatedCompany = await getResponse.Content.ReadFromJsonAsync<Company>();
+
+        updatedCompany.Should().NotBeNull();
+        updatedCompany!.Name.Should().Be("Activision Blizzard");
+        updatedCompany!.Key.Should().Be("CODMW2");
+        updatedCompany!.Active.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task Update_NonExistingCompany_ReturnNotFound()
+    {
+        var nonexistentId = 9999;
+        var companyUpdate = new CompanyDto
+        {
+            Name = "MorallyGoodEA",
+            Key = "NoGambling4Kids",
+        };
+
+        var response = await _client.PutAsJsonAsync<CompanyDTO>($"/api/company/{nonexistentId}", companyUpdate);
+
+        //ASSERT
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 }
+
