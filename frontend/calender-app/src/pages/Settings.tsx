@@ -1,5 +1,5 @@
 import React from "react";
-import "./Settings.css";
+import "../styles/Settings.css";
 import ThemeToggle from "../components/ThemeToggle";
 import AchievementButton from "../components/AchievementButton";
 

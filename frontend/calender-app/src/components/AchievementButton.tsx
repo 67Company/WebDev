@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import "./AchievementButton.css";
+import "../styles/AchievementButton.css";
 
 const AchievementButton = () => {
   const [count, setCount] = useState(() => {

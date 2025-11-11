@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import "./Achievements.css";
-import sampicon from "../media/adtje_kratje.png";
+import "../styles/Achievements.css";
 import beericon from "../media/beer.png";
 
 interface Achievement {
