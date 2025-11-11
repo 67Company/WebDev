@@ -64,6 +64,10 @@ public class CompanyController : ControllerBase
 	[HttpDelete("hard/{id}")]
 	public async Task<ActionResult> HardDelete(int id)
 	{
+		var company = await _companyService.GetCompanyByIdAsync(id);
+		if (company == null || company.IsActive)
+			return StatusCode(405);
+
 		var result = await _companyService.HardDeleteCompanyAsync(id);
 		if (!result)
 			return NotFound();

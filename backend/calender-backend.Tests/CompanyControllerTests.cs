@@ -46,6 +46,21 @@ public class CompanyControllerTests : IClassFixture<WebApplicationFactory<Progra
         _client = _factory.CreateClient();
     }
 
+    private async Task<Company> SeedCompany(string name, string key,bool isActive = true)
+    {
+        var company = new Company
+        {
+            Name = name,
+            Key = key,
+            IsActive = isActive
+        };
+
+        var response = await _client.PostAsJsonAsync("/api/company", company);
+        var createdCompany = await response.Content.ReadFromJsonAsync<Company>();
+        
+        return createdCompany!;
+    }
+
     [Fact]
     public async Task GetById_ExistingId_ReturnOkWithCompany()
     {
@@ -136,6 +151,37 @@ public class CompanyControllerTests : IClassFixture<WebApplicationFactory<Progra
 
         //ASSERT
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task Delete_InActiveCompany_ReturnNoContent()
+    {
+        var company = await SeedCompany("Ubisoft", "ACV", false);
+
+        var response = await _client.DeleteAsync($"/api/company/hard/{company.Id}");
+
+        //ASSERT
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+
+        var getResponse = await _client.GetAsync($"/api/company/{company.Id}");
+        getResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task Delete_NonExistingCompany_ReturnActionNotAllowed()
+    {
+        var company = await SeedCompany("EA", "FIFA22");
+
+        var response = await _client.DeleteAsync($"/api/company/hard/{company.Id}");
+
+        //ASSERT
+        response.StatusCode.Should().Be(HttpStatusCode.MethodNotAllowed);
+        
+        var getResponse = await _client.GetAsync($"/api/company/{company.Id}");
+        getResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var companyAfterDeleteAttempt = await getResponse.Content.ReadFromJsonAsync<Company>();
+        companyAfterDeleteAttempt.Should().NotBeNull();
     }
 }
 
