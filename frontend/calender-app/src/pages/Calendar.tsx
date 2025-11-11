@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./Calendar.css";
+import "../styles/Calendar.css";
 import CalendarDisplay from "../components/CalenderDisplay";
 import {
   Dialog,

@@ -1,4 +1,4 @@
-import "./ThemeToggle.css";
+import "../styles/ThemeToggle.css";
 import { useEffect, useState } from "react";
 
 const ThemeToggle = () => {
