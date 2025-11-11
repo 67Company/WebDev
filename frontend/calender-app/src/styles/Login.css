@@ -2,8 +2,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 80vh; /* full screen height */
-  background: var(--bg-color);
+  min-height: 90vh;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -15,54 +14,68 @@
   width: 320px;
   text-align: center;
   transition: background-color 0.3s ease, color 0.3s ease;
-
 }
 
 .login-title {
-  margin-bottom: 20px;
-  color: var(--text-color);
-  transition: background-color 0.3s ease, color 0.3s ease;
-
+  font-size: 26px;
+  font-weight: 600;
+  margin-bottom: 25px;
+  background: linear-gradient(90deg, #00d4ff, #8a2be2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .form-group {
   text-align: left;
-  margin-bottom: 15px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 6px;
-  font-size: 14px;
+  margin-bottom: 18px;
 }
 
 .loginlabel {
-  color: var(--text-color);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  margin: 0 0 10px 0;
+  background: white;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .form-group input {
   width: 100%;
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.05);
+  color: #f5f5f5;
   font-size: 14px;
-  box-sizing: border-box;
+  outline: none;
+  transition: border 0.25s ease, background 0.25s ease;
 }
 
 .login-button {
-  margin-top: 10px;
+  margin-top: 20px;
   width: 100%;
-  padding: 10px;
-  background: #007bff;
+  padding: 12px;
+  background: linear-gradient(90deg, #00d4ff, #8a2be2);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s ease-in-out;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.3s ease;
 }
 
 .login-button:hover {
-  background: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(138, 43, 226, 0.4);
+  opacity: 0.95;
+}
+
+@media (max-width: 480px) {
+  .overview-card {
+    width: 90%;
+    padding: 25px;
+  }
+
+  .login-title {
+    font-size: 22px;
+  }
 }
