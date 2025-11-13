@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "../styles/Achievements.css";
+import "../styles/Cards.css";
 import beericon from "../media/beer.png";
 import trophyicon from "../media/trophy.png";
 
@@ -47,7 +48,7 @@ const AchievementPage: React.FC = () => {
     createAchievement(12, "Desk DJ", "Played deephouse bangers that boosted team morale.", 55, 100, beericon),
     createAchievement(13, "King Kebab", "Eat a kebab at your desk after a wild night out.", 35, 100, beericon),
     createAchievement(14, "Let's not get political", "Defuse atleast 10 arguments about politics.", 20, 100, beericon),
-    createAchievement(15, "Find the hidden button", "Find the hidden button on our site and press it", getStatFromStorage("achievementCount"), 10, beericon)
+    createAchievement(15, "Find the button", "Find the hidden button on our site and press it", getStatFromStorage("achievementCount"), 10, beericon)
   ];
   
   const sortedAchievements = [...achievements].sort((a, b) => {
@@ -88,32 +89,33 @@ const AchievementPage: React.FC = () => {
       </div>
 
       <div className="achievements-wrapper">
-        <div className="achievements">
-          {visibleAchievements.map((a) => (
-            <div className="achievement-card" key={a.Id}>
-              <img
+        <div className="achievements" key={currentPage}>
+        {visibleAchievements.map((a, i) => (
+          <div
+            className="overview-card animated-card"
+            key={a.Id}
+            style={{ animationDelay: `${i * 0.07}s` }}
+          >
+            <img
               src={a.Icon || "/media/adtje_kratje.png"}
               alt={a.Title}
-              className="achievement-icon"/>
-              <h2 className="achievement-name">{a.Title}</h2>
-              <p className="achievement-Description">{a.Description}</p>
-              <div className="Progress-container">
-                <div
-                  className="Progress-bar"
-                  style={{
-                    width: `${a.Progress}%`,
-                    backgroundColor: a.Progress === 100 ? "#28a745" : "#007bff",
-                  }}
-                ></div>
-              </div>
-              <p className="achievement-Progress">{a.Progress}%</p>
+              className="achievement-icon"
+            />
+            <h2 className="achievement-name">{a.Title}</h2>
+            <p className="achievement-description">{a.Description}</p>
+            <div className="Progress-container">
+              <div
+                className={`Progress-bar ${a.Progress === 100 ? "full" : ""}`}
+                style={{ width: `${a.Progress}%` }}
+              ></div>
             </div>
-          ))}
-
-          {Array.from({ length: PAGE_SIZE - visibleAchievements.length }).map((_, i) => (
-            <div key={`filler-${i}`} className="achievement-card placeholder"></div>
-          ))}
-        </div>
+            <div className="achievement-stats">
+              <p>{a.Stat} / {a.Threshold}</p>
+              <p className="achievement-progress">{a.Progress}%</p>
+            </div>
+          </div>
+        ))}
+      </div>
 
         <div className="pagination">
           <button

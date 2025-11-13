@@ -1,55 +1,47 @@
-/* Make the whole app take full height */
 .App {
-  font-family: Arial, sans-serif;
+  font-family: 'Inter', sans-serif;
   text-align: center;
-  min-height: 99vh;
+  min-height: 100vh;
   display: flex;
-  flex-direction: column;     /* stack header, main, footer */
+  flex-direction: column;
+  background: linear-gradient(135deg, #1e1e2f, #232342, #2b2b5c);
+  background-size: 400% 400%;
+  animation: gradientFlow 10s ease infinite;
 }
 
-/* Login Button */
+@keyframes gradientFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.App-main {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 30px;
+  flex-wrap: wrap;
+  margin-top: 60px;
+  padding: 20px;
+}
+
 .button {
-  background: #007bff;
+  background: linear-gradient(90deg, #00d4ff, #8a2be2);
   color: white;
   border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 14px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s ease-in-out;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .button:hover {
-  background: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 212, 255, 0.4);
 }
 
-/* Main grows to push footer down */
-.App-main {
-  /* flex: 1;   take up all remaining space */
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  flex-wrap: wrap;
-  margin-top: 40px;
-  max-height: 80vh;
-}
-
-.overview-card {
-  background: var(--card-color);
-  color: var(--text-color);
-  padding: 20px;
-  border-radius: 12px;
-  width: 250px;
-  transition: background-color 0.3s ease, color 0.3s ease;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  text-align: left;
-  display: flex;
-  flex-direction: column;
-  height: auto;         /* ensures it grows only with content */
-  align-self: flex-start; /* prevents stretching in flex parent */
-}
-
-.overview-card h2 {
-  margin-top: 0;
-  margin-bottom: 0;
+.button:active {
+  transform: scale(0.97);
 }
