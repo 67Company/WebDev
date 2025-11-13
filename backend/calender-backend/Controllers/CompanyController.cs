@@ -30,7 +30,8 @@ public class CompanyController : ControllerBase
 		var company = new Company
 		{
 			Name = companyDto.Name,
-			Key = companyDto.Key
+			Key = companyDto.Key,
+			IsActive = companyDto.IsActive
 		};
 		var result = await _companyService.CreateCompanyAsync(company);
 		if (!result)
@@ -44,7 +45,8 @@ public class CompanyController : ControllerBase
 		var company = new Company
 		{
 			Name = companyDto.Name,
-			Key = companyDto.Key
+			Key = companyDto.Key,
+			IsActive = companyDto.IsActive
 		};
 		var result = await _companyService.UpdateCompanyInfoAsync(id, company);
 		if (!result)

@@ -17,4 +17,5 @@ public class CompanyDTO
 {
     public string Name { get; set; } = "Name_Missing";
     public string Key { get; set; } = "Key_Missing";
+    public bool IsActive { get; set; } = true;
 }

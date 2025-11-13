@@ -24,21 +24,21 @@ public class CompanyControllerTests : IClassFixture<WebApplicationFactory<Progra
             {
                 var descriptor = services.SingleOrDefault(database =>
                     database.ServiceType ==
-                    typeof(DbContextOptions<CalenderDbContext>));
+                    typeof(DbContextOptions<CalenderContext>));
 
                 if (descriptor != null)
                 {
                     services.Remove(descriptor);
                 }
 
-                services.AddDbContext<CalenderDbContext>(options =>
+                services.AddDbContext<CalenderContext>(options =>
                 {
                     options.UseInMemoryDatabase($"InMemoryTestDb{Guid.NewGuid()}");
                 });
 
                 var serviceProvider = services.BuildServiceProvider();
                 using var scope = serviceProvider.CreateScope();
-                var dbContext = scope.ServiceProvider.GetRequiredService<CalenderDbContext>();
+                var dbContext = scope.ServiceProvider.GetRequiredService<CalenderContext>();
                 dbContext.Database.EnsureCreated();
             });
         });
@@ -48,14 +48,14 @@ public class CompanyControllerTests : IClassFixture<WebApplicationFactory<Progra
 
     private async Task<Company> SeedCompany(string name, string key,bool isActive = true)
     {
-        var company = new Company
+        var company = new CompanyDTO
         {
             Name = name,
             Key = key,
             IsActive = isActive
         };
 
-        var response = await _client.PostAsJsonAsync("/api/company", company);
+        var response = await _client.PostAsJsonAsync<CompanyDTO>("/api/company", company);
         var createdCompany = await response.Content.ReadFromJsonAsync<Company>();
         
         return createdCompany!;
@@ -75,7 +75,7 @@ public class CompanyControllerTests : IClassFixture<WebApplicationFactory<Progra
         returnedCompany!.Id.Should().Be(company.Id);
         returnedCompany.Name.Should().Be("FromSoftware");
         returnedCompany.Key.Should().Be("DS3");
-        returnedCompany.Active.Should().BeTrue();
+        returnedCompany.IsActive.Should().BeTrue();
     }
 
     [Fact]
@@ -90,14 +90,14 @@ public class CompanyControllerTests : IClassFixture<WebApplicationFactory<Progra
     [Fact]
     public async Task Create_ValidCompany_ReturnCreatedCompany()
     {
-        var newCompany = new Company
+        var newCompany = new CompanyDTO
         {
             Name = "Team Cherry",
             Key = "HKSS",
 
         };
 
-        var response = await _client.PostAsJsonAsync<Company>("/api/company", newCompany);
+        var response = await _client.PostAsJsonAsync<CompanyDTO>("/api/company", newCompany);
 
         //ASSERT
         response.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -106,10 +106,10 @@ public class CompanyControllerTests : IClassFixture<WebApplicationFactory<Progra
         createdCompany!.Id.Should().BeGreaterThan(0);
         createdCompany!.Name.Should().Be("Team Cherry");
         createdCompany!.Key.Should().Be("HKSS");
-        createdCompany!.Active.Should().BeTrue();
+        createdCompany!.IsActive.Should().BeTrue();
 
-        var response = await _client.GetAsync($"/api/company/{createdCompany.Id}");
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var returnedCompany = await _client.GetAsync($"/api/company/{createdCompany.Id}");
+        returnedCompany.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
     [Fact]
@@ -117,13 +117,13 @@ public class CompanyControllerTests : IClassFixture<WebApplicationFactory<Progra
     {
         var company = await SeedCompany("Activision", "CODMW");
 
-        var companyUpdate = new CompanyDto
+        var companyUpdate = new CompanyDTO
         {
             Name = "Activision Blizzard",
             Key = "CODMW2",
         };
 
-        var response = await _client.PutAsJsonAsync<Company>($"/api/company/{company.Id}", company);
+        var response = await _client.PutAsJsonAsync<CompanyDTO>($"/api/company/{company.Id}", companyUpdate);
 
         //ASSERT
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
@@ -134,14 +134,14 @@ public class CompanyControllerTests : IClassFixture<WebApplicationFactory<Progra
         updatedCompany.Should().NotBeNull();
         updatedCompany!.Name.Should().Be("Activision Blizzard");
         updatedCompany!.Key.Should().Be("CODMW2");
-        updatedCompany!.Active.Should().BeTrue();
+        updatedCompany!.IsActive.Should().BeTrue();
     }
 
     [Fact]
     public async Task Update_NonExistingCompany_ReturnNotFound()
     {
         var nonexistentId = 9999;
-        var companyUpdate = new CompanyDto
+        var companyUpdate = new CompanyDTO
         {
             Name = "MorallyGoodEA",
             Key = "NoGambling4Kids",
@@ -168,9 +168,23 @@ public class CompanyControllerTests : IClassFixture<WebApplicationFactory<Progra
     }
 
     [Fact]
-    public async Task Delete_NonExistingCompany_ReturnActionNotAllowed()
+    public async Task SoftDelete_ExistingCompany_ReturnNoContent()
     {
-        var company = await SeedCompany("EA", "FIFA22");
+        var company = await SeedCompany("Bandcamp", "MUSIC");
+
+        var response = await _client.DeleteAsync($"/api/company/soft/{company.Id}");
+
+        //ASSERT
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+
+        var getResponse = await _client.GetAsync($"/api/company/{company.Id}");
+        getResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task Delete_IsActiveCompany_ReturnMethodNotAllowed()
+    {
+        var company = await SeedCompany("Nintendo", "ZeldaBOTW");
 
         var response = await _client.DeleteAsync($"/api/company/hard/{company.Id}");
 
@@ -182,6 +196,15 @@ public class CompanyControllerTests : IClassFixture<WebApplicationFactory<Progra
 
         var companyAfterDeleteAttempt = await getResponse.Content.ReadFromJsonAsync<Company>();
         companyAfterDeleteAttempt.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task HardDelete_NonExistent_ReturnNotFound()
+    {
+        var response = await _client.DeleteAsync($"/api/company/hard/999999");
+
+        //ASSERT
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 }
 
