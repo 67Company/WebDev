@@ -1,12 +1,23 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using calender_backend.Data;
 using calender_backend.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddDbContext<CalenderContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("CalenderDatabase")));
+// Only register SQLite if not in Testing environment
+if (!builder.Environment.EnvironmentName.Equals("Testing", StringComparison.OrdinalIgnoreCase))
+{
+    builder.Services.AddDbContext<CalenderContext>(options =>
+        options.UseSqlite(builder.Configuration.GetConnectionString("CalenderDatabase")));
+}
+else
+{
+    // Register DbContext without a provider for Testing environment
+    // The test project will configure the provider using ConfigureTestServices
+    builder.Services.AddDbContext<CalenderContext>();
+}
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddEndpointsApiExplorer();
@@ -22,9 +33,13 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
-using var scope = app.Services.CreateScope();
-var calenderContext = scope.ServiceProvider.GetRequiredService<CalenderContext>();
-calenderContext.Database.Migrate();
+// Only run migrations if not in test environment
+if (!app.Environment.EnvironmentName.Equals("Testing", StringComparison.OrdinalIgnoreCase))
+{
+    using var scope = app.Services.CreateScope();
+    var calenderContext = scope.ServiceProvider.GetRequiredService<CalenderContext>();
+    calenderContext.Database.Migrate();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -54,3 +69,6 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+// Program accessible to test project
+public partial class Program { }

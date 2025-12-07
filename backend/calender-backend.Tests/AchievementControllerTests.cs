@@ -24,21 +24,21 @@ public class AchievementControllerTests : IClassFixture<WebApplicationFactory<Pr
             {
                 var descriptor = services.SingleOrDefault(database =>
                     database.ServiceType ==
-                    typeof(DbContextOptions<CalenderDbContext>));
+                    typeof(DbContextOptions<CalenderContext>));
 
                 if (descriptor != null)
                 {
                     services.Remove(descriptor);
                 }
 
-                services.AddDbContext<CalenderDbContext>(options =>
+                services.AddDbContext<CalenderContext>(options =>
                 {
                     options.UseInMemoryDatabase($"InMemoryTestDb{Guid.NewGuid()}");
                 });
 
                 var serviceProvider = services.BuildServiceProvider();
                 using var scope = serviceProvider.CreateScope();
-                var dbContext = scope.ServiceProvider.GetRequiredService<CalenderDbContext>();
+                var dbContext = scope.ServiceProvider.GetRequiredService<CalenderContext>();
                 dbContext.Database.EnsureCreated();
             });
         });

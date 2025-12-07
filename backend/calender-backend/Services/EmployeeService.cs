@@ -33,8 +33,8 @@ public class EmployeeService : IEmployeeService
         if (employee != null)
         {
             employee.IsDeleted = true;
-            isDeleted = _context.Employees.Update(employee) != null;
             await _context.SaveChangesAsync();
+            isDeleted = true;
         }
         return isDeleted;
     }
@@ -43,11 +43,11 @@ public class EmployeeService : IEmployeeService
     {
         bool isDeleted = false;
         Employee? employee = await _context.Employees.FindAsync(id);
-        if (employee != null && employee.IsDeleted)
+        if (employee != null)
         {
             _context.Employees.Remove(employee);
-            isDeleted = true;
             await _context.SaveChangesAsync();
+            isDeleted = true;
         }
         return isDeleted;
     }
@@ -125,6 +125,10 @@ public class EmployeeService : IEmployeeService
                 isIncremented = false;
                 break;
         }
+        
+        if (isIncremented)
+            await _context.SaveChangesAsync();
+            
         return isIncremented;
     }
     
@@ -181,13 +185,26 @@ public class EmployeeService : IEmployeeService
                 isDecremented = false;
                 break;
         }
+        
+        if (isDecremented)
+            await _context.SaveChangesAsync();
+            
         return isDecremented;
     }
 
     public async Task<bool> UpdateEmployeeAsync(int id, Employee employee)
     {
-        bool isUpdated = _context.Employees.Update(employee) != null;
+        Employee? existingEmployee = await _context.Employees.FindAsync(id);
+        if (existingEmployee == null)
+            return false;
+
+        // Update properties
+        existingEmployee.Email = employee.Email;
+        existingEmployee.PasswordHash = employee.PasswordHash;
+        existingEmployee.Admin = employee.Admin;
+        existingEmployee.CompanyId = employee.CompanyId;
+        
         await _context.SaveChangesAsync();
-        return isUpdated;
+        return true;
     }
 }
