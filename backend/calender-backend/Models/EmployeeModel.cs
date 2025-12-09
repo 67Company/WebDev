@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace calender_backend.Models;
     public class Employee()
     {
@@ -12,9 +14,9 @@ namespace calender_backend.Models;
         public int EventsOrganized { get; set; } = 0;
         public int RoomsBooked { get; set; } = 0;
         public int CompanyId { get; set; }
-        public bool IsDeleted { get; set;} = false; // For soft deletion, when hard deleted clear database of relations
+        public bool IsDeleted { get; set; } = false; // For soft deletion, when hard deleted clear database of relations
 
-        public Company Company { get; set; } = null!;
+        public Company? Company { get; set; }
         public ICollection<Attendee> Attendances { get; set; } = new List<Attendee>();
         public ICollection<EmployeeAchievement> EmployeeAchievements { get; set; } = new List<EmployeeAchievement>();
         public ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();

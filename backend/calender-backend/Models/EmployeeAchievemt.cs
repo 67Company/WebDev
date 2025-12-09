@@ -6,9 +6,9 @@ public class EmployeeAchievement
     public DateTime DateAchieved { get; set; }
     public int CompanyId { get; set; }
 
-    public Employee Employee { get; set; } = null!;
-    public Achievement Achievement { get; set; } = null!;
-    public Company Company { get; set; } = null!;
+    public Employee? Employee { get; set; }
+    public Achievement? Achievement { get; set; }
+    public Company? Company { get; set; }
 }
 
 public class EmployeeAchievementDTO

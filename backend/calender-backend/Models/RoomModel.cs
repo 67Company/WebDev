@@ -6,7 +6,7 @@ public class Room
     public int Capacity { get; set; }
     public int CompanyId { get; set; }
 
-    public Company Company { get; set; } = null!;
+    public Company? Company { get; set; }
     public ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
 }
 

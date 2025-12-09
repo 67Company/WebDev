@@ -1,0 +1,60 @@
+.setting-item {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: background 0.25s ease, transform 0.25s ease;
+}
+
+.setting-item:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-3px);
+}
+
+/* TITLES INSIDE SETTINGS */
+.setting-item h2 {
+  font-size: 18px;
+  margin: 0;
+  background: linear-gradient(90deg, #00d4ff, #8a2be2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* DESCRIPTIONS */
+.setting-item p {
+  font-size: 14px;
+  color: #cfcfcf;
+  margin: 0;
+}
+
+/* THEME TOGGLE CONTAINER */
+.setting-item .ThemeToggle {
+  margin-top: 10px;
+  align-self: flex-start;
+}
+
+/* ACHIEVEMENT BUTTON SECTION */
+.setting-item:last-child,
+.overview-card > .AchievementButton {
+  margin-top: 20px;
+  align-self: center;
+}
+
+/* RESPONSIVENESS */
+@media (max-width: 600px) {
+  .App-main {
+    padding: 40px 10px;
+  }
+
+  .overview-card {
+    width: 100%;
+  }
+
+  .setting-item {
+    padding: 16px;
+  }
+}

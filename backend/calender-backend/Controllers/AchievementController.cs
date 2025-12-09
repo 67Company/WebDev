@@ -32,7 +32,7 @@ public class AchievementController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> Create([FromBody] AchievementDTO achievementDto)
+    public async Task<ActionResult> Create([FromBody] AchievementDTO achievementDto, int companyId)
     {
         var achievement = new Achievement
         {
@@ -40,7 +40,8 @@ public class AchievementController : ControllerBase
             Description = achievementDto.Description,
             Icon = achievementDto.Icon,
             StatToTrack = achievementDto.StatToTrack,
-            Threshold = achievementDto.Threshold
+            Threshold = achievementDto.Threshold,
+            CompanyId = companyId
         };
         var result = await _achievementService.CreateAchievementAsync(achievement);
         if (!result)
