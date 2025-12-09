@@ -1,4 +1,4 @@
-import "../styles/CalenderDisplay.css";
+import "./CalenderDisplay.css";
 import { useEffect, useState } from "react";
 
 interface Event {

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "../styles/Calendar.css";
 import CalendarDisplay from "../components/CalenderDisplay";
+import ActivitySidebar from "../components/ActivitySidebar";
 import {
   Dialog,
   DialogTitle,
@@ -43,8 +44,9 @@ const Calendar: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog> */}
-      <div className="coming-soon">
+      <div style={{ display: 'flex' }}>
         <CalendarDisplay />
+        <ActivitySidebar events={[]} />
       </div>
     </main>
   );
