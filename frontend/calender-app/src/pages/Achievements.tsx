@@ -6,7 +6,9 @@ import trophyicon from "../media/trophy.png";
 import { Api, Achievement } from "../CalendarApi";
 
 async function fetchAllAchievements(companyId: number): Promise<Achievement[]> {
-  const api = new Api();
+  const api = new Api({
+    baseUrl: "http://localhost:5000" // moet in env komen
+});
   
   const res = await api.api.achievementCompanyDetail(companyId);
   const data = res.data;
@@ -33,8 +35,21 @@ const AchievementPage: React.FC = () => {
     const loadAchievements = async () => {
       try {
         setLoading(true);
-        const data = await fetchAllAchievements(1); // Replace with actual companyId
-        setAchievements(data);
+        const data = await fetchAllAchievements(1);
+        
+        // Transform API data om frontend model te matchen
+        const transformedData = data.map(achievement => ({
+          Id: achievement.id || 0,
+          Title: achievement.title || "Unknown",
+          Description: achievement.description || "No description",
+          Icon: trophyicon, // placehorlder voor echte icons
+          Threshold: achievement.threshold || 0,
+          StatToTrack: achievement.statToTrack || "",
+          Stat: 0, // TODO: employee stats
+          Progress: 0 // TODO: calculate employee stats
+        }));
+        
+        setAchievements(transformedData);
         setError(null);
       } catch (err) {
         console.error('Failed to load achievements:', err);
