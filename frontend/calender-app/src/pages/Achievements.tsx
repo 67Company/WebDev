@@ -5,16 +5,18 @@ import beericon from "../media/beer.png";
 import trophyicon from "../media/trophy.png";
 import { Api, Achievement } from "../CalendarApi";
 
-async function fetchAllAchievements(companyId: number): Promise<Achievement[]> {
-  const api = new Api({
-    baseUrl: "http://localhost:5000" // moet in env komen
-});
-  
-  const res = await api.api.achievementCompanyDetail(companyId);
-  const data = res.data;
-  console.log(data);
-  
-  return data;
+const API_BASE_URL = "http://localhost:5000";
+
+async function fetchEmployeeDetails(employeeId: number) {
+  const api = new Api({ baseUrl: API_BASE_URL });
+  const response = await api.api.authMeDetail(employeeId);
+  return response.data
+}
+
+async function fetchCompanyAchievements(companyId: number) {
+  const api = new Api({ baseUrl: API_BASE_URL });
+  const response = await api.api.achievementCompanyDetail(companyId);
+  return response.data;
 }
 
 const getProgressInPercent = (Num: number, Goal: number): number => {
@@ -35,19 +37,48 @@ const AchievementPage: React.FC = () => {
     const loadAchievements = async () => {
       try {
         setLoading(true);
-        const data = await fetchAllAchievements(1);
         
-        // Transform API data om frontend model te matchen
-        const transformedData = data.map(achievement => ({
-          Id: achievement.id || 0,
-          Title: achievement.title || "Unknown",
-          Description: achievement.description || "No description",
-          Icon: trophyicon, // placehorlder voor echte icons
-          Threshold: achievement.threshold || 0,
-          StatToTrack: achievement.statToTrack || "",
-          Stat: 0, // TODO: employee stats
-          Progress: 0 // TODO: calculate employee stats
-        }));
+        // get logged in user van local storage
+        const userString = localStorage.getItem('user');
+        if (!userString) {
+          setError('Please log in to view achievements');
+          setLoading(false);
+          return;
+        }
+
+        const user = JSON.parse(userString);
+        
+        // fetch employee details om stats te krijgen
+        const employeeData = await fetchEmployeeDetails(user.id);
+        
+        if (!employeeData || !employeeData.stats || !employeeData.companyId) {
+          setError('Invalid employee data');
+          setLoading(false);
+          return;
+        }
+        
+        const stats = employeeData.stats;
+        const companyId = employeeData.companyId;
+        
+        // fetch achievements van employee's company
+        const achievementsData = await fetchCompanyAchievements(companyId);
+        
+        // transform API data and calculate progress based on employee stats
+        const transformedData = achievementsData.map((achievement: any) => {
+          const statValue = (stats as any)[achievement.statToTrack] || 0;
+          const progress = getProgressInPercent(statValue, achievement.threshold);
+          
+          return {
+            Id: achievement.id || 0,
+            Title: achievement.title || "Unknown",
+            Description: achievement.description || "No description",
+            Icon: trophyicon,
+            Threshold: achievement.threshold || 0,
+            StatToTrack: achievement.statToTrack || "",
+            Stat: statValue,
+            Progress: progress
+          };
+        });
         
         setAchievements(transformedData);
         setError(null);
