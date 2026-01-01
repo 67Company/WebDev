@@ -1,14 +1,6 @@
 /* eslint-disable */
 /* tslint:disable */
 // @ts-nocheck
-/*
- * ---------------------------------------------------------------
- * ## THIS FILE WAS GENERATED VIA SWAGGER-TYPESCRIPT-API        ##
- * ##                                                           ##
- * ## AUTHOR: acacode                                           ##
- * ## SOURCE: https://github.com/acacode/swagger-typescript-api ##
- * ---------------------------------------------------------------
- */
 
 export interface Achievement {
   /** @format int32 */
@@ -32,6 +24,14 @@ export interface AchievementDTO {
   statToTrack?: string | null;
   /** @format int32 */
   threshold?: number;
+}
+
+export interface AchievementUnlockedDTO {
+  /** @format int32 */
+  id?: number;
+  title?: string | null;
+  /** @format date-time */
+  unlockedAt?: string | null;
 }
 
 export interface Attendee {
@@ -111,6 +111,28 @@ export interface EmployeeAchievementDTO {
   dateAchieved?: string;
 }
 
+export interface EmployeeDTO {
+  /** @format int32 */
+  id?: number;
+  email?: string | null;
+}
+
+export interface EmployeeDetailDTO {
+  /** @format int32 */
+  id?: number;
+  email?: string | null;
+  isAdmin?: boolean;
+  /** @format int32 */
+  companyId?: number;
+  stats?: EmployeeStatsDTO;
+  achievements?: AchievementUnlockedDTO[] | null;
+}
+
+export interface EmployeeLoginDTO {
+  email?: string | null;
+  passwordHash?: string | null;
+}
+
 export interface EmployeeStatsDTO {
   /** @format int32 */
   meetingsAttended?: number;
@@ -158,6 +180,22 @@ export interface EventDTO {
   location?: string | null;
   /** @format int32 */
   capacity?: number;
+}
+
+export interface LoginResponseDTO {
+  employee?: EmployeeDTO;
+  isAdmin?: boolean;
+  message?: string | null;
+}
+
+export interface ProblemDetails {
+  type?: string | null;
+  title?: string | null;
+  /** @format int32 */
+  status?: number | null;
+  detail?: string | null;
+  instance?: string | null;
+  [key: string]: any;
 }
 
 export interface Reservation {
@@ -558,6 +596,38 @@ export class Api<
         query: query,
         body: data,
         type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Auth
+     * @name AuthLoginCreate
+     * @request POST:/api/Auth/login
+     */
+    authLoginCreate: (data: EmployeeLoginDTO, params: RequestParams = {}) =>
+      this.request<LoginResponseDTO, ProblemDetails>({
+        path: `/api/Auth/login`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Auth
+     * @name AuthMeDetail
+     * @request GET:/api/Auth/me/{employeeId}
+     */
+    authMeDetail: (employeeId: number, params: RequestParams = {}) =>
+      this.request<EmployeeDetailDTO, ProblemDetails>({
+        path: `/api/Auth/me/${employeeId}`,
+        method: "GET",
+        format: "json",
         ...params,
       }),
 
