@@ -7,7 +7,19 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddDbContext<CalenderContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("CalenderDatabase")));
+builder.Services.AddScoped<calender_backend.Interfaces.IAuthService, calender_backend.Services.AuthService>();
 builder.Services.AddControllersWithViews();
+
+// Add CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000", "http://localhost:3001", "http://localhost:5173")
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -25,6 +37,9 @@ var app = builder.Build();
 using var scope = app.Services.CreateScope();
 var calenderContext = scope.ServiceProvider.GetRequiredService<CalenderContext>();
 calenderContext.Database.Migrate();
+
+// Seed initial data
+DatabaseSeeder.SeedData(calenderContext);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -46,6 +61,8 @@ else
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+app.UseCors("AllowFrontend");
+
 app.UseAuthorization();
 
 app.MapControllers();
@@ -54,3 +71,6 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+// Make Program accessible to integration tests
+public partial class Program { }

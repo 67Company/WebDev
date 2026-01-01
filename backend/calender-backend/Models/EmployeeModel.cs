@@ -30,8 +30,15 @@ namespace calender_backend.Models;
 
     public class EmployeeLoginDTO
     {
-        public string Email { get; set; } = "Email_Missing";
-        public string PasswordHash { get; set; } = "Hash_Missing";
+        public required string Email { get; set; }
+        public required string PasswordHash { get; set; }
+    }
+
+    public class LoginResponseDTO
+    {
+        public EmployeeDTO Employee { get; set; } = new();
+        public bool IsAdmin { get; set; }
+        public string Message { get; set; } = string.Empty;
     }
 
     public class EmployeeStatsDTO
@@ -42,4 +49,21 @@ namespace calender_backend.Models;
         public int EventsAttended { get; set; }
         public int EventsOrganized { get; set; }
         public int RoomsBooked { get; set; }
+    }
+
+    public class AchievementUnlockedDTO
+    {
+        public int Id { get; set; }
+        public string? Title { get; set; }
+        public DateTime? UnlockedAt { get; set; }
+    }
+
+    public class EmployeeDetailDTO
+    {
+        public int Id { get; set; }
+        public string Email { get; set; } = "Email_Missing";
+        public bool IsAdmin { get; set; }
+        public int CompanyId { get; set; }
+        public EmployeeStatsDTO Stats { get; set; } = new();
+        public List<AchievementUnlockedDTO> Achievements { get; set; } = new();
     }
