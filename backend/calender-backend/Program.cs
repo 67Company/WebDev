@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddDbContext<CalenderContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("CalenderDatabase")));
+builder.Services.AddScoped<calender_backend.Interfaces.IAuthService, calender_backend.Services.AuthService>();
 builder.Services.AddControllersWithViews();
 
 // Add CORS
