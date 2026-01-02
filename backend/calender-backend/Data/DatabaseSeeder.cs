@@ -24,6 +24,9 @@ public static class DatabaseSeeder
         
         // Seed employees for the company
         SeedEmployees(context, company.Id);
+        
+        // Seed events for the company
+        SeedEvents(context, company.Id);
 
         Console.WriteLine($"✓ Seeded company '{company.Name}' (ID: {company.Id})");
     }
@@ -203,5 +206,107 @@ public static class DatabaseSeeder
         context.SaveChanges();
 
         Console.WriteLine($"✓ Seeded {employees.Count} employees");
+    }
+
+    private static void SeedEvents(CalenderContext context, int companyId)
+    {
+        var baseDate = new DateTime(2026, 1, 1);
+        
+        var events = new List<Event>
+        {
+            new Event
+            {
+                Title = "Team Standup",
+                Description = "Daily team sync and planning session",
+                Date = baseDate.AddDays(5),
+                StartTime = baseDate.AddDays(5).AddHours(9),
+                EndTime = baseDate.AddDays(5).AddHours(10),
+                Location = "Conference Room A",
+                Capacity = 20,
+                CompanyId = companyId
+            },
+            new Event
+            {
+                Title = "Sprint Planning",
+                Description = "Planning session for the upcoming sprint",
+                Date = baseDate.AddDays(7),
+                StartTime = baseDate.AddDays(7).AddHours(14),
+                EndTime = baseDate.AddDays(7).AddHours(16),
+                Location = "Conference Room B",
+                Capacity = 15,
+                CompanyId = companyId
+            },
+            new Event
+            {
+                Title = "Client Presentation",
+                Description = "Q4 results presentation for stakeholders",
+                Date = baseDate.AddDays(10),
+                StartTime = baseDate.AddDays(10).AddHours(11),
+                EndTime = baseDate.AddDays(10).AddHours(12).AddMinutes(30),
+                Location = "Main Hall",
+                Capacity = 50,
+                CompanyId = companyId
+            },
+            new Event
+            {
+                Title = "Code Review Session",
+                Description = "Review recent pull requests and discuss best practices",
+                Date = baseDate.AddDays(12),
+                StartTime = baseDate.AddDays(12).AddHours(15),
+                EndTime = baseDate.AddDays(12).AddHours(16),
+                Location = "Dev Room",
+                Capacity = 10,
+                CompanyId = companyId
+            },
+            new Event
+            {
+                Title = "All-Hands Meeting",
+                Description = "Monthly company-wide update and Q&A",
+                Date = baseDate.AddDays(15),
+                StartTime = baseDate.AddDays(15).AddHours(10),
+                EndTime = baseDate.AddDays(15).AddHours(11).AddMinutes(30),
+                Location = "Auditorium",
+                Capacity = 100,
+                CompanyId = companyId
+            },
+            new Event
+            {
+                Title = "Tech Workshop: Cloud Architecture",
+                Description = "Hands-on workshop on modern cloud patterns",
+                Date = baseDate.AddDays(20),
+                StartTime = baseDate.AddDays(20).AddHours(13),
+                EndTime = baseDate.AddDays(20).AddHours(17),
+                Location = "Training Room",
+                Capacity = 25,
+                CompanyId = companyId
+            },
+            new Event
+            {
+                Title = "Coffee & Code",
+                Description = "Casual meetup to discuss side projects",
+                Date = baseDate.AddDays(3),
+                StartTime = baseDate.AddDays(3).AddHours(10),
+                EndTime = baseDate.AddDays(3).AddHours(11),
+                Location = "Cafeteria",
+                Capacity = 30,
+                CompanyId = companyId
+            },
+            new Event
+            {
+                Title = "Product Demo Day",
+                Description = "Showcase new features to the team",
+                Date = baseDate.AddDays(8),
+                StartTime = baseDate.AddDays(8).AddHours(16),
+                EndTime = baseDate.AddDays(8).AddHours(17),
+                Location = "Main Hall",
+                Capacity = 40,
+                CompanyId = companyId
+            },
+        };
+
+        context.Events.AddRange(events);
+        context.SaveChanges();
+
+        Console.WriteLine($"Seeded {events.Count} events");
     }
 }

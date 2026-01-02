@@ -1,6 +1,14 @@
 /* eslint-disable */
 /* tslint:disable */
 // @ts-nocheck
+/*
+ * ---------------------------------------------------------------
+ * ## THIS FILE WAS GENERATED VIA SWAGGER-TYPESCRIPT-API        ##
+ * ##                                                           ##
+ * ## AUTHOR: acacode                                           ##
+ * ## SOURCE: https://github.com/acacode/swagger-typescript-api ##
+ * ---------------------------------------------------------------
+ */
 
 export interface Achievement {
   /** @format int32 */
@@ -180,6 +188,25 @@ export interface EventDTO {
   location?: string | null;
   /** @format int32 */
   capacity?: number;
+}
+
+export interface EventWithCapacityDTO {
+  /** @format int32 */
+  id?: number;
+  title?: string | null;
+  description?: string | null;
+  /** @format date-time */
+  date?: string;
+  /** @format date-time */
+  startTime?: string;
+  /** @format date-time */
+  endTime?: string;
+  location?: string | null;
+  /** @format int32 */
+  capacity?: number;
+  /** @format int32 */
+  currentAttendees?: number;
+  isFull?: boolean;
 }
 
 export interface LoginResponseDTO {
@@ -978,6 +1005,28 @@ export class Api<
      * No description
      *
      * @tags Event
+     * @name EventWithCapacityList
+     * @request GET:/api/Event/with-capacity
+     */
+    eventWithCapacityList: (
+      query?: {
+        /** @format int32 */
+        companyId?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<EventWithCapacityDTO[], any>({
+        path: `/api/Event/with-capacity`,
+        method: "GET",
+        query: query,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Event
      * @name EventDetail
      * @request GET:/api/Event/{id}
      */
@@ -1016,6 +1065,53 @@ export class Api<
       this.request<void, any>({
         path: `/api/Event/${id}`,
         method: "DELETE",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Event
+     * @name EventJoinCreate
+     * @request POST:/api/Event/{id}/join
+     */
+    eventJoinCreate: (id: number, data: number, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/api/Event/${id}/join`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Event
+     * @name EventLeaveDelete
+     * @request DELETE:/api/Event/{id}/leave
+     */
+    eventLeaveDelete: (id: number, data: number, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/api/Event/${id}/leave`,
+        method: "DELETE",
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Event
+     * @name EventJoinedDetail
+     * @request GET:/api/Event/joined/{employeeId}
+     */
+    eventJoinedDetail: (employeeId: number, params: RequestParams = {}) =>
+      this.request<Event[], any>({
+        path: `/api/Event/joined/${employeeId}`,
+        method: "GET",
+        format: "json",
         ...params,
       }),
 
