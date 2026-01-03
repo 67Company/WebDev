@@ -41,7 +41,12 @@ const Login: React.FC = () => {
         }));
         // Notify App component that user has logged in
         window.dispatchEvent(new Event('userChanged'));
-        navigate("/"); // Redirect after successful login
+        // Redirect based on admin status
+        if (data.isAdmin) {
+          navigate("/admin");
+        } else {
+          navigate("/");
+        }
       } else {
         setError("Invalid email or password");
       }
