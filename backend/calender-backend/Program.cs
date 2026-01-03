@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using calender_backend.Data;
 using calender_backend.Models;
+using calender_backend.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -62,7 +63,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseCors("AllowFrontend");
-
+app.UseAdminAuthorization();
 app.UseAuthorization();
 
 app.MapControllers();
