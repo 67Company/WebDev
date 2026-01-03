@@ -1,5 +1,6 @@
 using calender_backend.Data;
 using calender_backend.Models;
+using Microsoft.EntityFrameworkCore;
 
 public class CompanyService : ICompanyService
 {
@@ -7,6 +8,14 @@ public class CompanyService : ICompanyService
     public CompanyService(CalenderContext context)
     {
         _context = context;
+    }
+
+    public async Task<List<Company>> GetAllCompaniesAsync()
+    {
+        return await _context.Companies
+            .Where(c => c.IsActive)
+            .OrderBy(c => c.Name)
+            .ToListAsync();
     }
 
     public async Task<Company?> GetCompanyByIdAsync(int id)

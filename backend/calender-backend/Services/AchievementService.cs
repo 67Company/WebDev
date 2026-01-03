@@ -44,8 +44,19 @@ public class AchievementService : IAchievementService
 
     public async Task<bool> UpdateAchievementAsync(int id, Achievement achievement)
     {
-        bool isUpdated =  _context.Achievements.Update(achievement) != null;
+        var existingAchievement = await _context.Achievements.FindAsync(id);
+        if (existingAchievement == null)
+        {
+            return false;
+        }
+
+        existingAchievement.Title = achievement.Title;
+        existingAchievement.Description = achievement.Description;
+        existingAchievement.Icon = achievement.Icon;
+        existingAchievement.StatToTrack = achievement.StatToTrack;
+        existingAchievement.Threshold = achievement.Threshold;
+
         await _context.SaveChangesAsync();
-        return isUpdated;
+        return true;
     }
 }

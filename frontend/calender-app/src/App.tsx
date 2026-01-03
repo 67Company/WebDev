@@ -8,7 +8,9 @@ import adtjeKratje from "./media/adtje_kratje.png";
 import Settings from "./pages/Settings";
 import ThemeToggle from "./components/ThemeToggle";
 import Achievements from "./pages/Achievements";
-import AdminPanel from "./pages/AdminPanel";
+import Admin from "./pages/Admin";
+import AdminEvents from "./pages/AdminEvents";
+import AdminAchievements from "./pages/AdminAchievements";
 
 function App() {
   const [user, setUser] = useState<any>(null);
@@ -70,7 +72,15 @@ function App() {
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/achievements" element={<Achievements />} />
-          <Route path="/admin" element={<AdminPanel />} />
+          <Route path="/admin" element={
+            user && user.isAdmin ? <Admin /> : <Login />
+          } />
+          <Route path="/admin/events" element={
+            user && user.isAdmin ? <AdminEvents /> : <Login />
+          } />
+          <Route path="/admin/achievements" element={
+            user && user.isAdmin ? <AdminAchievements /> : <Login />
+          } />
         </Routes>
 
       <footer className="App-footer">

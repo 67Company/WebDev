@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import '../styles/AdminPanel.css';
 import '../styles/Cards.css';
-import { Api, Event, EventDTO, EmployeeDTO } from '../CalendarApi';
+import { Api, Event, EventDTO, EmployeeDTO, Company } from '../CalendarApi';
 
 const API_BASE_URL = "http://localhost:5000";
 
 // API Helper Functions
+async function getAllCompanies() {
+  const api = new Api({ baseUrl: API_BASE_URL });
+  const response = await api.api.companyList();
+  return response;
+}
+
 async function getAllEvents(companyId: number) {
   const api = new Api({ baseUrl: API_BASE_URL });
   const response = await api.api.eventList({ companyId });
@@ -44,11 +51,14 @@ interface EventFormData {
   endTime: string;
   location: string;
   capacity: number;
+  companyId: number;
 }
 
-const AdminPanel: React.FC = () => {
+const AdminEvents: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
+  const [companies, setCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(true);
+  const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   const [viewingAttendees, setViewingAttendees] = useState<{ eventId: number; title: string } | null>(null);
@@ -62,15 +72,33 @@ const AdminPanel: React.FC = () => {
     startTime: '',
     endTime: '',
     location: '',
-    capacity: 0
+    capacity: 0,
+    companyId: 0
   });
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const companyId = user.companyId || 1;
 
+  const showNotification = (message: string, type: 'success' | 'error') => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 3000);
+  };
+
   useEffect(() => {
+    fetchCompanies();
     fetchEvents();
   }, []);
+
+  const fetchCompanies = async () => {
+    try {
+      const response = await getAllCompanies();
+      if (response.ok && response.data) {
+        setCompanies(response.data);
+      }
+    } catch (error) {
+      console.error('Error fetching companies:', error);
+    }
+  };
 
   const fetchEvents = async () => {
     try {
@@ -96,11 +124,11 @@ const AdminPanel: React.FC = () => {
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: name === 'capacity' ? parseInt(value) || 0 : value
+      [name]: (name === 'capacity' || name === 'companyId') ? parseInt(value) || 0 : value
     }));
   };
 
@@ -108,23 +136,22 @@ const AdminPanel: React.FC = () => {
     e.preventDefault();
     try {
       const eventData: EventDTO = {
-        ...formData,
-        companyId: companyId
+        ...formData
       };
       
       const response = await createEvent(eventData);
 
       if (response.ok) {
-        alert('Event created successfully!');
+        showNotification('Event created successfully!', 'success');
         setShowCreateForm(false);
         resetForm();
         fetchEvents();
       } else {
-        alert('Failed to create event');
+        showNotification('Failed to create event', 'error');
       }
     } catch (error) {
       console.error('Error creating event:', error);
-      alert('Error creating event');
+      showNotification('Error creating event', 'error');
     }
   };
 
@@ -134,23 +161,22 @@ const AdminPanel: React.FC = () => {
 
     try {
       const eventData: EventDTO = {
-        ...formData,
-        companyId: companyId
+        ...formData
       };
       
       const response = await updateEvent(editingEvent.id!, eventData);
 
       if (response.ok) {
-        alert('Event updated successfully!');
+        showNotification('Event updated successfully!', 'success');
         setEditingEvent(null);
         resetForm();
         fetchEvents();
       } else {
-        alert('Failed to update event');
+        showNotification('Failed to update event', 'error');
       }
     } catch (error) {
       console.error('Error updating event:', error);
-      alert('Error updating event');
+      showNotification('Error updating event', 'error');
     }
   };
 
@@ -159,15 +185,15 @@ const AdminPanel: React.FC = () => {
       const response = await deleteEvent(event.id!);
 
       if (response.ok) {
-        alert('Event deleted successfully!');
+        showNotification('Event deleted successfully!', 'success');
         setDeleteConfirm(null);
         fetchEvents();
       } else {
-        alert('Failed to delete event');
+        showNotification('Failed to delete event', 'error');
       }
     } catch (error) {
       console.error('Error deleting event:', error);
-      alert('Error deleting event');
+      showNotification('Error deleting event', 'error');
     }
   };
 
@@ -180,7 +206,8 @@ const AdminPanel: React.FC = () => {
       startTime: event.startTime || '',
       endTime: event.endTime || '',
       location: event.location || '',
-      capacity: event.capacity || 0
+      capacity: event.capacity || 0,
+      companyId: event.companyId || 0
     });
     setShowCreateForm(false);
   };
@@ -198,7 +225,8 @@ const AdminPanel: React.FC = () => {
       startTime: '',
       endTime: '',
       location: '',
-      capacity: 0
+      capacity: 0,
+      companyId: 0
     });
   };
 
@@ -226,13 +254,25 @@ const AdminPanel: React.FC = () => {
     <main className="App-main">
       <section className="overview-card admin-container">
         <div className="admin-header">
-          <h2>⚙️ Admin Panel - Event Management</h2>
+          {!showCreateForm && !editingEvent && (
+            <Link to="/admin">
+              <button className="btn-secondary">← Back</button>
+            </Link>
+          )}
+          <h2>📅 Event Management</h2>
           {!showCreateForm && !editingEvent && (
             <button className="btn-primary" onClick={() => setShowCreateForm(true)}>
               Create New Event
             </button>
           )}
         </div>
+
+      {/* Notification */}
+      {notification && (
+        <div className={`notification ${notification.type}`}>
+          {notification.message}
+        </div>
+      )}
 
       {/* Create Event Form */}
       {showCreateForm && (
@@ -299,6 +339,23 @@ const AdminPanel: React.FC = () => {
               </div>
             </div>
             <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="companyId">Company</label>
+                <select
+                  id="companyId"
+                  name="companyId"
+                  value={formData.companyId}
+                  onChange={handleInputChange}
+                  required
+                >
+                  <option value="">Select a company</option>
+                  {companies.map(company => (
+                    <option key={company.id} value={company.id}>
+                      {company.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
               <div className="form-group">
                 <label htmlFor="location">Location</label>
                 <input
@@ -400,6 +457,23 @@ const AdminPanel: React.FC = () => {
               </div>
             </div>
             <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="companyId">Company</label>
+                <select
+                  id="companyId"
+                  name="companyId"
+                  value={formData.companyId}
+                  onChange={handleInputChange}
+                  required
+                >
+                  <option value="">Select a company</option>
+                  {companies.map(company => (
+                    <option key={company.id} value={company.id}>
+                      {company.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
               <div className="form-group">
                 <label htmlFor="location">Location</label>
                 <input
@@ -560,9 +634,10 @@ const AdminPanel: React.FC = () => {
           </div>
         </div>
       )}
+
       </section>
     </main>
   );
 };
 
-export default AdminPanel;
+export default AdminEvents;

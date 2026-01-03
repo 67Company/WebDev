@@ -666,6 +666,37 @@ export class Api<
      * No description
      *
      * @tags Company
+     * @name CompanyList
+     * @request GET:/api/Company
+     */
+    companyList: (params: RequestParams = {}) =>
+      this.request<Company[], any>({
+        path: `/api/Company`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Company
+     * @name CompanyCreate
+     * @request POST:/api/Company
+     */
+    companyCreate: (data: CompanyDTO, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/api/Company`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Company
      * @name CompanyDetail
      * @request GET:/api/Company/{id}
      */
@@ -688,22 +719,6 @@ export class Api<
       this.request<void, any>({
         path: `/api/Company/${id}`,
         method: "PUT",
-        body: data,
-        type: ContentType.Json,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags Company
-     * @name CompanyCreate
-     * @request POST:/api/Company
-     */
-    companyCreate: (data: CompanyDTO, params: RequestParams = {}) =>
-      this.request<void, any>({
-        path: `/api/Company`,
-        method: "POST",
         body: data,
         type: ContentType.Json,
         ...params,
