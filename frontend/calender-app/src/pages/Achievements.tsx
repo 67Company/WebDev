@@ -91,6 +91,13 @@ const AchievementPage: React.FC = () => {
     };
 
     loadAchievements();
+
+    // Dit is zodat de page automatisch refreshed every so often om nieuwe achievements te laden
+    const intervalId = setInterval(() => {
+      loadAchievements();
+    }, 60000); // Refresh 60 sec
+
+    return () => clearInterval(intervalId);
   }, []);
   
   const sortedAchievements = [...achievements].sort((a, b) => {
