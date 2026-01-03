@@ -52,6 +52,12 @@ public class EmployeeController : ControllerBase
 	[HttpPost]
 	public async Task<ActionResult> Create([FromBody] Employee employee)
 	{
+		// Hash the password before storing
+		if (!string.IsNullOrEmpty(employee.PasswordHash))
+		{
+			employee.PasswordHash = BCrypt.Net.BCrypt.HashPassword(employee.PasswordHash);
+		}
+		
 		var result = await _employeeService.CreateEmployeeAsync(employee);
 		if (!result)
 			return BadRequest();

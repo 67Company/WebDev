@@ -1,5 +1,13 @@
 import "./CalenderDisplay.css";
 import { useEffect, useState } from "react";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Typography
+} from "@mui/material";
 
 interface Event {
   id: string;
@@ -7,6 +15,10 @@ interface Event {
   start: Date;
   end: Date;
   color?: string;
+  location?: string;
+  description?: string;
+  capacity?: number;
+  currentAttendees?: number;
 }
 
 interface CalendarDisplayProps {
@@ -19,6 +31,8 @@ const CalendarDisplay: React.FC<CalendarDisplayProps> = ({ events }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [viewMode, setViewMode] = useState<ViewMode>("week");
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [openDialog, setOpenDialog] = useState(false);
 
   const hours = Array.from({ length: 24 }, (_, i) => i);
 
@@ -97,6 +111,16 @@ const CalendarDisplay: React.FC<CalendarDisplayProps> = ({ events }) => {
   const isToday = (date: Date) => {
     const today = new Date();
     return date.toDateString() === today.toDateString();
+  };
+
+  const handleEventClick = (event: Event) => {
+    setSelectedEvent(event);
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setSelectedEvent(null);
   };
 
   const weekDays = viewMode === "week" ? getWeekDays(currentDate) : [currentDate];
@@ -253,7 +277,9 @@ const CalendarDisplay: React.FC<CalendarDisplayProps> = ({ events }) => {
                           top: `${top}px`,
                           height: `${height}px`,
                           backgroundColor: event.color,
+                          cursor: 'pointer'
                         }}
+                        onClick={() => handleEventClick(event)}
                       >
                         <div className="event-title">{event.title}</div>
                         <div className="event-time">
@@ -268,6 +294,60 @@ const CalendarDisplay: React.FC<CalendarDisplayProps> = ({ events }) => {
           </div>
         </div>
       </div>
+
+      {/* Event Details Dialog */}
+      <Dialog 
+        open={openDialog} 
+        onClose={handleCloseDialog} 
+        maxWidth="sm" 
+        fullWidth
+        className="event-dialog"
+      >
+        <DialogTitle>{selectedEvent?.title || 'Event Details'}</DialogTitle>
+        <DialogContent>
+          {selectedEvent && (
+            <>
+              <Typography variant="body1" gutterBottom>
+                <strong>Time:</strong> 
+                {selectedEvent.start.toLocaleString('en-US', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })} - {selectedEvent.end.toLocaleTimeString('en-US', {
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}
+              </Typography>
+              
+              {selectedEvent.location && (
+                <Typography variant="body1" gutterBottom>
+                  <strong>Location:</strong> {selectedEvent.location}
+                </Typography>
+              )}
+              
+              {selectedEvent.description && (
+                <Typography variant="body1" gutterBottom>
+                  <strong>Description:</strong> {selectedEvent.description}
+                </Typography>
+              )}
+              
+              {selectedEvent.capacity && (
+                <Typography variant="body1" gutterBottom>
+                  <strong>Capacity:</strong> {selectedEvent.currentAttendees || 0} / {selectedEvent.capacity} attendees
+                </Typography>
+              )}
+            </>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog}>
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

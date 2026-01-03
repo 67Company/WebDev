@@ -1,0 +1,153 @@
+.admin-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  min-height: calc(100vh - 70px - 5vh);
+}
+
+.admin-container h4 {
+  color: var(--text-color);
+  margin-bottom: 30px;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+/* Style MUI components to match app theme */
+.admin-container .MuiPaper-root {
+  background: var(--bg-white-98) !important;
+  box-shadow: 0 4px 20px var(--shadow-light) !important;
+  border-radius: 12px !important;
+  overflow: hidden;
+}
+
+.admin-container .MuiTab-root {
+  color: var(--text-secondary) !important;
+  font-weight: 500 !important;
+  text-transform: none !important;
+  font-size: 1rem !important;
+}
+
+.admin-container .MuiTab-root.Mui-selected {
+  color: var(--primary-color) !important;
+}
+
+.admin-container .MuiTabs-indicator {
+  background-color: var(--primary-color) !important;
+}
+
+.admin-container .MuiButton-contained {
+  background: linear-gradient(135deg, var(--primary-gradient-start), var(--primary-gradient-end)) !important;
+  color: white !important;
+  border-radius: 8px !important;
+  text-transform: none !important;
+  font-weight: 500 !important;
+  padding: 10px 20px !important;
+  box-shadow: 0 3px 10px var(--shadow-primary-light) !important;
+  transition: all 0.2s ease !important;
+}
+
+.admin-container .MuiButton-contained:hover {
+  box-shadow: 0 6px 14px var(--shadow-primary-medium) !important;
+  transform: translateY(-2px);
+}
+
+.admin-container .MuiTableHead-root {
+  background: var(--bg-primary-05) !important;
+}
+
+.admin-container .MuiTableCell-head {
+  color: var(--text-primary) !important;
+  font-weight: 600 !important;
+  font-size: 0.95rem !important;
+}
+
+.admin-container .MuiTableCell-body {
+  color: var(--text-primary) !important;
+}
+
+.admin-container .MuiTableRow-root:hover {
+  background: var(--bg-primary-02) !important;
+}
+
+.admin-container .MuiAlert-root {
+  margin-bottom: 20px;
+  border-radius: 8px !important;
+}
+
+.admin-container .MuiDialog-paper {
+  background: var(--bg-white-98) !important;
+  border-radius: 16px !important;
+}
+
+.admin-container .MuiDialogTitle-root {
+  color: var(--text-primary) !important;
+  font-weight: 600 !important;
+  padding: 24px !important;
+}
+
+.admin-container .MuiDialogContent-root {
+  color: var(--text-primary) !important;
+  padding: 20px 24px !important;
+}
+
+.admin-container .MuiTextField-root {
+  margin-bottom: 8px;
+}
+
+.admin-container .MuiInputBase-root {
+  background: white;
+  border-radius: 8px;
+}
+
+.admin-container .MuiOutlinedInput-root {
+  border-radius: 8px !important;
+}
+
+.admin-container .MuiOutlinedInput-notchedOutline {
+  border-color: var(--border-primary-20) !important;
+}
+
+.admin-container .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: var(--primary-color) !important;
+}
+
+.admin-container .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: var(--primary-color) !important;
+}
+
+.admin-container .MuiInputLabel-root {
+  color: var(--text-secondary) !important;
+}
+
+.admin-container .MuiInputLabel-root.Mui-focused {
+  color: var(--primary-color) !important;
+}
+
+.admin-container .MuiIconButton-root {
+  transition: all 0.2s ease !important;
+}
+
+.admin-container .MuiIconButton-root:hover {
+  transform: scale(1.1);
+}
+
+/* Dark mode support */
+.dark-mode .admin-container .MuiPaper-root {
+  background: var(--bg-white-90) !important;
+}
+
+.dark-mode .admin-container .MuiDialog-paper {
+  background: var(--bg-white-90) !important;
+}
+
+.dark-mode .admin-container .MuiInputBase-root {
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.dark-mode .admin-container .MuiTableCell-head,
+.dark-mode .admin-container .MuiTableCell-body,
+.dark-mode .admin-container .MuiDialogTitle-root,
+.dark-mode .admin-container .MuiDialogContent-root {
+  color: var(--text-primary) !important;
+}
+

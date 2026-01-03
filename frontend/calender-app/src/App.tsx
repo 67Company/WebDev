@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import "./App.css";
 import Home from "./pages/Home";
@@ -8,9 +8,11 @@ import adtjeKratje from "./media/adtje_kratje.png";
 import Settings from "./pages/Settings";
 import ThemeToggle from "./components/ThemeToggle";
 import Achievements from "./pages/Achievements";
+import Admin from "./pages/Admin";
 
-function App() {
+function AppContent() {
   const [user, setUser] = useState<any>(null);
+  const navigate = useNavigate();
 
   // Checkt localStorage eerste keer laden en luistert naar login/logout events
   useEffect(() => {
@@ -34,19 +36,25 @@ function App() {
     localStorage.removeItem('user');
     setUser(null);
     window.dispatchEvent(new Event('userChanged'));
+    navigate('/'); // Redirect to home page
   };
 
   return (
-    <Router>
-      <div className="App">
-        <header className="App-header">
-          <Link to="/">
-            <img className="Logoimg" src={adtjeKratje} alt="Logo" />
-          </Link>
-          {user ? (
+    <div className="App">
+      <header className="App-header">
+        <Link to="/">
+          <img className="Logoimg" src={adtjeKratje} alt="Logo" />
+        </Link>
+        <ThemeToggle />
+        {user ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
               {/* temp: laat email zien voor testen */}
               <span style={{ color: '#fff' }}>{user.email}</span>
+              {user.isAdmin && (
+                <Link to="/admin">
+                  <button className="login-button">Admin</button>
+                </Link>
+              )}
               <button className="login-button" onClick={handleLogout}>Logout</button>
             </div>
           ) : (
@@ -62,6 +70,7 @@ function App() {
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/achievements" element={<Achievements />} />
+          <Route path="/admin" element={<Admin />} />
         </Routes>
 
       <footer className="App-footer">
@@ -71,6 +80,13 @@ function App() {
       </footer>
 
       </div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <AppContent />
     </Router>
   );
 }

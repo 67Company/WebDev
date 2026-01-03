@@ -26,6 +26,8 @@ interface Event {
   capacity?: number;
   currentAttendees?: number;
   isFull?: boolean;
+  location?: string;
+  description?: string;
 }
 
 async function fetchEmployeeDetails(employeeId: number) {
@@ -89,6 +91,15 @@ const Calendar: React.FC = () => {
         if (eventToAdd) {
           setCalendarEvents(prev => [...prev, eventToAdd]);
         }
+        
+        // Increment EventsAttended stat
+        try {
+          await fetch(`http://localhost:5000/api/Employee/increment/${currentEmployeeId}/EventsAttended`, {
+            method: 'POST'
+          });
+        } catch (statErr) {
+          console.error('Failed to increment EventsAttended stat:', statErr);
+        }
       }
     } catch (err) {
       console.error('Failed to join event:', err);
@@ -110,6 +121,15 @@ const Calendar: React.FC = () => {
         
         // Remove event from calendar
         setCalendarEvents(prev => prev.filter(e => e.id !== eventId));
+        
+        // Decrement EventsAttended stat
+        try {
+          await fetch(`http://localhost:5000/api/Employee/decrement/${currentEmployeeId}/EventsAttended`, {
+            method: 'POST'
+          });
+        } catch (statErr) {
+          console.error('Failed to decrement EventsAttended stat:', statErr);
+        }
       }
     } catch (err) {
       console.error('Failed to leave event:', err);
@@ -165,7 +185,11 @@ const Calendar: React.FC = () => {
           title: event.title || 'Untitled Event',
           start: new Date(event.startTime),
           end: new Date(event.endTime),
-          color: '#3b82f6'
+          color: '#3b82f6',
+          location: event.location,
+          description: event.description,
+          capacity: event.capacity,
+          currentAttendees: allEventsData?.find((e: any) => e.id === event.id)?.currentAttendees
         }));
         
         // Track which events are joined

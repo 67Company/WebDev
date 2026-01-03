@@ -91,6 +91,17 @@ const AchievementPage: React.FC = () => {
     };
 
     loadAchievements();
+    
+    // Add event listener for manual refresh when returning to the page
+    const handleFocus = () => {
+      loadAchievements();
+    };
+    
+    window.addEventListener('focus', handleFocus);
+    
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+    };
   }, []);
   
   const sortedAchievements = [...achievements].sort((a, b) => {

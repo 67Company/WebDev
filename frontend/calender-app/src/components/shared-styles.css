@@ -240,3 +240,29 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
+/* Dark Mode Overrides */
+.dark-mode {
+  /* Update backgrounds for dark mode */
+  --bg-white-98: rgba(26, 26, 46, 0.98);
+  --bg-white-95: rgba(26, 26, 46, 0.95);
+  --bg-white-90: rgba(26, 26, 46, 0.90);
+  --bg-white-80: rgba(30, 30, 50, 0.8);
+  --bg-white-70: rgba(30, 30, 50, 0.7);
+  --bg-white-60: rgba(30, 30, 50, 0.6);
+  --bg-white-40: rgba(30, 30, 50, 0.4);
+  
+  /* Update text colors for dark mode */
+  --text-primary: #e8e8e8;
+  --text-secondary: #b8b8b8;
+  --text-light: #888888;
+  
+  /* Update borders for dark mode */
+  --border-light: rgba(255, 255, 255, 0.1);
+  --border-black-08: rgba(255, 255, 255, 0.08);
+  --border-black-10: rgba(255, 255, 255, 0.1);
+  
+  /* Update shadows for dark mode */
+  --shadow-light: rgba(0, 0, 0, 0.3);
+  --shadow-medium: rgba(0, 0, 0, 0.4);
+}

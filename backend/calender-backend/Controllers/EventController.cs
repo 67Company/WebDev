@@ -49,7 +49,8 @@ public class EventController : ControllerBase
             StartTime = eventDto.StartTime,
             EndTime = eventDto.EndTime,
             Location = eventDto.Location,
-            Capacity = eventDto.Capacity
+            Capacity = eventDto.Capacity,
+            CompanyId = eventDto.CompanyId
         };
         var result = await _eventService.CreateEventAsync(ev);
         if (!result)

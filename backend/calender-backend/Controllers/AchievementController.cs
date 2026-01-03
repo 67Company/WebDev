@@ -32,7 +32,7 @@ public class AchievementController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> Create([FromBody] AchievementDTO achievementDto, int companyId)
+    public async Task<ActionResult> Create([FromBody] AchievementDTO achievementDto, [FromQuery] int companyId)
     {
         var achievement = new Achievement
         {
