@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Link, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import "./App.css";
 import Home from "./pages/Home";
@@ -74,16 +74,16 @@ function App() {
           <Route path="/settings" element={<Settings />} />
           <Route path="/achievements" element={<Achievements />} />
           <Route path="/admin" element={
-            user && user.isAdmin ? <Admin /> : <Login />
+            user && user.isAdmin ? <Admin /> : <Navigate to="/login" replace />
           } />
           <Route path="/admin/events" element={
-            user && user.isAdmin ? <AdminEvents /> : <Login />
+            user && user.isAdmin ? <AdminEvents /> : <Navigate to="/login" replace />
           } />
           <Route path="/admin/achievements" element={
-            user && user.isAdmin ? <AdminAchievements /> : <Login />
+            user && user.isAdmin ? <AdminAchievements /> : <Navigate to="/login" replace />
           } />
           <Route path="/admin/employees" element={
-            user && user.isAdmin ? <AdminEmployees /> : <Login />
+            user && user.isAdmin ? <AdminEmployees /> : <Navigate to="/login" replace />
           } />
         </Routes>
 
