@@ -85,6 +85,7 @@ function App() {
           <Route path="/admin/employees" element={
             user && user.isAdmin ? <AdminEmployees /> : <Navigate to="/login" replace />
           } />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
 
       <footer className="App-footer">
