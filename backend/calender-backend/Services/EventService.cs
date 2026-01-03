@@ -132,4 +132,17 @@ public class EventService : IEventService
             .Select(a => a.Event!)
             .ToListAsync();
     }
+
+    public async Task<IEnumerable<EmployeeDTO>> GetEventAttendeesAsync(int eventId)
+    {
+        return await _context.Attendees
+            .Where(a => a.EventId == eventId)
+            .Include(a => a.Employee)
+            .Select(a => new EmployeeDTO
+            {
+                Id = a.Employee!.Id,
+                Email = a.Employee.Email
+            })
+            .ToListAsync();
+    }
 }

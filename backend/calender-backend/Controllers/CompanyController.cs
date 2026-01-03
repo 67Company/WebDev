@@ -15,6 +15,13 @@ public class CompanyController : ControllerBase
 		_companyService = new CompanyService(context);
 	}
 
+	[HttpGet]
+	public async Task<ActionResult<List<Company>>> GetAll()
+	{
+		var companies = await _companyService.GetAllCompaniesAsync();
+		return Ok(companies);
+	}
+
 	[HttpGet("{id}")]
 	public async Task<ActionResult<Company>> GetById(int id)
 	{

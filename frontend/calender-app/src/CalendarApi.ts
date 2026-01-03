@@ -123,6 +123,8 @@ export interface EmployeeDTO {
   /** @format int32 */
   id?: number;
   email?: string | null;
+  /** @format int32 */
+  companyId?: number;
 }
 
 export interface EmployeeDetailDTO {
@@ -188,6 +190,8 @@ export interface EventDTO {
   location?: string | null;
   /** @format int32 */
   capacity?: number;
+  /** @format int32 */
+  companyId?: number;
 }
 
 export interface EventWithCapacityDTO {
@@ -662,6 +666,37 @@ export class Api<
      * No description
      *
      * @tags Company
+     * @name CompanyList
+     * @request GET:/api/Company
+     */
+    companyList: (params: RequestParams = {}) =>
+      this.request<Company[], any>({
+        path: `/api/Company`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Company
+     * @name CompanyCreate
+     * @request POST:/api/Company
+     */
+    companyCreate: (data: CompanyDTO, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/api/Company`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Company
      * @name CompanyDetail
      * @request GET:/api/Company/{id}
      */
@@ -684,22 +719,6 @@ export class Api<
       this.request<void, any>({
         path: `/api/Company/${id}`,
         method: "PUT",
-        body: data,
-        type: ContentType.Json,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags Company
-     * @name CompanyCreate
-     * @request POST:/api/Company
-     */
-    companyCreate: (data: CompanyDTO, params: RequestParams = {}) =>
-      this.request<void, any>({
-        path: `/api/Company`,
-        method: "POST",
         body: data,
         type: ContentType.Json,
         ...params,
@@ -1110,6 +1129,21 @@ export class Api<
     eventJoinedDetail: (employeeId: number, params: RequestParams = {}) =>
       this.request<Event[], any>({
         path: `/api/Event/joined/${employeeId}`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Event
+     * @name EventAttendeesList
+     * @request GET:/api/Event/{id}/attendees
+     */
+    eventAttendeesList: (id: number, params: RequestParams = {}) =>
+      this.request<EmployeeDTO[], any>({
+        path: `/api/Event/${id}/attendees`,
         method: "GET",
         format: "json",
         ...params,

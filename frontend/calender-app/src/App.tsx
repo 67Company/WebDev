@@ -8,6 +8,10 @@ import adtjeKratje from "./media/adtje_kratje.png";
 import Settings from "./pages/Settings";
 import ThemeToggle from "./components/ThemeToggle";
 import Achievements from "./pages/Achievements";
+import Admin from "./pages/Admin";
+import AdminEvents from "./pages/AdminEvents";
+import AdminAchievements from "./pages/AdminAchievements";
+import AdminEmployees from "./pages/AdminEmployees";
 
 function App() {
   const [user, setUser] = useState<any>(null);
@@ -43,17 +47,24 @@ function App() {
           <Link to="/">
             <img className="Logoimg" src={adtjeKratje} alt="Logo" />
           </Link>
-          {user ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-              {/* temp: laat email zien voor testen */}
-              <span style={{ color: '#fff' }}>{user.email}</span>
-              <button className="login-button" onClick={handleLogout}>Logout</button>
-            </div>
-          ) : (
-            <Link to="/login">
-              <button className="login-button">Login</button>
-            </Link>
-          )}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginLeft: 'auto' }}>
+            {user && (
+              <>
+                <span style={{ color: '#fff' }}>{user.email}</span>
+                {user.isAdmin && (
+                  <Link to="/admin">
+                    <button className="login-button">Admin Panel</button>
+                  </Link>
+                )}
+                <button className="login-button" onClick={handleLogout}>Logout</button>
+              </>
+            )}
+            {!user && (
+              <Link to="/login">
+                <button className="login-button">Login</button>
+              </Link>
+            )}
+          </div>
         </header>
 
         <Routes>
@@ -62,6 +73,18 @@ function App() {
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/achievements" element={<Achievements />} />
+          <Route path="/admin" element={
+            user && user.isAdmin ? <Admin /> : <Login />
+          } />
+          <Route path="/admin/events" element={
+            user && user.isAdmin ? <AdminEvents /> : <Login />
+          } />
+          <Route path="/admin/achievements" element={
+            user && user.isAdmin ? <AdminAchievements /> : <Login />
+          } />
+          <Route path="/admin/employees" element={
+            user && user.isAdmin ? <AdminEmployees /> : <Login />
+          } />
         </Routes>
 
       <footer className="App-footer">

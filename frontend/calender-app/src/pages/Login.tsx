@@ -36,11 +36,17 @@ const Login: React.FC = () => {
         localStorage.setItem('user', JSON.stringify({
           id: data.employee.id,
           email: data.employee.email,
+          companyId: data.employee.companyId,
           isAdmin: data.isAdmin,
         }));
         // Notify App component that user has logged in
         window.dispatchEvent(new Event('userChanged'));
-        navigate("/"); // Redirect after successful login
+        // Redirect based on admin status
+        if (data.isAdmin) {
+          navigate("/admin");
+        } else {
+          navigate("/");
+        }
       } else {
         setError("Invalid email or password");
       }
