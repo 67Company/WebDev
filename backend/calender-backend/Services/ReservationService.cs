@@ -138,6 +138,17 @@ public class ReservationService : IReservationService
         var dayStart = request.Date.Date;
         var dayEnd = dayStart.AddDays(1);
 
+        // If booking for today, check that timeslot hasn't ended
+        var today = DateTime.Today;
+        if (dayStart == today)
+        {
+            var now = DateTime.Now;
+            if (timeslot.EndTime < now)
+            {
+                return (false, "Cannot book for a timeslot that has already ended", null);
+            }
+        }
+
         bool roomAlreadyBooked = await _context.Reservations.AnyAsync(r =>
             r.RoomId == room.Id &&
             r.CompanyId == room.CompanyId &&
