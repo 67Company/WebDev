@@ -123,6 +123,8 @@ export interface EmployeeDTO {
   /** @format int32 */
   id?: number;
   email?: string | null;
+  /** @format int32 */
+  companyId?: number;
 }
 
 export interface EmployeeDetailDTO {
@@ -188,6 +190,8 @@ export interface EventDTO {
   location?: string | null;
   /** @format int32 */
   capacity?: number;
+  /** @format int32 */
+  companyId?: number;
 }
 
 export interface EventWithCapacityDTO {
@@ -1110,6 +1114,21 @@ export class Api<
     eventJoinedDetail: (employeeId: number, params: RequestParams = {}) =>
       this.request<Event[], any>({
         path: `/api/Event/joined/${employeeId}`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Event
+     * @name EventAttendeesList
+     * @request GET:/api/Event/{id}/attendees
+     */
+    eventAttendeesList: (id: number, params: RequestParams = {}) =>
+      this.request<EmployeeDTO[], any>({
+        path: `/api/Event/${id}/attendees`,
         method: "GET",
         format: "json",
         ...params,

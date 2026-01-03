@@ -11,4 +11,5 @@ public interface IEventService
     Task<bool> JoinEventAsync(int eventId, int employeeId);
     Task<bool> LeaveEventAsync(int eventId, int employeeId);
     Task<IEnumerable<Event>> GetJoinedEventsAsync(int employeeId);
+    Task<IEnumerable<EmployeeDTO>> GetEventAttendeesAsync(int eventId);
 }

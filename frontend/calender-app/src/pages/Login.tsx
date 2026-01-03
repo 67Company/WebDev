@@ -36,6 +36,7 @@ const Login: React.FC = () => {
         localStorage.setItem('user', JSON.stringify({
           id: data.employee.id,
           email: data.employee.email,
+          companyId: data.employee.companyId,
           isAdmin: data.isAdmin,
         }));
         // Notify App component that user has logged in

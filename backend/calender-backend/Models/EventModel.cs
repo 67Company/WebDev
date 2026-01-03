@@ -24,6 +24,7 @@ public class EventDTO
     public DateTime EndTime { get; set; }
     public string Location { get; set; } = "Location_Missing";
     public int Capacity { get; set; }
+    public int CompanyId { get; set; }
 }
 
 public class EventWithCapacityDTO

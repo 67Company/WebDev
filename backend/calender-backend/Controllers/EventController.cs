@@ -49,7 +49,8 @@ public class EventController : ControllerBase
             StartTime = eventDto.StartTime,
             EndTime = eventDto.EndTime,
             Location = eventDto.Location,
-            Capacity = eventDto.Capacity
+            Capacity = eventDto.Capacity,
+            CompanyId = eventDto.CompanyId
         };
         var result = await _eventService.CreateEventAsync(ev);
         if (!result)
@@ -68,7 +69,8 @@ public class EventController : ControllerBase
             StartTime = eventDto.StartTime,
             EndTime = eventDto.EndTime,
             Location = eventDto.Location,
-            Capacity = eventDto.Capacity
+            Capacity = eventDto.Capacity,
+            CompanyId = eventDto.CompanyId
         };
         var result = await _eventService.UpdateEventAsync(id, ev);
         if (!result)
@@ -108,5 +110,12 @@ public class EventController : ControllerBase
     {
         var events = await _eventService.GetJoinedEventsAsync(employeeId);
         return Ok(events);
+    }
+
+    [HttpGet("{id}/attendees")]
+    public async Task<ActionResult<IEnumerable<EmployeeDTO>>> GetEventAttendees(int id)
+    {
+        var attendees = await _eventService.GetEventAttendeesAsync(id);
+        return Ok(attendees);
     }
 }

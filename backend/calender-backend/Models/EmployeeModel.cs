@@ -26,6 +26,7 @@ namespace calender_backend.Models;
     {
         public int Id { get; set; }
         public string Email { get; set; } = "Email_Missing";
+        public int CompanyId { get; set; }
     }
 
     public class EmployeeLoginDTO

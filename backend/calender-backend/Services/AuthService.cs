@@ -36,7 +36,8 @@ public class AuthService : IAuthService
         var employeeDto = new EmployeeDTO
         {
             Id = employee.Id,
-            Email = employee.Email
+            Email = employee.Email,
+            CompanyId = employee.CompanyId
         };
 
         return (true, employeeDto, employee.Admin, "Login successful");

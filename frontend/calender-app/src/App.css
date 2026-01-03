@@ -48,6 +48,7 @@
   cursor: pointer;
   box-shadow: 0 3px 10px rgba(0, 114, 255, 0.2);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
+  white-space: nowrap;
 }
 
 .login-button:hover {
