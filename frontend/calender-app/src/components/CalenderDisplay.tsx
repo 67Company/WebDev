@@ -11,16 +11,39 @@ interface Event {
 
 interface CalendarDisplayProps {
   events: Event[];
+  timeslots?: { id?: number; startTime?: string; endTime?: string }[];
+  onSlotSelect?: (args: { date: Date; timeslotId?: number; start?: Date }) => void;
+  onEventClick?: (event: Event) => void;
 }
 
 type ViewMode = "day" | "week";
 
-const CalendarDisplay: React.FC<CalendarDisplayProps> = ({ events }) => {
+const CalendarDisplay: React.FC<CalendarDisplayProps> = ({ events, timeslots = [], onSlotSelect, onEventClick }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [viewMode, setViewMode] = useState<ViewMode>("week");
   const [currentTime, setCurrentTime] = useState(new Date());
 
   const hours = Array.from({ length: 24 }, (_, i) => i);
+
+  const timeslotStarts = timeslots
+    .map(slot => {
+      if (!slot.startTime) return null;
+      const d = new Date(slot.startTime);
+      return {
+        id: slot.id,
+        start: d,
+        minutes: d.getHours() * 60 + d.getMinutes(),
+      };
+    })
+    .filter(Boolean) as { id?: number; start: Date; minutes: number }[];
+
+  const pickTimeslot = (minutes: number) => {
+    if (!timeslotStarts.length) return null;
+    // pick closest timeslot that starts at or after click; fallback to last
+    const sorted = [...timeslotStarts].sort((a, b) => a.minutes - b.minutes);
+    const match = sorted.find(t => t.minutes >= minutes) ?? sorted[sorted.length - 1];
+    return match;
+  };
 
   // Update current time every minute
   useEffect(() => {
@@ -218,7 +241,30 @@ const CalendarDisplay: React.FC<CalendarDisplayProps> = ({ events }) => {
 
             {/* Days Columns */}
             {weekDays.map((day, dayIndex) => (
-              <div key={dayIndex} className="day-column-body">
+              <div
+                key={dayIndex}
+                className="day-column-body"
+                onClick={(e) => {
+                  if (!onSlotSelect) return;
+                  const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
+                  const scrollParent = (e.currentTarget as HTMLDivElement).parentElement;
+                  const scrollOffset = scrollParent?.scrollTop || 0;
+                  const y = e.clientY - rect.top + scrollOffset;
+                  // Each hour = 60px, so divide by 60 to get hours, then multiply by 60 to convert to minutes
+                  const minutes = Math.round((y / 60) * 60);
+                  const slot = pickTimeslot(minutes);
+                  if (!slot) {
+                    console.warn('No timeslot found for minutes:', minutes);
+                    return;
+                  }
+                  const selectedDate = new Date(day);
+                  selectedDate.setHours(slot.start.getHours(), slot.start.getMinutes(), 0, 0);
+                  console.log('Selected slot:', { date: selectedDate, timeslotId: slot.id, slot: slot.start.toISOString() });
+                  onSlotSelect({ date: selectedDate, timeslotId: slot.id, start: slot.start });
+                }}
+                role={onSlotSelect ? "button" : undefined}
+                tabIndex={onSlotSelect ? 0 : undefined}
+              >
                 <div className="day-timeline">
                   {/* Hour grid lines */}
                   {hours.map(hour => (
@@ -253,6 +299,11 @@ const CalendarDisplay: React.FC<CalendarDisplayProps> = ({ events }) => {
                           top: `${top}px`,
                           height: `${height}px`,
                           backgroundColor: event.color,
+                          cursor: onEventClick ? 'pointer' : 'default',
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (onEventClick) onEventClick(event);
                         }}
                       >
                         <div className="event-title">{event.title}</div>
