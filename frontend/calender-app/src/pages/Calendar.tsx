@@ -63,9 +63,15 @@ async function fetchTimeslots() {
   return response.data ?? [];
 }
 
-async function fetchReservations(employeeId: number, companyId: number) {
+async function fetchEmployeeReservations(employeeId: number, companyId: number) {
   const api = new Api({ baseUrl: API_BASE_URL });
   const response = await api.api.reservationEmployeeDetail(employeeId, { companyId });
+  return response.data ?? [];
+}
+
+async function fetchCompanyReservations(companyId: number) {
+  const api = new Api({ baseUrl: API_BASE_URL });
+  const response = await api.api.reservationList({ companyId });
   return response.data ?? [];
 }
 
@@ -86,6 +92,7 @@ const Calendar: React.FC = () => {
   const [bookingLoading, setBookingLoading] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState<Event | null>(null);
   const [allReservations, setAllReservations] = useState<any[]>([]);
+  const [companyId, setCompanyId] = useState<number | null>(null);
 
   const handleJoinEvent = async (eventId: string) => {
     if (!currentEmployeeId) return;
@@ -160,14 +167,16 @@ const Calendar: React.FC = () => {
         const joinedEventsData = await fetchJoinedEvents(user.id);
 
         // Fetch rooms and timeslots for booking
-        const [roomsData, timeslotsData, reservationsData] = await Promise.all([
+        const [roomsData, timeslotsData, employeeReservationsData, companyReservationsData] = await Promise.all([
           fetchRooms(employeeData.companyId),
           fetchTimeslots(),
-          fetchReservations(user.id, employeeData.companyId)
+          fetchEmployeeReservations(user.id, employeeData.companyId),
+          fetchCompanyReservations(employeeData.companyId)
         ]);
         
-        // Store all reservations for availability checking
-        setAllReservations(reservationsData);
+        // Store all company reservations for availability checking
+        setAllReservations(companyReservationsData);
+        setCompanyId(employeeData.companyId ?? null);
         
         // Transform all events with capacity info
         const transformedAllEvents: Event[] = (allEventsData || []).map((event: any) => ({
@@ -191,7 +200,7 @@ const Calendar: React.FC = () => {
         }));
         
         // Transform reservations into events
-        const transformedReservations: Event[] = (reservationsData || []).map((reservation: any) => {
+        const transformedReservations: Event[] = (employeeReservationsData || []).map((reservation: any) => {
           const timeslot = timeslotsData.find(t => t.id === reservation.timeslotId);
           const room = roomsData.find(r => r.id === reservation.roomId);
           
@@ -227,9 +236,6 @@ const Calendar: React.FC = () => {
         setJoinedEventIds(joinedIds);
         setRooms(roomsData);
         setTimeslots(timeslotsData);
-        if (roomsData.length && selectedRoomId === "") {
-          setSelectedRoomId(roomsData[0].id ?? "");
-        }
         if (timeslotsData.length && selectedTimeslotId === "") {
           setSelectedTimeslotId(timeslotsData[0].id ?? "");
         }
@@ -244,6 +250,33 @@ const Calendar: React.FC = () => {
 
     loadEvents();
   }, []);
+
+  // Periodically refresh company reservations so availability updates when others book
+  useEffect(() => {
+    if (!companyId) return;
+    let isMounted = true;
+
+    const load = async () => {
+      const data = await fetchCompanyReservations(companyId);
+      if (isMounted) setAllReservations(data);
+    };
+
+    load();
+    const interval = setInterval(load, 15000);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, [companyId]);
+
+  const refreshCompanyReservations = async (companyIdValue: number) => {
+    try {
+      const data = await fetchCompanyReservations(companyIdValue);
+      setAllReservations(data);
+    } catch (err) {
+      console.error('Failed to refresh reservations:', err);
+    }
+  };
 
   const handleBookRoom = async () => {
     if (!currentEmployeeId) {
@@ -318,6 +351,9 @@ const Calendar: React.FC = () => {
           
           // Update all reservations to reflect new booking
           setAllReservations(prev => [...prev, reservation]);
+          if (companyId) {
+            refreshCompanyReservations(companyId);
+          }
         }
         
         setBookingStatus('Room booked successfully!');
@@ -538,11 +574,10 @@ const Calendar: React.FC = () => {
                       return (
                         <div 
                           key={room.id} 
-                          className={`room-item ${availability.available ? 'available' : 'booked'}`}
+                          className={`room-item ${availability.available ? 'available' : 'booked'} ${selectedRoomId === room.id ? 'selected' : ''}`}
                           onClick={() => {
-                            if (availability.available) {
-                              setSelectedRoomId(room.id ?? "");
-                            }
+                            if (!availability.available) return;
+                            setSelectedRoomId(room.id ?? "");
                           }}
                           style={{ cursor: availability.available ? 'pointer' : 'not-allowed' }}
                         >
@@ -556,23 +591,6 @@ const Calendar: React.FC = () => {
                   </div>
                 </div>
               )}
-
-              <div className="form-field">
-                <label htmlFor="booking-room">Room</label>
-                <select
-                  id="booking-room"
-                  value={selectedRoomId}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    setSelectedRoomId(value === "" ? "" : Number(value));
-                  }}
-                >
-                  <option value="" disabled>Select a room</option>
-                  {rooms.map(room => (
-                    <option key={room.id} value={room.id}>{room.name}</option>
-                  ))}
-                </select>
-              </div>
 
               <div className="form-actions">
                 <button

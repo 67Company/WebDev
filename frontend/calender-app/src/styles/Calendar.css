@@ -304,6 +304,25 @@
   background: #ffffff;
 }
 
+.room-item.selected {
+  border-color: #7c3aed;
+  box-shadow: 0 6px 18px rgba(124, 58, 237, 0.25), 0 0 0 3px rgba(124, 58, 237, 0.18);
+  background: linear-gradient(135deg, #f6f0ff, #ffffff);
+  transform: translateX(4px);
+  position: relative;
+}
+
+.room-item.selected::before {
+  content: "";
+  position: absolute;
+  left: -6px;
+  top: 8px;
+  bottom: 8px;
+  width: 4px;
+  border-radius: 6px;
+  background: linear-gradient(180deg, #a855f7, #7c3aed);
+}
+
 .room-item.available {
   border-color: #48bb78;
   background: #f0fff4;
