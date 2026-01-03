@@ -7,13 +7,24 @@ interface Event {
   start: Date;
   end: Date;
   color?: string;
+  capacity?: number;
+  currentAttendees?: number;
+  isFull?: boolean;
 }
 
 interface ActivitySidebarProps {
   events: Event[];
+  joinedEventIds: Set<string>;
+  onJoinEvent: (eventId: string) => void;
+  onLeaveEvent: (eventId: string) => void;
 }
 
-const ActivitySidebar: React.FC<ActivitySidebarProps> = ({ events }) => {
+const ActivitySidebar: React.FC<ActivitySidebarProps> = ({ 
+  events, 
+  joinedEventIds,
+  onJoinEvent,
+  onLeaveEvent
+}) => {
   const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
 
   useEffect(() => {
@@ -51,10 +62,10 @@ const ActivitySidebar: React.FC<ActivitySidebarProps> = ({ events }) => {
   };
 
   const formatEventTime = (date: Date) => {
-    return date.toLocaleTimeString("en-US", { 
+    return date.toLocaleTimeString("en-GB", { 
       hour: "2-digit", 
       minute: "2-digit",
-      hour12: true
+      hour12: false
     });
   };
 
@@ -75,6 +86,12 @@ const ActivitySidebar: React.FC<ActivitySidebarProps> = ({ events }) => {
     } else {
       return 'Starting soon';
     }
+  };
+
+  const canLeaveEvent = (eventDate: Date) => {
+    const now = new Date();
+    const hoursUntilEvent = (eventDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+    return hoursUntilEvent >= 24;
   };
 
   return (
@@ -132,6 +149,62 @@ const ActivitySidebar: React.FC<ActivitySidebarProps> = ({ events }) => {
                       </svg>
                       <span>{formatEventTime(event.start)} - {formatEventTime(event.end)}</span>
                     </div>
+                  </div>
+                  
+                  <div className="event-actions">
+                    {event.capacity && event.currentAttendees !== undefined && (
+                      <div className="event-capacity" style={{ color: '#4a5568' }}>
+                        {event.currentAttendees} / {event.capacity} attendees
+                      </div>
+                    )}
+                    
+                    {joinedEventIds.has(event.id) ? (
+                      canLeaveEvent(event.start) ? (
+                        <button 
+                          className="event-button event-button-joined"
+                          onClick={() => onLeaveEvent(event.id)}
+                        >
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                          </svg>
+                          Joined - Click to Leave
+                        </button>
+                      ) : (
+                        <button 
+                          className="event-button event-button-locked"
+                          disabled
+                        >
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                          </svg>
+                          Joined - Locked
+                        </button>
+                      )
+                    ) : event.isFull ? (
+                      <button 
+                        className="event-button event-button-full"
+                        disabled
+                      >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <line x1="15" y1="9" x2="9" y2="15"></line>
+                          <line x1="9" y1="9" x2="15" y2="15"></line>
+                        </svg>
+                        Full
+                      </button>
+                    ) : (
+                      <button 
+                        className="event-button event-button-join"
+                        onClick={() => onJoinEvent(event.id)}
+                      >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <line x1="12" y1="5" x2="12" y2="19"></line>
+                          <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Join
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

@@ -9,36 +9,16 @@ interface Event {
   color?: string;
 }
 
+interface CalendarDisplayProps {
+  events: Event[];
+}
+
 type ViewMode = "day" | "week";
 
-const CalendarDisplay: React.FC = () => {
+const CalendarDisplay: React.FC<CalendarDisplayProps> = ({ events }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [viewMode, setViewMode] = useState<ViewMode>("week");
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [events, setEvents] = useState<Event[]>([
-    // Sample events for demonstration
-    {
-      id: "1",
-      title: "Team Meeting",
-      start: new Date(2025, 8, 25, 9, 0),
-      end: new Date(2025, 8, 25, 10, 0),
-      color: "#3b82f6"
-    },
-    {
-      id: "2",
-      title: "Project Review",
-      start: new Date(2025, 8, 26, 14, 0),
-      end: new Date(2025, 8, 26, 15, 30),
-      color: "#10b981"
-    },
-    {
-      id: "3",
-      title: "Client Call",
-      start: new Date(2025, 8, 27, 11, 0),
-      end: new Date(2025, 8, 27, 12, 0),
-      color: "#f59e0b"
-    }
-  ]);
 
   const hours = Array.from({ length: 24 }, (_, i) => i);
 
@@ -258,6 +238,13 @@ const CalendarDisplay: React.FC = () => {
                   {/* Events */}
                   {getEventsForDate(day).map(event => {
                     const { top, height } = getEventPosition(event);
+                    const formatTime24 = (date: Date) => {
+                      return date.toLocaleTimeString("nl-NL", { 
+                        hour: "2-digit", 
+                        minute: "2-digit",
+                        hour12: false
+                      });
+                    };
                     return (
                       <div
                         key={event.id}
@@ -270,10 +257,7 @@ const CalendarDisplay: React.FC = () => {
                       >
                         <div className="event-title">{event.title}</div>
                         <div className="event-time">
-                          {event.start.toLocaleTimeString("en-US", { 
-                            hour: "2-digit", 
-                            minute: "2-digit" 
-                          })}
+                          {formatTime24(event.start)} - {formatTime24(event.end)}
                         </div>
                       </div>
                     );

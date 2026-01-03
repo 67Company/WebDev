@@ -22,6 +22,13 @@ public class EventController : ControllerBase
         return Ok(events);
     }
 
+    [HttpGet("with-capacity")]
+    public async Task<ActionResult<IEnumerable<EventWithCapacityDTO>>> GetAllWithCapacity(int companyId)
+    {
+        var events = await _eventService.GetAllEventsWithCapacityAsync(companyId);
+        return Ok(events);
+    }
+
     [HttpGet("{id}")]
     public async Task<ActionResult<Event>> GetById(int id)
     {
@@ -76,5 +83,30 @@ public class EventController : ControllerBase
         if (!result)
             return NotFound();
         return NoContent();
+    }
+
+    [HttpPost("{id}/join")]
+    public async Task<ActionResult> JoinEvent(int id, [FromBody] int employeeId)
+    {
+        var result = await _eventService.JoinEventAsync(id, employeeId);
+        if (!result)
+            return BadRequest("Unable to join event");
+        return Ok();
+    }
+
+    [HttpDelete("{id}/leave")]
+    public async Task<ActionResult> LeaveEvent(int id, [FromBody] int employeeId)
+    {
+        var result = await _eventService.LeaveEventAsync(id, employeeId);
+        if (!result)
+            return BadRequest("Unable to leave event");
+        return Ok();
+    }
+
+    [HttpGet("joined/{employeeId}")]
+    public async Task<ActionResult<IEnumerable<Event>>> GetJoinedEvents(int employeeId)
+    {
+        var events = await _eventService.GetJoinedEventsAsync(employeeId);
+        return Ok(events);
     }
 }
