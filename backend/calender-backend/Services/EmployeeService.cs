@@ -1,6 +1,7 @@
 using calender_backend.Models;
 using calender_backend.Data;
 using Microsoft.EntityFrameworkCore;
+using static BCrypt.Net.BCrypt;
 
 public class EmployeeService : IEmployeeService
 {
@@ -20,6 +21,11 @@ public class EmployeeService : IEmployeeService
         {
             return isCreated; // Employee with the same email already exists
         } else {
+            // Hash password if it's plain text (not already hashed)
+            if (!string.IsNullOrEmpty(employee.PasswordHash) && !employee.PasswordHash.StartsWith("$2"))
+            {
+                employee.PasswordHash = HashPassword(employee.PasswordHash);
+            }
             isCreated = await _context.Employees.AddAsync(employee) != null;
             await _context.SaveChangesAsync();
         }
@@ -186,6 +192,12 @@ public class EmployeeService : IEmployeeService
 
     public async Task<bool> UpdateEmployeeAsync(int id, Employee employee)
     {
+        // Hash password if it's plain text (not already hashed) and not empty
+        if (!string.IsNullOrEmpty(employee.PasswordHash) && !employee.PasswordHash.StartsWith("$2"))
+        {
+            employee.PasswordHash = HashPassword(employee.PasswordHash);
+        }
+        
         bool isUpdated = _context.Employees.Update(employee) != null;
         await _context.SaveChangesAsync();
         return isUpdated;

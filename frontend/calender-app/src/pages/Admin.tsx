@@ -21,6 +21,14 @@ const Admin: React.FC = () => {
           <button className="button">Click for more</button>
         </Link>
       </section>
+
+      <section className="overview-card">
+        <h2>👥 Employee Management</h2>
+        <p>Create and manage employee accounts.</p>
+        <Link to="/admin/employees">
+          <button className="button">Click for more</button>
+        </Link>
+      </section>
     </main>
   );
 };

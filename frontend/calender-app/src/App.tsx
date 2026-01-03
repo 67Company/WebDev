@@ -11,6 +11,7 @@ import Achievements from "./pages/Achievements";
 import Admin from "./pages/Admin";
 import AdminEvents from "./pages/AdminEvents";
 import AdminAchievements from "./pages/AdminAchievements";
+import AdminEmployees from "./pages/AdminEmployees";
 
 function App() {
   const [user, setUser] = useState<any>(null);
@@ -80,6 +81,9 @@ function App() {
           } />
           <Route path="/admin/achievements" element={
             user && user.isAdmin ? <AdminAchievements /> : <Login />
+          } />
+          <Route path="/admin/employees" element={
+            user && user.isAdmin ? <AdminEmployees /> : <Login />
           } />
         </Routes>
 
