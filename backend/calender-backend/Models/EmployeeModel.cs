@@ -42,6 +42,14 @@ namespace calender_backend.Models;
         public string Message { get; set; } = string.Empty;
     }
 
+    public class SessionDTO
+    {
+        public int Id { get; set; }
+        public string Email { get; set; } = string.Empty;
+        public int CompanyId { get; set; }
+        public bool IsAdmin { get; set; }
+    }
+
     public class EmployeeStatsDTO
     {
         public int MeetingsAttended { get; set; }

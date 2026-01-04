@@ -37,11 +37,52 @@ public class AuthController : ControllerBase
             return Unauthorized(new { message });
         }
 
+        // Store user info in session
+        HttpContext.Session.SetInt32("UserId", employee!.Id);
+        HttpContext.Session.SetString("UserEmail", employee.Email);
+        HttpContext.Session.SetInt32("CompanyId", employee.CompanyId);
+        HttpContext.Session.SetString("IsAdmin", isAdmin.ToString());
+
         return Ok(new LoginResponseDTO
         { 
             Employee = employee!,
             IsAdmin = isAdmin,
             Message = message
+        });
+    }
+
+    // POST: api/Auth/logout
+    [HttpPost("logout")]
+    [ProducesResponseType(200)]
+    public IActionResult Logout()
+    {
+        HttpContext.Session.Clear();
+        return Ok(new { message = "Logged out successfully" });
+    }
+
+    // GET: api/Auth/session
+    [HttpGet("session")]
+    [ProducesResponseType(typeof(SessionDTO), 200)]
+    [ProducesResponseType(401)]
+    public IActionResult GetSession()
+    {
+        var userId = HttpContext.Session.GetInt32("UserId");
+        
+        if (userId == null)
+        {
+            return Unauthorized(new { message = "No active session" });
+        }
+
+        var userEmail = HttpContext.Session.GetString("UserEmail");
+        var companyId = HttpContext.Session.GetInt32("CompanyId");
+        var isAdmin = HttpContext.Session.GetString("IsAdmin") == "True";
+
+        return Ok(new SessionDTO
+        {
+            Id = userId.Value,
+            Email = userEmail ?? "",
+            CompanyId = companyId ?? 0,
+            IsAdmin = isAdmin
         });
     }
 
