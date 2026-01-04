@@ -444,56 +444,54 @@ const Calendar: React.FC = () => {
 
   return (
     <main className="calendar-container">
-      <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
-        <CalendarDisplay 
-          events={calendarEvents}
-          timeslots={timeslots}
-          onSlotSelect={({ date, timeslotId }) => {
-            setBookingDate(date);
-            if (timeslotId !== undefined) {
-              setSelectedTimeslotId(timeslotId);
-            }
-          }}
-          onEventClick={(event) => {
-            // Only show modal for reservations
-            if (event.id.startsWith('reservation-')) {
-              setSelectedBooking(event);
-            } 
-            // Show event detail panel for joined events
-            else if (event.id.startsWith('event-')) {
-              setSelectedEvent(event);
-            }
-          }}
+      <CalendarDisplay 
+        events={calendarEvents}
+        timeslots={timeslots}
+        onSlotSelect={({ date, timeslotId }) => {
+          setBookingDate(date);
+          if (timeslotId !== undefined) {
+            setSelectedTimeslotId(timeslotId);
+          }
+        }}
+        onEventClick={(event) => {
+          // Only show modal for reservations
+          if (event.id.startsWith('reservation-')) {
+            setSelectedBooking(event);
+          } 
+          // Show event detail panel for joined events
+          else if (event.id.startsWith('event-')) {
+            setSelectedEvent(event);
+          }
+        }}
+      />
+      <div className="calendar-sidebar-wrapper">
+        <ActivitySidebar 
+          events={allEvents} 
+          joinedEventIds={joinedEventIds}
+          onJoinEvent={handleJoinEvent}
+          onLeaveEvent={handleLeaveEvent}
         />
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', width: '360px' }}>
-          <ActivitySidebar 
-            events={allEvents} 
-            joinedEventIds={joinedEventIds}
-            onJoinEvent={handleJoinEvent}
-            onLeaveEvent={handleLeaveEvent}
-          />
-          <ReservationPanel
-            currentEmployeeId={currentEmployeeId}
-            rooms={rooms}
-            timeslots={timeslots}
-            selectedRoomId={selectedRoomId}
-            selectedTimeslotId={selectedTimeslotId}
-            bookingDate={bookingDate}
-            allReservations={allReservations}
-            companyId={companyId}
-            onRoomSelect={setSelectedRoomId}
-            onTimeslotSelect={setSelectedTimeslotId}
-            onDateChange={setBookingDate}
-            onBookingSuccess={(reservation, event) => {
-              setCalendarEvents(prev => [...prev, event]);
-              setAllReservations(prev => [...prev, reservation]);
-              if (companyId) {
-                refreshCompanyReservations(companyId);
-              }
-            }}
-            onCalendarEventsUpdate={setCalendarEvents}
-          />
-        </div>
+        <ReservationPanel
+          currentEmployeeId={currentEmployeeId}
+          rooms={rooms}
+          timeslots={timeslots}
+          selectedRoomId={selectedRoomId}
+          selectedTimeslotId={selectedTimeslotId}
+          bookingDate={bookingDate}
+          allReservations={allReservations}
+          companyId={companyId}
+          onRoomSelect={setSelectedRoomId}
+          onTimeslotSelect={setSelectedTimeslotId}
+          onDateChange={setBookingDate}
+          onBookingSuccess={(reservation, event) => {
+            setCalendarEvents(prev => [...prev, event]);
+            setAllReservations(prev => [...prev, reservation]);
+            if (companyId) {
+              refreshCompanyReservations(companyId);
+            }
+          }}
+          onCalendarEventsUpdate={setCalendarEvents}
+        />
       </div>
 
       {/* Booking Details Modal */}

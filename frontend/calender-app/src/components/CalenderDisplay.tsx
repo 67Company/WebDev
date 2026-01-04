@@ -142,7 +142,7 @@ const CalendarDisplay: React.FC<CalendarDisplayProps> = ({ events, timeslots = [
 
   return (
     <div 
-      className="calendar-container"
+      className="calendar-display-container"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >

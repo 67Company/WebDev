@@ -1,10 +1,23 @@
 .calendar-container {
   display: flex;
   width: 100%;
-  height: 100vh;
+  height: calc(100vh - 70px);
   margin: 0;
   padding: 0;
   overflow: hidden;
+  gap: 20px;
+}
+
+.calendar-sidebar-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 360px;
+  height: 100%;
+  flex-shrink: 0;
+  padding-right: 20px;
+  padding-top: 20px;
+  padding-bottom: 20px;
 }
 
 .MuiDateCalendar-root {
@@ -41,13 +54,15 @@
   background: #ffffff;
   backdrop-filter: blur(10px);
   border-radius: 12px;
-  padding: 16px;
+  padding: 12px;
   border: 2px solid #e2e8f0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
   animation: slideIn 0.5s ease forwards;
+  max-height: 50%;
+  overflow-y: auto;
 }
 
 @keyframes slideIn {
@@ -68,14 +83,14 @@
 }
 
 .booking-header {
-  margin-bottom: 16px;
-  padding-bottom: 12px;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
   border-bottom: 2px solid #e2e8f0;
 }
 
 .booking-header h3 {
   margin: 0;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   color: #1a202c;
   background: linear-gradient(135deg, #667eea, #764ba2);
@@ -87,29 +102,29 @@
 .booking-form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
 .form-field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
 .form-field label {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 600;
   color: #2d3748;
 }
 
 .form-field input,
 .form-field select {
-  padding: 10px 12px;
+  padding: 8px 10px;
   border-radius: 8px;
   border: 1px solid #cbd5e0;
   background: #ffffff;
   color: #2d3748;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   transition: all 0.3s ease;
   font-family: inherit;
 }
@@ -129,15 +144,15 @@
 .form-actions {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
   margin-top: 4px;
 }
 
 .booking-button {
-  padding: 10px 16px;
+  padding: 8px 12px;
   border: none;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -159,9 +174,9 @@
 }
 
 .booking-status {
-  padding: 12px;
+  padding: 10px;
   border-radius: 8px;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 500;
   animation: slideIn 0.3s ease forwards;
 }
@@ -288,7 +303,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  max-height: 200px;
+  max-height: 100px;
   overflow-y: auto;
   padding: 4px;
 }
