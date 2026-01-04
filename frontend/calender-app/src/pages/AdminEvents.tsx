@@ -6,6 +6,16 @@ import { Api, Event, EventDTO, EmployeeDTO, Company } from '../CalendarApi';
 
 const API_BASE_URL = "http://localhost:5000";
 
+interface Review {
+  id: number;
+  eventId: number;
+  employeeId: number;
+  employeeEmail: string;
+  content: string;
+  rating: number;
+  createdAt: string;
+}
+
 // API Helper Functions
 async function getAllCompanies() {
   const api = new Api({ baseUrl: API_BASE_URL });
@@ -23,6 +33,14 @@ async function getEventAttendees(eventId: number) {
   const api = new Api({ baseUrl: API_BASE_URL });
   const response = await api.api.eventAttendeesList(eventId);
   return response;
+}
+
+async function getEventReviews(eventId: number): Promise<Review[]> {
+  const response = await fetch(`${API_BASE_URL}/api/review/event/${eventId}`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch reviews');
+  }
+  return response.json();
 }
 
 async function createEvent(eventData: EventDTO) {
@@ -62,7 +80,9 @@ const AdminEvents: React.FC = () => {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   const [viewingAttendees, setViewingAttendees] = useState<{ eventId: number; title: string } | null>(null);
+  const [viewingReviews, setViewingReviews] = useState<{ eventId: number; title: string } | null>(null);
   const [attendees, setAttendees] = useState<EmployeeDTO[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [deleteConfirm, setDeleteConfirm] = useState<Event | null>(null);
   
   const [formData, setFormData] = useState<EventFormData>({
@@ -121,6 +141,16 @@ const AdminEvents: React.FC = () => {
       }
     } catch (error) {
       console.error('Error fetching attendees:', error);
+    }
+  };
+
+  const fetchReviews = async (eventId: number) => {
+    try {
+      const reviewsData = await getEventReviews(eventId);
+      setReviews(reviewsData);
+    } catch (error) {
+      console.error('Error fetching reviews:', error);
+      showNotification('Failed to load reviews', 'error');
     }
   };
 
@@ -215,6 +245,11 @@ const AdminEvents: React.FC = () => {
   const viewAttendees = (event: Event) => {
     setViewingAttendees({ eventId: event.id!, title: event.title || '' });
     fetchAttendees(event.id!);
+  };
+
+  const viewReviews = (event: Event) => {
+    setViewingReviews({ eventId: event.id!, title: event.title || '' });
+    fetchReviews(event.id!);
   };
 
   const resetForm = () => {
@@ -554,6 +589,13 @@ const AdminEvents: React.FC = () => {
                           👥
                         </button>
                         <button
+                          className="btn-view"
+                          onClick={() => viewReviews(event)}
+                          title="View Reviews"
+                        >
+                          ⭐
+                        </button>
+                        <button
                           className="btn-edit"
                           onClick={() => startEdit(event)}
                           title="Edit Event"
@@ -628,6 +670,52 @@ const AdminEvents: React.FC = () => {
             </div>
             <div className="modal-actions">
               <button className="btn-primary" onClick={() => setViewingAttendees(null)}>
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Reviews Modal */}
+      {viewingReviews && (
+        <div className="modal-overlay" onClick={() => setViewingReviews(null)}>
+          <div className="modal-content reviews-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Reviews for: {viewingReviews.title}</h2>
+              <button className="btn-close" onClick={() => setViewingReviews(null)}>×</button>
+            </div>
+            <div className="reviews-list">
+              {reviews.length === 0 ? (
+                <p className="no-reviews">No reviews yet</p>
+              ) : (
+                <div className="reviews-container">
+                  {reviews.map(review => (
+                    <div key={review.id} className="review-card">
+                      <div className="review-header">
+                        <div className="review-meta">
+                          <span className="review-email">{review.employeeEmail}</span>
+                          <span className="review-date">
+                            {new Date(review.createdAt).toLocaleDateString()}
+                          </span>
+                        </div>
+                        <div className="review-rating">
+                          <span className="stars">
+                            {'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}
+                          </span>
+                          <span className="rating-text">{review.rating}/5</span>
+                        </div>
+                      </div>
+                      <div className="review-content">
+                        <p>{review.content}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="modal-actions">
+              <button className="btn-primary" onClick={() => setViewingReviews(null)}>
                 Close
               </button>
             </div>

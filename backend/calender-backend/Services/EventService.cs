@@ -40,7 +40,12 @@ public class EventService : IEventService
 
     public async Task<Event?> GetEventByIdAsync(int id)
     {
-        Event? eventEntry = await _context.Events.FindAsync(id);
+        Event? eventEntry = await _context.Events
+            .Include(e => e.Attendees)
+                .ThenInclude(a => a.Employee)
+            .Include(e => e.Reviews)
+                .ThenInclude(r => r.Employee)
+            .FirstOrDefaultAsync(e => e.Id == id);
         return eventEntry;
     }
 
@@ -144,5 +149,54 @@ public class EventService : IEventService
                 Email = a.Employee.Email
             })
             .ToListAsync();
+    }
+
+    public async Task<EventWithDetailsDTO?> GetEventWithDetailsAsync(int eventId)
+    {
+        var ev = await _context.Events
+            .Include(e => e.Attendees)
+                .ThenInclude(a => a.Employee)
+            .Include(e => e.Reviews)
+                .ThenInclude(r => r.Employee)
+            .FirstOrDefaultAsync(e => e.Id == eventId);
+
+        if (ev == null)
+            return null;
+
+        var attendees = ev.Attendees
+            .Select(a => new EmployeeDTO
+            {
+                Id = a.Employee!.Id,
+                Email = a.Employee.Email
+            })
+            .ToList();
+
+        var reviews = ev.Reviews
+            .Select(r => new ReviewWithEmployeeDTO
+            {
+                Id = r.Id,
+                EventId = r.EventId,
+                EmployeeId = r.EmployeeId,
+                EmployeeEmail = r.Employee!.Email,
+                Content = r.Content,
+                Rating = r.Rating,
+                CreatedAt = r.CreatedAt
+            })
+            .ToList();
+
+        return new EventWithDetailsDTO
+        {
+            Id = ev.Id,
+            Title = ev.Title,
+            Description = ev.Description,
+            Date = ev.Date,
+            StartTime = ev.StartTime,
+            EndTime = ev.EndTime,
+            Location = ev.Location,
+            Capacity = ev.Capacity,
+            CurrentAttendees = attendees.Count,
+            Attendees = attendees,
+            Reviews = reviews
+        };
     }
 }
