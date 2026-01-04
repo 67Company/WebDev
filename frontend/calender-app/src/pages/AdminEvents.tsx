@@ -36,11 +36,14 @@ async function getEventAttendees(eventId: number) {
 }
 
 async function getEventReviews(eventId: number): Promise<Review[]> {
-  const response = await fetch(`${API_BASE_URL}/api/review/event/${eventId}`);
-  if (!response.ok) {
-    throw new Error('Failed to fetch reviews');
-  }
-  return response.json();
+  const api = new Api({ baseUrl: API_BASE_URL });
+  const response = await api.request<Review[]>({
+    path: `/api/Review/event/${eventId}`,
+    method: 'GET',
+    format: 'json',
+  });
+
+  return response.data;
 }
 
 async function createEvent(eventData: EventDTO) {

@@ -4,7 +4,7 @@ import CalendarDisplay from "../components/CalenderDisplay";
 import ActivitySidebar from "../components/ActivitySidebar";
 import ReservationPanel from "../components/ReservationPanel";
 import ReviewModal from "../components/ReviewModal";
-import { Api, Room, Timeslot } from "../CalendarApi";
+import { Api, Room, Timeslot, ContentType } from "../CalendarApi";
 
 const API_BASE_URL = "http://localhost:5000";
 
@@ -23,6 +23,16 @@ interface Event {
   timeslotId?: number;
   description?: string;
   location?: string;
+}
+
+interface ReviewResponse {
+  id: number;
+  eventId: number;
+  employeeId: number;
+  employeeEmail: string;
+  content: string;
+  rating: number;
+  createdAt: string;
 }
 
 async function fetchEmployeeDetails(employeeId: number) {
@@ -55,25 +65,17 @@ async function leaveEvent(eventId: number, employeeId: number) {
   return response.ok;
 }
 
-async function submitReview(eventId: number, employeeId: number, rating: number, content: string) {
-  const response = await fetch(`${API_BASE_URL}/api/review`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      eventId,
-      employeeId,
-      rating,
-      content
-    })
+async function submitReview(eventId: number, employeeId: number, rating: number, content: string): Promise<ReviewResponse> {
+  const api = new Api({ baseUrl: API_BASE_URL });
+  const response = await api.request<ReviewResponse>({
+    path: `/api/Review`,
+    method: "POST",
+    body: { eventId, employeeId, rating, content },
+    type: ContentType.Json,
+    format: "json",
   });
-  
-  if (!response.ok) {
-    throw new Error('Failed to submit review');
-  }
-  
-  return response.json();
+
+  return response.data;
 }
 
 async function fetchRooms(companyId: number) {
