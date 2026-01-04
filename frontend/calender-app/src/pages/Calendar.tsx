@@ -20,6 +20,8 @@ interface Event {
   roomName?: string;
   roomId?: number;
   timeslotId?: number;
+  description?: string;
+  location?: string;
 }
 
 async function fetchEmployeeDetails(employeeId: number) {
@@ -87,24 +89,48 @@ const Calendar: React.FC = () => {
   const [timeslots, setTimeslots] = useState<Timeslot[]>([]);
   const [selectedRoomId, setSelectedRoomId] = useState<number | "">("");
   const [selectedTimeslotId, setSelectedTimeslotId] = useState<number | "">("");
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [bookingDate, setBookingDate] = useState<Date | null>(new Date());
   const [selectedBooking, setSelectedBooking] = useState<Event | null>(null);
   const [allReservations, setAllReservations] = useState<any[]>([]);
   const [companyId, setCompanyId] = useState<number | null>(null);
 
   const handleJoinEvent = async (eventId: string) => {
-    if (!currentEmployeeId) return;
+    if (!currentEmployeeId || !companyId) return;
     
     try {
-      const success = await joinEvent(parseInt(eventId), currentEmployeeId);
+      // Remove 'event-' prefix if present for API call
+      const numericId = eventId.replace('event-', '');
+      const success = await joinEvent(parseInt(numericId), currentEmployeeId);
       if (success) {
-        // Add to joined events
+        // Add to joined events (eventId already has 'event-' prefix from allEvents)
         setJoinedEventIds(prev => new Set(prev).add(eventId));
         
-        // Add event to calendar
-        const eventToAdd = allEvents.find(e => e.id === eventId);
+        // Refetch all events to get updated attendee counts
+        const allEventsData = await fetchCompanyEvents(companyId);
+        const transformedAllEvents: Event[] = (allEventsData || []).map((event: any) => ({
+          id: `event-${event.id}`,
+          title: event.title || 'Untitled Event',
+          start: new Date(event.startTime),
+          end: new Date(event.endTime),
+          color: '#3b82f6',
+          capacity: event.capacity,
+          currentAttendees: event.currentAttendees,
+          isFull: event.isFull,
+          description: event.description,
+          location: event.location
+        }));
+        setAllEvents(transformedAllEvents);
+        
+        // Add event to calendar with updated data
+        const eventToAdd = transformedAllEvents.find(e => e.id === eventId);
         if (eventToAdd) {
           setCalendarEvents(prev => [...prev, eventToAdd]);
+        }
+        
+        // Update selected event if it's the one being joined
+        if (selectedEvent && selectedEvent.id === eventId && eventToAdd) {
+          setSelectedEvent(eventToAdd);
         }
       }
     } catch (err) {
@@ -113,10 +139,12 @@ const Calendar: React.FC = () => {
   };
 
   const handleLeaveEvent = async (eventId: string) => {
-    if (!currentEmployeeId) return;
+    if (!currentEmployeeId || !companyId) return;
     
     try {
-      const success = await leaveEvent(parseInt(eventId), currentEmployeeId);
+      // Remove 'event-' prefix if present
+      const numericId = eventId.replace('event-', '');
+      const success = await leaveEvent(parseInt(numericId), currentEmployeeId);
       if (success) {
         // Remove from joined events
         setJoinedEventIds(prev => {
@@ -125,8 +153,29 @@ const Calendar: React.FC = () => {
           return newSet;
         });
         
+        // Refetch all events to get updated attendee counts
+        const allEventsData = await fetchCompanyEvents(companyId);
+        const transformedAllEvents: Event[] = (allEventsData || []).map((event: any) => ({
+          id: `event-${event.id}`,
+          title: event.title || 'Untitled Event',
+          start: new Date(event.startTime),
+          end: new Date(event.endTime),
+          color: '#3b82f6',
+          capacity: event.capacity,
+          currentAttendees: event.currentAttendees,
+          isFull: event.isFull,
+          description: event.description,
+          location: event.location
+        }));
+        setAllEvents(transformedAllEvents);
+        
         // Remove event from calendar
         setCalendarEvents(prev => prev.filter(e => e.id !== eventId));
+        
+        // Close modal if the event being left is currently selected
+        if (selectedEvent && selectedEvent.id === eventId) {
+          setSelectedEvent(null);
+        }
       }
     } catch (err) {
       console.error('Failed to leave event:', err);
@@ -178,23 +227,30 @@ const Calendar: React.FC = () => {
         
         // Transform all events with capacity info
         const transformedAllEvents: Event[] = (allEventsData || []).map((event: any) => ({
-          id: event.id?.toString() || '',
+          id: `event-${event.id}`,
           title: event.title || 'Untitled Event',
           start: new Date(event.startTime),
           end: new Date(event.endTime),
           color: '#3b82f6',
           capacity: event.capacity,
           currentAttendees: event.currentAttendees,
-          isFull: event.isFull
+          isFull: event.isFull,
+          description: event.description,
+          location: event.location
         }));
         
         // Transform joined events
         const transformedJoinedEvents: Event[] = (joinedEventsData || []).map((event: any) => ({
-          id: event.id?.toString() || '',
+          id: `event-${event.id}`,
           title: event.title || 'Untitled Event',
           start: new Date(event.startTime),
           end: new Date(event.endTime),
-          color: '#3b82f6'
+          color: '#3b82f6',
+          description: event.description,
+          location: event.location,
+          capacity: event.capacity,
+          currentAttendees: event.currentAttendees,
+          isFull: event.isFull
         }));
         
         // Transform reservations into events
@@ -364,6 +420,10 @@ const Calendar: React.FC = () => {
             // Only show modal for reservations
             if (event.id.startsWith('reservation-')) {
               setSelectedBooking(event);
+            } 
+            // Show event detail panel for joined events
+            else if (event.id.startsWith('event-')) {
+              setSelectedEvent(event);
             }
           }}
         />
@@ -448,6 +508,77 @@ const Calendar: React.FC = () => {
                   {((selectedBooking.start.getTime() - new Date().getTime()) / (1000 * 60 * 60)) < 24 
                     ? 'Cannot cancel (less than 24h)' 
                     : 'Cancel Reservation'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Event Detail Panel */}
+      {selectedEvent && (
+        <div className="modal-overlay" onClick={() => setSelectedEvent(null)}>
+          <div className="modal-content booking-card" onClick={(e) => e.stopPropagation()}>
+            <div className="booking-header">
+              <h3>{selectedEvent.title}</h3>
+              <button 
+                className="modal-close"
+                onClick={() => setSelectedEvent(null)}
+                aria-label="Close"
+              >
+                ×
+              </button>
+            </div>
+            <div className="booking-details">
+              <div className="detail-row">
+                <span className="detail-label">Date:</span>
+                <span className="detail-value">
+                  {selectedEvent.start.toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  })}
+                </span>
+              </div>
+              <div className="detail-row">
+                <span className="detail-label">Time:</span>
+                <span className="detail-value">
+                  {formatTime(selectedEvent.start.toISOString())} - {formatTime(selectedEvent.end.toISOString())}
+                </span>
+              </div>
+              {selectedEvent.location && (
+                <div className="detail-row">
+                  <span className="detail-label">Location:</span>
+                  <span className="detail-value">{selectedEvent.location}</span>
+                </div>
+              )}
+              {selectedEvent.description && (
+                <div className="detail-row">
+                  <span className="detail-label">Description:</span>
+                  <span className="detail-value">{selectedEvent.description}</span>
+                </div>
+              )}
+              <div className="detail-row">
+                <span className="detail-label">Attendance:</span>
+                <span className="detail-value">
+                  {selectedEvent.currentAttendees || 0} / {selectedEvent.capacity || 'Unlimited'} attendees
+                  {selectedEvent.isFull && <span style={{ color: '#c53030', fontWeight: 'bold' }}> (Full)</span>}
+                </span>
+              </div>
+              <div className="form-actions" style={{ marginTop: '16px' }}>
+                <button
+                  type="button"
+                  className="booking-button"
+                  style={{
+                    background: '#ef4444'
+                  }}
+                  onClick={async () => {
+                    await handleLeaveEvent(selectedEvent.id);
+                    setSelectedEvent(null);
+                  }}
+                >
+                  Leave Event
                 </button>
               </div>
             </div>
