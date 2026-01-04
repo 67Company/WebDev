@@ -51,6 +51,15 @@ export interface Attendee {
   employee?: Employee;
 }
 
+export interface BookReservationRequest {
+  /** @format date-time */
+  date?: string;
+  /** @format int32 */
+  timeslotId?: number;
+  /** @format int32 */
+  roomId?: number;
+}
+
 export interface Company {
   /** @format int32 */
   id?: number;
@@ -248,15 +257,6 @@ export interface Reservation {
   company?: Company;
 }
 
-export interface BookReservationRequest {
-  /** @format date-time */
-  date?: string;
-  /** @format int32 */
-  timeslotId?: number;
-  /** @format int32 */
-  roomId?: number;
-}
-
 export interface Room {
   /** @format int32 */
   id?: number;
@@ -275,6 +275,15 @@ export interface RoomDTO {
   name?: string | null;
   /** @format int32 */
   capacity?: number;
+}
+
+export interface SessionDTO {
+  /** @format int32 */
+  id?: number;
+  email?: string | null;
+  /** @format int32 */
+  companyId?: number;
+  isAdmin?: boolean;
 }
 
 export interface Timeslot {
@@ -347,7 +356,7 @@ export class HttpClient<SecurityDataType = unknown> {
     fetch(...fetchParams);
 
   private baseApiParams: RequestParams = {
-    credentials: "same-origin",
+    credentials: "include",
     headers: {},
     redirect: "follow",
     referrerPolicy: "no-referrer",
@@ -652,6 +661,35 @@ export class Api<
         method: "POST",
         body: data,
         type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Auth
+     * @name AuthLogoutCreate
+     * @request POST:/api/Auth/logout
+     */
+    authLogoutCreate: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/api/Auth/logout`,
+        method: "POST",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Auth
+     * @name AuthSessionList
+     * @request GET:/api/Auth/session
+     */
+    authSessionList: (params: RequestParams = {}) =>
+      this.request<SessionDTO, ProblemDetails>({
+        path: `/api/Auth/session`,
+        method: "GET",
         format: "json",
         ...params,
       }),
@@ -1200,25 +1238,6 @@ export class Api<
      * No description
      *
      * @tags Reservation
-     * @name ReservationBookCreate
-     * @request POST:/api/Reservation/book
-     */
-    reservationBookCreate: (
-      data: BookReservationRequest,
-      params: RequestParams = {},
-    ) =>
-      this.request<Reservation, any>({
-        path: `/api/Reservation/book`,
-        method: "POST",
-        body: data,
-        type: ContentType.Json,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags Reservation
      * @name ReservationDetail
      * @request GET:/api/Reservation/{id}
      */
@@ -1254,6 +1273,30 @@ export class Api<
      * No description
      *
      * @tags Reservation
+     * @name ReservationBookCreate
+     * @request POST:/api/Reservation/book
+     */
+    reservationBookCreate: (
+      data: BookReservationRequest,
+      query?: {
+        /** @format int32 */
+        employeeId?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/Reservation/book`,
+        method: "POST",
+        query: query,
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Reservation
      * @name ReservationRoomEmployeeDateDelete
      * @request DELETE:/api/Reservation/room/{roomId}/employee/{employeeId}/date/{date}
      */
@@ -1278,17 +1321,16 @@ export class Api<
      */
     reservationDelete: (
       reservationId: number,
-      query: {
+      query?: {
         /** @format int32 */
-        employeeId: number;
+        employeeId?: number;
       },
       params: RequestParams = {},
     ) =>
-      this.request<{ message?: string }, any>({
+      this.request<void, any>({
         path: `/api/Reservation/${reservationId}`,
         method: "DELETE",
         query: query,
-        format: "json",
         ...params,
       }),
 
