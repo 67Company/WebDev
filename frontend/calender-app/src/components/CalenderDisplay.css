@@ -344,10 +344,11 @@
   text-overflow: ellipsis;
 }
 
-.event-time {
+.day-timeline .event .event-time {
   font-size: var(--font-sm);
   opacity: 0.9;
   font-weight: var(--weight-normal);
+  color: white !important;
 }
 
 /* Current time indicator */
