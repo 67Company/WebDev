@@ -2,37 +2,36 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "../styles/AdminPanel.css";
 import "../styles/Cards.css";
-import { Api, Employee, Company } from "../CalendarApi";
-
-const API_BASE_URL = "http://localhost:5000";
+import { Employee, Company } from "../CalendarApi";
+import { createApiClient, createAdminApiClient } from "../services/apiService";
 
 // API Helper Functions
 async function getAllCompanies() {
-  const api = new Api({ baseUrl: API_BASE_URL });
+  const api = createApiClient();
   const response = await api.api.companyList();
   return response;
 }
 
 async function getAllEmployees() {
-  const api = new Api({ baseUrl: API_BASE_URL });
+  const api = createApiClient();
   const response = await api.api.employeeList();
   return response;
 }
 
 async function createEmployee(employeeData: Employee) {
-  const api = new Api({ baseUrl: API_BASE_URL });
+  const api = createAdminApiClient();
   const response = await api.api.employeeCreate(employeeData);
   return response;
 }
 
 async function updateEmployee(employeeId: number, employeeData: Employee) {
-  const api = new Api({ baseUrl: API_BASE_URL });
+  const api = createAdminApiClient();
   const response = await api.api.employeeUpdate(employeeId, employeeData);
   return response;
 }
 
 async function softDeleteEmployee(employeeId: number) {
-  const api = new Api({ baseUrl: API_BASE_URL });
+  const api = createAdminApiClient();
   const response = await api.api.employeeSoftDelete(employeeId);
   return response;
 }

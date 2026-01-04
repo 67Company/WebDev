@@ -3,18 +3,17 @@ import "../styles/Achievements.css";
 import "../styles/Cards.css";
 import beericon from "../media/beer.png";
 import trophyicon from "../media/trophy.png";
-import { Api, Achievement } from "../CalendarApi";
-
-const API_BASE_URL = "http://localhost:5000";
+import { Achievement } from "../CalendarApi";
+import { createApiClient } from "../services/apiService";
 
 async function fetchEmployeeDetails(employeeId: number) {
-  const api = new Api({ baseUrl: API_BASE_URL });
+  const api = createApiClient();
   const response = await api.api.authMeDetail(employeeId);
   return response.data
 }
 
 async function fetchCompanyAchievements(companyId: number) {
-  const api = new Api({ baseUrl: API_BASE_URL });
+  const api = createApiClient();
   const response = await api.api.achievementCompanyDetail(companyId);
   return response.data;
 }

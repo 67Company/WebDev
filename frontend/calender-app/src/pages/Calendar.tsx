@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "../styles/Calendar.css";
 import CalendarDisplay from "../components/CalenderDisplay";
 import ActivitySidebar from "../components/ActivitySidebar";
-import { Api } from "../CalendarApi";
+import { createApiClient } from "../services/apiService";
 import {
   Dialog,
   DialogTitle,
@@ -14,8 +14,6 @@ import {
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-
-const API_BASE_URL = "http://localhost:5000";
 
 interface Event {
   id: string;
@@ -29,31 +27,31 @@ interface Event {
 }
 
 async function fetchEmployeeDetails(employeeId: number) {
-  const api = new Api({ baseUrl: API_BASE_URL });
+  const api = createApiClient();
   const response = await api.api.authMeDetail(employeeId);
   return response.data;
 }
 
 async function fetchCompanyEvents(companyId: number) {
-  const api = new Api({ baseUrl: API_BASE_URL });
+  const api = createApiClient();
   const response = await api.api.eventWithCapacityList({ companyId });
   return response.data;
 }
 
 async function fetchJoinedEvents(employeeId: number) {
-  const api = new Api({ baseUrl: API_BASE_URL });
+  const api = createApiClient();
   const response = await api.api.eventJoinedDetail(employeeId);
   return response.data;
 }
 
 async function joinEvent(eventId: number, employeeId: number) {
-  const api = new Api({ baseUrl: API_BASE_URL });
+  const api = createApiClient();
   const response = await api.api.eventJoinCreate(eventId, employeeId);
   return response.ok;
 }
 
 async function leaveEvent(eventId: number, employeeId: number) {
-  const api = new Api({ baseUrl: API_BASE_URL });
+  const api = createApiClient();
   const response = await api.api.eventLeaveDelete(eventId, employeeId);
   return response.ok;
 }

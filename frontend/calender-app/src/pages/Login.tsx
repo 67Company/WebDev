@@ -2,12 +2,10 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Login.css";
 import "../styles/Cards.css";
-import { Api } from "../CalendarApi";
-
-const API_BASE_URL = "http://localhost:5000";
+import { createPublicApiClient } from "../services/apiService";
 
 async function loginUser(email: string, password: string) {
-  const api = new Api({ baseUrl: API_BASE_URL });
+  const api = createPublicApiClient();
   const response = await api.api.authLoginCreate({
     email,
     passwordHash: password,

@@ -2,37 +2,36 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/AdminPanel.css';
 import '../styles/Cards.css';
-import { Api, Achievement, AchievementDTO, Company } from '../CalendarApi';
-
-const API_BASE_URL = "http://localhost:5000";
+import { Achievement, AchievementDTO, Company } from '../CalendarApi';
+import { createAdminApiClient, createApiClient } from '../services/apiService';
 
 // Achievement API Helper Functions
 async function getAllCompanies() {
-  const api = new Api({ baseUrl: API_BASE_URL });
+  const api = createApiClient();
   const response = await api.api.companyList();
   return response;
 }
 
 async function getAllAchievements(companyId: number) {
-  const api = new Api({ baseUrl: API_BASE_URL });
+  const api = createApiClient();
   const response = await api.api.achievementCompanyDetail(companyId);
   return response;
 }
 
 async function createAchievement(achievementData: AchievementDTO, companyId: number) {
-  const api = new Api({ baseUrl: API_BASE_URL });
+  const api = createAdminApiClient();
   const response = await api.api.achievementCreate(achievementData, { companyId });
   return response;
 }
 
 async function updateAchievement(achievementId: number, achievementData: AchievementDTO) {
-  const api = new Api({ baseUrl: API_BASE_URL });
+  const api = createAdminApiClient();
   const response = await api.api.achievementUpdate(achievementId, achievementData);
   return response;
 }
 
 async function deleteAchievement(achievementId: number) {
-  const api = new Api({ baseUrl: API_BASE_URL });
+  const api = createAdminApiClient();
   const response = await api.api.achievementDelete(achievementId);
   return response;
 }

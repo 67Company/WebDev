@@ -2,43 +2,42 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/AdminPanel.css';
 import '../styles/Cards.css';
-import { Api, Event, EventDTO, EmployeeDTO, Company } from '../CalendarApi';
-
-const API_BASE_URL = "http://localhost:5000";
+import { Event, EventDTO, EmployeeDTO, Company } from '../CalendarApi';
+import { createApiClient, createAdminApiClient } from '../services/apiService';
 
 // API Helper Functions
 async function getAllCompanies() {
-  const api = new Api({ baseUrl: API_BASE_URL });
+  const api = createApiClient();
   const response = await api.api.companyList();
   return response;
 }
 
 async function getAllEvents(companyId: number) {
-  const api = new Api({ baseUrl: API_BASE_URL });
+  const api = createApiClient();
   const response = await api.api.eventList({ companyId });
   return response;
 }
 
 async function getEventAttendees(eventId: number) {
-  const api = new Api({ baseUrl: API_BASE_URL });
+  const api = createApiClient();
   const response = await api.api.eventAttendeesList(eventId);
   return response;
 }
 
 async function createEvent(eventData: EventDTO) {
-  const api = new Api({ baseUrl: API_BASE_URL });
+  const api = createAdminApiClient();
   const response = await api.api.eventCreate(eventData);
   return response;
 }
 
 async function updateEvent(eventId: number, eventData: EventDTO) {
-  const api = new Api({ baseUrl: API_BASE_URL });
+  const api = createAdminApiClient();
   const response = await api.api.eventUpdate(eventId, eventData);
   return response;
 }
 
 async function deleteEvent(eventId: number) {
-  const api = new Api({ baseUrl: API_BASE_URL });
+  const api = createAdminApiClient();
   const response = await api.api.eventDelete(eventId);
   return response;
 }
