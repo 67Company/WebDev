@@ -31,7 +31,8 @@ public static class DatabaseSeeder
         
         // Seed events for the company
         SeedEvents(context, company.Id);
-
+        // Seed event attendees for testing
+        SeedEventAttendees(context);
         Console.WriteLine($"✓ Seeded company '{company.Name}' (ID: {company.Id})");
     }
 
@@ -365,5 +366,46 @@ public static class DatabaseSeeder
         context.SaveChanges();
 
         Console.WriteLine($"Seeded {events.Count} events");
+    }
+
+    private static void SeedEventAttendees(CalenderContext context)
+    {
+        // Check if attendees already exist
+        if (context.Attendees.Any())
+        {
+            Console.WriteLine($"Attendees already exist - skipping attendee seed ({context.Attendees.Count()} found)");
+            return;
+        }
+
+        // Get john's employee record
+        var john = context.Employees.FirstOrDefault(e => e.Email == "john.doe@techcorp.com");
+        if (john == null)
+        {
+            Console.WriteLine("John not found - skipping attendee seed");
+            return;
+        }
+
+        // Get the first event (Coffee & Code - on Jan 3)
+        var pastEvent = context.Events
+            .Where(e => e.Title == "Coffee & Code")
+            .FirstOrDefault();
+
+        if (pastEvent == null)
+        {
+            Console.WriteLine("Coffee & Code event not found - skipping attendee seed");
+            return;
+        }
+
+        // Add john as an attendee to the event
+        var attendee = new Attendee
+        {
+            EventId = pastEvent.Id,
+            EmployeeId = john.Id
+        };
+
+        context.Attendees.Add(attendee);
+        context.SaveChanges();
+
+        Console.WriteLine($"✓ Added John (ID: {john.Id}) as attendee to '{pastEvent.Title}' event");
     }
 }

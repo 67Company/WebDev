@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "../styles/Calendar.css";
+import ReviewModal from "./ReviewModal";
 
 interface Event {
   id: string;
@@ -18,15 +19,20 @@ interface EventDetailPanelProps {
   event: Event | null;
   onClose: () => void;
   onLeave: (eventId: string) => Promise<void>;
+  onReview?: (eventId: string, rating: number, content: string) => Promise<void>;
+  currentEmployeeId?: number;
 }
 
 const EventDetailPanel: React.FC<EventDetailPanelProps> = ({
   event,
   onClose,
-  onLeave
+  onLeave,
+  onReview,
+  currentEmployeeId
 }) => {
   const [isLeaving, setIsLeaving] = useState(false);
   const [leaveError, setLeaveError] = useState<string | null>(null);
+  const [showReviewModal, setShowReviewModal] = useState(false);
 
   if (!event) return null;
 
@@ -46,6 +52,10 @@ const EventDetailPanel: React.FC<EventDetailPanelProps> = ({
     });
   };
 
+  const isEventEnded = () => {
+    return new Date() > event.end;
+  };
+
   const handleLeaveEvent = async () => {
     setIsLeaving(true);
     setLeaveError(null);
@@ -57,6 +67,18 @@ const EventDetailPanel: React.FC<EventDetailPanelProps> = ({
       setLeaveError("Failed to leave event. Please try again.");
     } finally {
       setIsLeaving(false);
+    }
+  };
+
+  const handleReviewSubmit = async (rating: number, content: string) => {
+    if (!onReview || !currentEmployeeId) return;
+    
+    try {
+      await onReview(event.id, rating, content);
+      setShowReviewModal(false);
+    } catch (err) {
+      console.error('Failed to submit review:', err);
+      throw err;
     }
   };
 
@@ -105,6 +127,14 @@ const EventDetailPanel: React.FC<EventDetailPanelProps> = ({
           )}
 
           <div className="event-detail-actions">
+            {isEventEnded() && onReview && currentEmployeeId ? (
+              <button 
+                className="review-button"
+                onClick={() => setShowReviewModal(true)}
+              >
+                Leave a Review
+              </button>
+            ) : null}
             <button 
               className="leave-event-button"
               onClick={handleLeaveEvent}
@@ -117,6 +147,16 @@ const EventDetailPanel: React.FC<EventDetailPanelProps> = ({
             </button>
           </div>
         </div>
+
+        {showReviewModal && currentEmployeeId && (
+          <ReviewModal
+            eventId={event.id}
+            eventTitle={event.title}
+            employeeId={currentEmployeeId}
+            onClose={() => setShowReviewModal(false)}
+            onSubmit={handleReviewSubmit}
+          />
+        )}
       </div>
     </div>
   );

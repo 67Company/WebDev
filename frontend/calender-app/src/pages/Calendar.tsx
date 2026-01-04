@@ -3,7 +3,8 @@ import "../styles/Calendar.css";
 import CalendarDisplay from "../components/CalenderDisplay";
 import ActivitySidebar from "../components/ActivitySidebar";
 import ReservationPanel from "../components/ReservationPanel";
-import { Api, Room, Timeslot } from "../CalendarApi";
+import ReviewModal from "../components/ReviewModal";
+import { Api, Room, Timeslot, ContentType } from "../CalendarApi";
 
 const API_BASE_URL = "http://localhost:5000";
 
@@ -22,6 +23,16 @@ interface Event {
   timeslotId?: number;
   description?: string;
   location?: string;
+}
+
+interface ReviewResponse {
+  id: number;
+  eventId: number;
+  employeeId: number;
+  employeeEmail: string;
+  content: string;
+  rating: number;
+  createdAt: string;
 }
 
 async function fetchEmployeeDetails(employeeId: number) {
@@ -52,6 +63,19 @@ async function leaveEvent(eventId: number, employeeId: number) {
   const api = new Api({ baseUrl: API_BASE_URL });
   const response = await api.api.eventLeaveDelete(eventId, employeeId);
   return response.ok;
+}
+
+async function submitReview(eventId: number, employeeId: number, rating: number, content: string): Promise<ReviewResponse> {
+  const api = new Api({ baseUrl: API_BASE_URL });
+  const response = await api.request<ReviewResponse>({
+    path: `/api/Review`,
+    method: "POST",
+    body: { eventId, employeeId, rating, content },
+    type: ContentType.Json,
+    format: "json",
+  });
+
+  return response.data;
 }
 
 async function fetchRooms(companyId: number) {
@@ -94,6 +118,7 @@ const Calendar: React.FC = () => {
   const [selectedBooking, setSelectedBooking] = useState<Event | null>(null);
   const [allReservations, setAllReservations] = useState<any[]>([]);
   const [companyId, setCompanyId] = useState<number | null>(null);
+  const [showReviewModal, setShowReviewModal] = useState(false);
 
   const handleJoinEvent = async (eventId: string) => {
     if (!currentEmployeeId || !companyId) return;
@@ -179,6 +204,19 @@ const Calendar: React.FC = () => {
       }
     } catch (err) {
       console.error('Failed to leave event:', err);
+    }
+  };
+
+  const handleReviewSubmit = async (rating: number, content: string) => {
+    if (!currentEmployeeId || !selectedEvent) return;
+
+    try {
+      const numericId = selectedEvent.id.replace('event-', '');
+      await submitReview(parseInt(numericId), currentEmployeeId, rating, content);
+      setShowReviewModal(false);
+    } catch (err) {
+      console.error('Failed to submit review:', err);
+      throw err;
     }
   };
 
@@ -567,6 +605,18 @@ const Calendar: React.FC = () => {
                 </span>
               </div>
               <div className="form-actions" style={{ marginTop: '16px' }}>
+                {new Date() > selectedEvent.end && (
+                  <button
+                    type="button"
+                    className="booking-button"
+                    style={{
+                      background: '#8b5cf6'
+                    }}
+                    onClick={() => setShowReviewModal(true)}
+                  >
+                    Leave a Review
+                  </button>
+                )}
                 <button
                   type="button"
                   className="booking-button"
@@ -584,6 +634,17 @@ const Calendar: React.FC = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Review Modal */}
+      {showReviewModal && selectedEvent && currentEmployeeId && (
+        <ReviewModal
+          eventId={selectedEvent.id}
+          eventTitle={selectedEvent.title}
+          employeeId={currentEmployeeId}
+          onClose={() => setShowReviewModal(false)}
+          onSubmit={handleReviewSubmit}
+        />
       )}
     </main>
   );

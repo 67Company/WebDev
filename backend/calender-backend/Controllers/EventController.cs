@@ -38,6 +38,15 @@ public class EventController : ControllerBase
         return Ok(ev);
     }
 
+    [HttpGet("{id}/details")]
+    public async Task<ActionResult<EventWithDetailsDTO>> GetWithDetails(int id)
+    {
+        var ev = await _eventService.GetEventWithDetailsAsync(id);
+        if (ev == null)
+            return NotFound();
+        return Ok(ev);
+    }
+
     [HttpPost]
     public async Task<ActionResult> Create([FromBody] EventDTO eventDto)
     {
