@@ -2,18 +2,8 @@ import React, { useState, useEffect } from "react";
 import "../styles/Calendar.css";
 import CalendarDisplay from "../components/CalenderDisplay";
 import ActivitySidebar from "../components/ActivitySidebar";
-import { Api } from "../CalendarApi";
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  Typography
-} from "@mui/material";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import ReservationPanel from "../components/ReservationPanel";
+import { Api, Room, Timeslot } from "../CalendarApi";
 
 const API_BASE_URL = "http://localhost:5000";
 
@@ -26,6 +16,10 @@ interface Event {
   capacity?: number;
   currentAttendees?: number;
   isFull?: boolean;
+  reservationId?: number;
+  roomName?: string;
+  roomId?: number;
+  timeslotId?: number;
 }
 
 async function fetchEmployeeDetails(employeeId: number) {
@@ -58,22 +52,45 @@ async function leaveEvent(eventId: number, employeeId: number) {
   return response.ok;
 }
 
+async function fetchRooms(companyId: number) {
+  const api = new Api({ baseUrl: API_BASE_URL });
+  const response = await api.api.roomCompanyDetail(companyId);
+  return response.data ?? [];
+}
+
+async function fetchTimeslots() {
+  const api = new Api({ baseUrl: API_BASE_URL });
+  const response = await api.api.timeslotList();
+  return response.data ?? [];
+}
+
+async function fetchEmployeeReservations(employeeId: number, companyId: number) {
+  const api = new Api({ baseUrl: API_BASE_URL });
+  const response = await api.api.reservationEmployeeDetail(employeeId, { companyId });
+  return response.data ?? [];
+}
+
+async function fetchCompanyReservations(companyId: number) {
+  const api = new Api({ baseUrl: API_BASE_URL });
+  const response = await api.api.reservationList({ companyId });
+  return response.data ?? [];
+}
+
 const Calendar: React.FC = () => {
   const [calendarEvents, setCalendarEvents] = useState<Event[]>([]); // Events shown in calendar (joined only)
   const [allEvents, setAllEvents] = useState<Event[]>([]); // All company events for sidebar
   const [joinedEventIds, setJoinedEventIds] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [open, setOpen] = useState(false);
   const [currentEmployeeId, setCurrentEmployeeId] = useState<number | null>(null);
-
-  const handleDayClick = (date: Date | null) => {
-    setSelectedDate(date);
-    setOpen(true);
-  };
-
-  const handleClose = () => setOpen(false);
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [timeslots, setTimeslots] = useState<Timeslot[]>([]);
+  const [selectedRoomId, setSelectedRoomId] = useState<number | "">("");
+  const [selectedTimeslotId, setSelectedTimeslotId] = useState<number | "">("");
+  const [bookingDate, setBookingDate] = useState<Date | null>(new Date());
+  const [selectedBooking, setSelectedBooking] = useState<Event | null>(null);
+  const [allReservations, setAllReservations] = useState<any[]>([]);
+  const [companyId, setCompanyId] = useState<number | null>(null);
 
   const handleJoinEvent = async (eventId: string) => {
     if (!currentEmployeeId) return;
@@ -146,6 +163,18 @@ const Calendar: React.FC = () => {
         
         // Fetch events the employee has joined for calendar
         const joinedEventsData = await fetchJoinedEvents(user.id);
+
+        // Fetch rooms and timeslots for booking
+        const [roomsData, timeslotsData, employeeReservationsData, companyReservationsData] = await Promise.all([
+          fetchRooms(employeeData.companyId),
+          fetchTimeslots(),
+          fetchEmployeeReservations(user.id, employeeData.companyId),
+          fetchCompanyReservations(employeeData.companyId)
+        ]);
+        
+        // Store all company reservations for availability checking
+        setAllReservations(companyReservationsData);
+        setCompanyId(employeeData.companyId ?? null);
         
         // Transform all events with capacity info
         const transformedAllEvents: Event[] = (allEventsData || []).map((event: any) => ({
@@ -168,12 +197,46 @@ const Calendar: React.FC = () => {
           color: '#3b82f6'
         }));
         
+        // Transform reservations into events
+        const transformedReservations: Event[] = (employeeReservationsData || []).map((reservation: any) => {
+          const timeslot = timeslotsData.find(t => t.id === reservation.timeslotId);
+          const room = roomsData.find(r => r.id === reservation.roomId);
+          
+          if (!timeslot) return null;
+          
+          const startDate = new Date(reservation.date);
+          const startTime = new Date(timeslot.startTime || startDate);
+          const endTime = new Date(timeslot.endTime || startDate);
+          
+          startDate.setHours(startTime.getHours(), startTime.getMinutes(), 0, 0);
+          const endDate = new Date(startDate);
+          endDate.setHours(endTime.getHours(), endTime.getMinutes(), 0, 0);
+          
+          return {
+            id: `reservation-${reservation.id}`,
+            title: room?.name ? `Booked: ${room.name}` : 'Booked Room',
+            start: startDate,
+            end: endDate,
+            color: '#10b981', // green for bookings
+            reservationId: reservation.id,
+            roomName: room?.name || 'Unknown Room',
+            roomId: reservation.roomId,
+            timeslotId: reservation.timeslotId
+          };
+        }).filter(Boolean) as Event[];
+        
         // Track which events are joined
         const joinedIds = new Set(transformedJoinedEvents.map(e => e.id));
         
         setAllEvents(transformedAllEvents);
-        setCalendarEvents(transformedJoinedEvents);
+        // Combine events and reservations for calendar display
+        setCalendarEvents([...transformedJoinedEvents, ...transformedReservations]);
         setJoinedEventIds(joinedIds);
+        setRooms(roomsData);
+        setTimeslots(timeslotsData);
+        if (timeslotsData.length && selectedTimeslotId === "") {
+          setSelectedTimeslotId(timeslotsData[0].id ?? "");
+        }
         setError(null);
       } catch (err) {
         console.error('Failed to load events:', err);
@@ -185,6 +248,85 @@ const Calendar: React.FC = () => {
 
     loadEvents();
   }, []);
+
+  // Periodically refresh company reservations so availability updates when others book
+  useEffect(() => {
+    if (!companyId) return;
+    let isMounted = true;
+
+    const load = async () => {
+      const data = await fetchCompanyReservations(companyId);
+      if (isMounted) setAllReservations(data);
+    };
+
+    load();
+    const interval = setInterval(load, 15000);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, [companyId]);
+
+  const refreshCompanyReservations = async (companyIdValue: number) => {
+    try {
+      const data = await fetchCompanyReservations(companyIdValue);
+      setAllReservations(data);
+    } catch (err) {
+      console.error('Failed to refresh reservations:', err);
+    }
+  };
+
+  const handleCancelReservation = async () => {
+    if (!currentEmployeeId || !selectedBooking?.reservationId) return;
+
+    // Check if reservation is more than 24 hours away
+    const hoursUntilReservation = (selectedBooking.start.getTime() - new Date().getTime()) / (1000 * 60 * 60);
+    
+    if (hoursUntilReservation < 24) {
+      alert('Reservations can only be cancelled more than 24 hours in advance');
+      return;
+    }
+
+    if (!window.confirm('Are you sure you want to cancel this reservation?')) {
+      return;
+    }
+
+    try {
+      const api = new Api({ baseUrl: API_BASE_URL });
+      const response = await api.api.reservationDelete(
+        selectedBooking.reservationId,
+        { employeeId: currentEmployeeId }
+      );
+
+      if (response.ok) {
+        // Remove from calendar
+        setCalendarEvents(prev => prev.filter(e => e.id !== selectedBooking.id));
+        // Remove from all reservations
+        setAllReservations(prev => prev.filter(r => r.id !== selectedBooking.reservationId));
+        setSelectedBooking(null);
+        alert('Reservation cancelled successfully');
+      } else {
+        const errorData = await response.json();
+        alert(errorData.message || 'Failed to cancel reservation');
+      }
+    } catch (err: any) {
+      console.error('Cancel reservation error:', err);
+      alert(err?.message || 'Failed to cancel reservation');
+    }
+  };
+
+  const formatTime = (value?: string) => {
+    if (!value) return '';
+    const date = new Date(value);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
+  const getLocalDateString = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
   if (loading) {
     return (
@@ -208,15 +350,110 @@ const Calendar: React.FC = () => {
 
   return (
     <main className="calendar-container">
-      <div style={{ display: 'flex' }}>
-        <CalendarDisplay events={calendarEvents} />
-        <ActivitySidebar 
-          events={allEvents} 
-          joinedEventIds={joinedEventIds}
-          onJoinEvent={handleJoinEvent}
-          onLeaveEvent={handleLeaveEvent}
+      <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
+        <CalendarDisplay 
+          events={calendarEvents}
+          timeslots={timeslots}
+          onSlotSelect={({ date, timeslotId }) => {
+            setBookingDate(date);
+            if (timeslotId !== undefined) {
+              setSelectedTimeslotId(timeslotId);
+            }
+          }}
+          onEventClick={(event) => {
+            // Only show modal for reservations
+            if (event.id.startsWith('reservation-')) {
+              setSelectedBooking(event);
+            }
+          }}
         />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', width: '360px' }}>
+          <ActivitySidebar 
+            events={allEvents} 
+            joinedEventIds={joinedEventIds}
+            onJoinEvent={handleJoinEvent}
+            onLeaveEvent={handleLeaveEvent}
+          />
+          <ReservationPanel
+            currentEmployeeId={currentEmployeeId}
+            rooms={rooms}
+            timeslots={timeslots}
+            selectedRoomId={selectedRoomId}
+            selectedTimeslotId={selectedTimeslotId}
+            bookingDate={bookingDate}
+            allReservations={allReservations}
+            companyId={companyId}
+            onRoomSelect={setSelectedRoomId}
+            onTimeslotSelect={setSelectedTimeslotId}
+            onDateChange={setBookingDate}
+            onBookingSuccess={(reservation, event) => {
+              setCalendarEvents(prev => [...prev, event]);
+              setAllReservations(prev => [...prev, reservation]);
+              if (companyId) {
+                refreshCompanyReservations(companyId);
+              }
+            }}
+            onCalendarEventsUpdate={setCalendarEvents}
+          />
+        </div>
       </div>
+
+      {/* Booking Details Modal */}
+      {selectedBooking && (
+        <div className="modal-overlay" onClick={() => setSelectedBooking(null)}>
+          <div className="modal-content booking-card" onClick={(e) => e.stopPropagation()}>
+            <div className="booking-header">
+              <h3>Booking Details</h3>
+              <button 
+                className="modal-close"
+                onClick={() => setSelectedBooking(null)}
+                aria-label="Close"
+              >
+                ×
+              </button>
+            </div>
+            <div className="booking-details">
+              <div className="detail-row">
+                <span className="detail-label">Room:</span>
+                <span className="detail-value">{selectedBooking.roomName}</span>
+              </div>
+              <div className="detail-row">
+                <span className="detail-label">Date:</span>
+                <span className="detail-value">
+                  {selectedBooking.start.toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  })}
+                </span>
+              </div>
+              <div className="detail-row">
+                <span className="detail-label">Time:</span>
+                <span className="detail-value">
+                  {formatTime(selectedBooking.start.toISOString())} - {formatTime(selectedBooking.end.toISOString())}
+                </span>
+              </div>
+              <div className="form-actions" style={{ marginTop: '16px' }}>
+                <button
+                  type="button"
+                  className="booking-button"
+                  style={{
+                    background: ((selectedBooking.start.getTime() - new Date().getTime()) / (1000 * 60 * 60)) < 24 ? '#cbd5e0' : '#ef4444',
+                    cursor: ((selectedBooking.start.getTime() - new Date().getTime()) / (1000 * 60 * 60)) < 24 ? 'not-allowed' : 'pointer'
+                  }}
+                  disabled={((selectedBooking.start.getTime() - new Date().getTime()) / (1000 * 60 * 60)) < 24}
+                  onClick={handleCancelReservation}
+                >
+                  {((selectedBooking.start.getTime() - new Date().getTime()) / (1000 * 60 * 60)) < 24 
+                    ? 'Cannot cancel (less than 24h)' 
+                    : 'Cancel Reservation'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 };

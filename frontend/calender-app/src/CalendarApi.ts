@@ -248,6 +248,15 @@ export interface Reservation {
   company?: Company;
 }
 
+export interface BookReservationRequest {
+  /** @format date-time */
+  date?: string;
+  /** @format int32 */
+  timeslotId?: number;
+  /** @format int32 */
+  roomId?: number;
+}
+
 export interface Room {
   /** @format int32 */
   id?: number;
@@ -1191,6 +1200,25 @@ export class Api<
      * No description
      *
      * @tags Reservation
+     * @name ReservationBookCreate
+     * @request POST:/api/Reservation/book
+     */
+    reservationBookCreate: (
+      data: BookReservationRequest,
+      params: RequestParams = {},
+    ) =>
+      this.request<Reservation, any>({
+        path: `/api/Reservation/book`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Reservation
      * @name ReservationDetail
      * @request GET:/api/Reservation/{id}
      */
@@ -1238,6 +1266,29 @@ export class Api<
       this.request<void, any>({
         path: `/api/Reservation/room/${roomId}/employee/${employeeId}/date/${date}`,
         method: "DELETE",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Reservation
+     * @name ReservationDelete
+     * @request DELETE:/api/Reservation/{reservationId}
+     */
+    reservationDelete: (
+      reservationId: number,
+      query: {
+        /** @format int32 */
+        employeeId: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<{ message?: string }, any>({
+        path: `/api/Reservation/${reservationId}`,
+        method: "DELETE",
+        query: query,
+        format: "json",
         ...params,
       }),
 

@@ -13,3 +13,20 @@ public class Reservation
     public Timeslot? Timeslot { get; set; }
     public Company? Company { get; set; }
 }
+
+public class ReservationResultDTO
+{
+    public int Id { get; set; }
+    public DateTime Date { get; set; }
+    public int EmployeeId { get; set; }
+    public int RoomId { get; set; }
+    public int TimeslotId { get; set; }
+    public int CompanyId { get; set; }
+}
+
+public class BookReservationRequest
+{
+    public DateTime Date { get; set; }
+    public int TimeslotId { get; set; }
+    public int RoomId { get; set; }
+}

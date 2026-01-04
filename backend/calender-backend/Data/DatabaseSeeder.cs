@@ -18,6 +18,10 @@ public static class DatabaseSeeder
 
         // Seed company
         var company = SeedCompany(context);
+
+        // Seed supporting data for reservations
+        SeedRooms(context, company.Id);
+        SeedTimeslots(context);
         
         // Seed achievements for the company
         SeedAchievements(context, company.Id);
@@ -44,6 +48,59 @@ public static class DatabaseSeeder
         context.SaveChanges();
 
         return company;
+    }
+
+    private static void SeedRooms(CalenderContext context, int companyId)
+    {
+        if (context.Rooms.Any(r => r.CompanyId == companyId))
+        {
+            Console.WriteLine("Rooms already exist - skipping room seed");
+            return;
+        }
+
+        var rooms = new List<Room>
+        {
+            new Room { Name = "Conference Room A", Capacity = 12, CompanyId = companyId },
+            new Room { Name = "Conference Room B", Capacity = 8, CompanyId = companyId },
+            new Room { Name = "Executive Boardroom", Capacity = 16, CompanyId = companyId },
+            new Room { Name = "Focus Room", Capacity = 4, CompanyId = companyId },
+            new Room { Name = "Training Lab", Capacity = 20, CompanyId = companyId }
+        };
+
+        context.Rooms.AddRange(rooms);
+        context.SaveChanges();
+
+        Console.WriteLine($"✓ Seeded {rooms.Count} rooms");
+    }
+
+    private static void SeedTimeslots(CalenderContext context)
+    {
+        if (context.Timeslots.Any())
+        {
+            Console.WriteLine($"Timeslots already exist - skipping seed ({context.Timeslots.Count()} found)");
+            return;
+        }
+
+        var timeslots = new List<Timeslot>();
+        var start = DateTime.Today.Date.AddHours(8);
+        var end = DateTime.Today.Date.AddHours(18);
+
+        var current = start;
+        while (current < end)
+        {
+            timeslots.Add(new Timeslot
+            {
+                StartTime = current,
+                EndTime = current.AddMinutes(30)
+            });
+
+            current = current.AddMinutes(30);
+        }
+
+        context.Timeslots.AddRange(timeslots);
+        context.SaveChanges();
+
+        Console.WriteLine($"✓ Seeded {timeslots.Count} timeslots");
     }
 
     private static void SeedAchievements(CalenderContext context, int companyId)
