@@ -49,6 +49,11 @@ public class ReservationService : IReservationService
         if (reservation != null)
         {
             _context.Reservations.Remove(reservation);
+            var employee = await _context.Employees.FirstOrDefaultAsync(e => e.Id == employeeId && !e.IsDeleted);
+            if (employee != null && employee.RoomsBooked > 0)
+            {
+                employee.RoomsBooked -= 1;
+            }
             await _context.SaveChangesAsync();
             return true;
         }
@@ -82,6 +87,11 @@ public class ReservationService : IReservationService
             return (false, "Reservations can only be cancelled more than 24 hours in advance");
 
         _context.Reservations.Remove(reservation);
+        var employee = await _context.Employees.FirstOrDefaultAsync(e => e.Id == employeeId && !e.IsDeleted);
+        if (employee != null && employee.RoomsBooked > 0)
+        {
+            employee.RoomsBooked -= 1;
+        }
         await _context.SaveChangesAsync();
 
         return (true, "Reservation cancelled successfully");
@@ -181,8 +191,59 @@ public class ReservationService : IReservationService
 
         await _context.Reservations.AddAsync(reservation);
         employee.RoomsBooked += 1;
+        await AwardStatAchievementsAsync(employee, "roomsbooked");
         await _context.SaveChangesAsync();
 
         return (true, "Reservation created", reservation);
+    }
+
+    // Evaluate and assign achievements for a stat if thresholds are met
+    private async Task AwardStatAchievementsAsync(Employee employee, string statName)
+    {
+        var statKey = statName.ToLower();
+        int currentValue = statKey switch
+        {
+            "roomsbooked" => employee.RoomsBooked,
+            _ => 0
+        };
+
+        if (currentValue <= 0)
+        {
+            return;
+        }
+
+        var eligibleAchievements = await _context.Achievements
+            .Where(a => a.CompanyId == employee.CompanyId
+                        && a.StatToTrack.ToLower() == statKey
+                        && a.Threshold <= currentValue)
+            .ToListAsync();
+
+        if (!eligibleAchievements.Any())
+        {
+            return;
+        }
+
+        var alreadyEarnedIds = await _context.EmployeeAchievements
+            .Where(ea => ea.EmployeeId == employee.Id)
+            .Select(ea => ea.AchievementId)
+            .ToListAsync();
+
+        foreach (var achievement in eligibleAchievements)
+        {
+            if (alreadyEarnedIds.Contains(achievement.Id))
+            {
+                continue;
+            }
+
+            var earned = new EmployeeAchievement
+            {
+                AchievementId = achievement.Id,
+                EmployeeId = employee.Id,
+                CompanyId = employee.CompanyId,
+                DateAchieved = DateTime.UtcNow
+            };
+
+            await _context.EmployeeAchievements.AddAsync(earned);
+        }
     }
 }

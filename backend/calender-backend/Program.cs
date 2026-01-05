@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using calender_backend.Data;
 using calender_backend.Models;
+using calender_backend.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -78,6 +79,9 @@ app.UseCors("AllowFrontend");
 
 // Enable session middleware (must be before UseAuthorization)
 app.UseSession();
+
+// Require login for write operations (POST/PUT/PATCH/DELETE)
+app.UseMiddleware<SessionAuthMiddleware>();
 
 app.UseAuthorization();
 

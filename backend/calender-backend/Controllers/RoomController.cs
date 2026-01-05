@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using calender_backend.Models;
 using calender_backend.Data;
+using calender_backend.Filters;
 
 namespace calender_backend.Controllers;
 
@@ -48,6 +49,7 @@ public class RoomController : ControllerBase
 	}
 
 	[HttpPost]
+	[AdminOnly]
 	public async Task<ActionResult> Create([FromBody] RoomDTO roomDto)
 	{
 		var room = new Room
@@ -62,6 +64,7 @@ public class RoomController : ControllerBase
 	}
 
 	[HttpPut("{id}")]
+	[AdminOnly]
 	public async Task<ActionResult> Update(int id, [FromBody] RoomDTO roomDto)
 	{
 		var room = new Room
@@ -76,6 +79,7 @@ public class RoomController : ControllerBase
 	}
 
 	[HttpDelete("{id}")]
+	[AdminOnly]
 	public async Task<ActionResult> Delete(int id)
 	{
 		var result = await _roomService.DeleteRoomAsync(id);
