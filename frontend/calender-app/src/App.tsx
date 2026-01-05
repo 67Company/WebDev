@@ -72,9 +72,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/calendar" element={<Calendar />} />
-          <Route path="/office-attendance" element={
-            user ? <OfficeAttendance /> : <Navigate to="/login" replace />
-          } />
+          <Route path="/office-attendance" element={<OfficeAttendance />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/achievements" element={<Achievements />} />
           <Route path="/admin" element={
