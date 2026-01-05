@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+
 namespace calender_backend.Filters;
 
 public class AdminOnlyAttribute : Attribute, IAsyncAuthorizationFilter
