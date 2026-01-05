@@ -131,6 +131,10 @@ public class EmployeeService : IEmployeeService
                 isIncremented = false;
                 break;
         }
+        if (isIncremented)
+        {
+            await _context.SaveChangesAsync();
+        }
         return isIncremented;
     }
     
@@ -186,6 +190,10 @@ public class EmployeeService : IEmployeeService
             default:
                 isDecremented = false;
                 break;
+        }
+        if (isDecremented)
+        {
+            await _context.SaveChangesAsync();
         }
         return isDecremented;
     }

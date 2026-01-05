@@ -5,10 +5,12 @@ using Microsoft.EntityFrameworkCore;
 public class EventService : IEventService
 {
     private readonly CalenderContext _context;
+    private readonly EmployeeService _employeeService;
 
     public EventService(CalenderContext context)
     {
         _context = context;
+        _employeeService = new EmployeeService(context);
     }
 
     public async Task<IEnumerable<Event>> GetAllEventsAsync(int companyId)
@@ -104,6 +106,19 @@ public class EventService : IEventService
 
         await _context.Attendees.AddAsync(attendee);
         await _context.SaveChangesAsync();
+        
+        // Increment EventsAttended
+        await _employeeService.IncrementEmployeeStatAsync("eventsattended", employeeId, 1);
+        
+        // Update LargestTeamSize if this event has more attendees
+        var employee = await _context.Employees.FindAsync(employeeId);
+        var updatedAttendeeCount = (eventEntry.Attendees?.Count ?? 0) + 1; // +1 for the attendee we just added
+        if (employee != null && updatedAttendeeCount > employee.LargestTeamSize)
+        {
+            employee.LargestTeamSize = updatedAttendeeCount;
+            await _context.SaveChangesAsync();
+        }
+        
         return true;
     }
 
@@ -126,6 +141,10 @@ public class EventService : IEventService
 
         _context.Attendees.Remove(attendee);
         await _context.SaveChangesAsync();
+        
+        // Decrement EventsAttended
+        await _employeeService.DecrementEmployeeStatAsync("eventsattended", employeeId, 1);
+        
         return true;
     }
 
