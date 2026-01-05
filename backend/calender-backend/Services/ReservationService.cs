@@ -5,10 +5,12 @@ using Microsoft.EntityFrameworkCore;
 public class ReservationService : IReservationService
 {
     private readonly CalenderContext _context;
+    private readonly EmployeeService _employeeService;
 
     public ReservationService(CalenderContext context)
     {
         _context = context;
+        _employeeService = new EmployeeService(context);
     }
 
     public async Task<IEnumerable<Reservation>> GetAllReservationsAsync(int companyId)
@@ -93,6 +95,17 @@ public class ReservationService : IReservationService
             employee.RoomsBooked -= 1;
         }
         await _context.SaveChangesAsync();
+        
+        // Decrement RoomsBooked
+        await _employeeService.DecrementEmployeeStatAsync("roomsbooked", employeeId, 1);
+        
+        // Decrement MeetingsAttended
+        await _employeeService.DecrementEmployeeStatAsync("meetingsattended", employeeId, 1);
+        
+        // Decrement TotalMeetingTime (calculate based on timeslot duration)
+        var timeslotDuration = (reservation.Timeslot.EndTime - reservation.Timeslot.StartTime).TotalHours;
+        int timeIncrements = (int)Math.Ceiling(timeslotDuration / 0.5); // Each 0.5 hour = 1 increment
+        await _employeeService.DecrementEmployeeStatAsync("totalmeetingtime", employeeId, timeIncrements);
 
         return (true, "Reservation cancelled successfully");
     }
@@ -193,6 +206,14 @@ public class ReservationService : IReservationService
         employee.RoomsBooked += 1;
         await AwardStatAchievementsAsync(employee, "roomsbooked");
         await _context.SaveChangesAsync();
+        
+        // Increment MeetingsAttended
+        await _employeeService.IncrementEmployeeStatAsync("meetingsattended", employeeId, 1);
+        
+        // Increment TotalMeetingTime (calculate based on timeslot duration)
+        var timeslotDuration = (timeslot.EndTime - timeslot.StartTime).TotalHours;
+        int timeIncrements = (int)Math.Ceiling(timeslotDuration / 0.5); // Each 0.5 hour = 1 increment
+        await _employeeService.IncrementEmployeeStatAsync("totalmeetingtime", employeeId, timeIncrements);
 
         return (true, "Reservation created", reservation);
     }
