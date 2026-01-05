@@ -145,6 +145,7 @@ const OfficeAttendance: React.FC = () => {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify(bookingRequest),
       });
 
@@ -183,6 +184,7 @@ const OfficeAttendance: React.FC = () => {
         `${API_BASE_URL}/api/OfficeAttendance/${attendanceId}/employee/${currentEmployeeId}`,
         {
           method: "DELETE",
+          credentials: "include",
         }
       );
 
