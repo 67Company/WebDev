@@ -1,0 +1,242 @@
+/* Shared CSS Variables and Reusable Styles */
+
+:root {
+  /* Color Palette */
+  --primary-gradient-start: #667eea;
+  --primary-gradient-end: #764ba2;
+  --primary-color: #667eea;
+  --primary-dark: #764ba2;
+  --secondary-color: #764ba2;
+  --accent-color: #ef4444;
+  
+  /* Background Colors */
+  --bg-white-98: rgba(255, 255, 255, 0.98);
+  --bg-white-95: rgba(255, 255, 255, 0.95);
+  --bg-white-90: rgba(255, 255, 255, 0.9);
+  --bg-white-80: rgba(255, 255, 255, 0.8);
+  --bg-white-70: rgba(255, 255, 255, 0.7);
+  --bg-white-60: rgba(255, 255, 255, 0.6);
+  --bg-white-40: rgba(255, 255, 255, 0.4);
+  --bg-primary-02: rgba(102, 126, 234, 0.02);
+  --bg-primary-05: rgba(102, 126, 234, 0.05);
+  --bg-primary-10: rgba(102, 126, 234, 0.1);
+  --bg-primary-15: rgba(102, 126, 234, 0.15);
+  --bg-primary-20: rgba(102, 126, 234, 0.2);
+  --bg-secondary-10: rgba(118, 75, 162, 0.1);
+  --bg-secondary-20: rgba(118, 75, 162, 0.2);
+  
+  /* Border Colors */
+  --border-primary-10: rgba(102, 126, 234, 0.1);
+  --border-primary-20: rgba(102, 126, 234, 0.2);
+  --border-primary-30: rgba(102, 126, 234, 0.3);
+  --border-white-20: rgba(255, 255, 255, 0.2);
+  --border-white-30: rgba(255, 255, 255, 0.3);
+  --border-black-08: rgba(0, 0, 0, 0.08);
+  --border-black-10: rgba(0, 0, 0, 0.1);
+  --border-light: rgba(0, 0, 0, 0.08);
+  
+  /* Text Colors */
+  --text-primary: #2d3748;
+  --text-secondary: #718096;
+  --text-light: #a0aec0;
+  
+  /* Shadow Colors */
+  --shadow-light: rgba(0, 0, 0, 0.1);
+  --shadow-medium: rgba(0, 0, 0, 0.15);
+  --shadow-inset: rgba(0, 0, 0, 0.1);
+  --shadow-primary: rgba(102, 126, 234, 0.3);
+  --shadow-primary-light: rgba(102, 126, 234, 0.2);
+  --shadow-primary-medium: rgba(102, 126, 234, 0.4);
+  --shadow-primary-strong: rgba(102, 126, 234, 0.5);
+  --shadow-accent: rgba(239, 68, 68, 0.6);
+  
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-round: 50%;
+  
+  /* Font Sizes */
+  --font-xs: 0.625rem;
+  --font-sm: 0.75rem;
+  --font-base: 0.875rem;
+  --font-md: 1rem;
+  --font-lg: 1.25rem;
+  --font-xl: 1.5rem;
+  
+  /* Font Weights */
+  --weight-normal: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  
+  /* Transitions */
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+  --transition-base: 0.3s ease;
+  --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.5s ease;
+  
+  /* Blur Effects */
+  --blur-sm: blur(10px);
+  --blur-md: blur(15px);
+  --blur-lg: blur(20px);
+  
+  /* Z-Index Layers */
+  --z-base: 1;
+  --z-event: 1;
+  --z-event-hover: 2;
+  --z-raised: 2;
+  --z-current-time: 5;
+  --z-dropdown: 5;
+  --z-sticky: 10;
+  --z-overlay: 15;
+  --z-modal: 20;
+  
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-accent: linear-gradient(90deg, #ef4444, #f97316);
+  
+  /* Shadow Values */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 4px 16px rgba(0, 0, 0, 0.25);
+  --shadow-primary: 0 4px 12px rgba(102, 126, 234, 0.4);
+  --shadow-primary-light: 0 4px 12px rgba(102, 126, 234, 0.3);
+  
+  /* Font Family */
+  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+/* Reusable Gradient Backgrounds */
+.gradient-primary {
+  background: linear-gradient(135deg, var(--primary-gradient-start), var(--primary-gradient-end));
+}
+
+.gradient-primary-subtle {
+  background: linear-gradient(135deg, var(--bg-primary-05), var(--bg-primary-10));
+}
+
+.gradient-primary-medium {
+  background: linear-gradient(135deg, var(--bg-primary-10), var(--bg-primary-15));
+}
+
+/* Glass Morphism Effects */
+.glass-effect {
+  backdrop-filter: var(--blur-md);
+  background: var(--bg-white-80);
+}
+
+.glass-effect-strong {
+  backdrop-filter: var(--blur-lg);
+  background: var(--bg-white-95);
+}
+
+/* Shadow Utilities */
+.shadow-sm {
+  box-shadow: 0 2px 4px var(--shadow-light);
+}
+
+.shadow-md {
+  box-shadow: 0 2px 8px var(--shadow-light);
+}
+
+.shadow-lg {
+  box-shadow: 0 4px 16px var(--shadow-medium);
+}
+
+.shadow-primary {
+  box-shadow: 0 2px 8px var(--shadow-primary);
+}
+
+.shadow-primary-lg {
+  box-shadow: 0 4px 16px var(--shadow-primary-light);
+}
+
+/* Hover Effects */
+.hover-lift {
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+/* Scrollbar Styles */
+.custom-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-primary-30) transparent;
+}
+
+.custom-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+  background: var(--border-primary-30);
+  border-radius: 3px;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--border-primary-30);
+}
+
+/* Hide Scrollbar */
+.hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Button Reset */
+.btn-reset {
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
+}
+
+/* Flexbox Utilities */
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Text Utilities */
+.text-gradient {
+  background: linear-gradient(135deg, var(--primary-gradient-start), var(--primary-gradient-end));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
