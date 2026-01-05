@@ -128,7 +128,6 @@ const Calendar: React.FC = () => {
   };
 
   const handleClose = () => setOpen(false);
-  const [currentEmployeeId, setCurrentEmployeeId] = useState<number | null>(null);
   const [rooms, setRooms] = useState<Room[]>([]);
   const [timeslots, setTimeslots] = useState<Timeslot[]>([]);
   const [selectedRoomId, setSelectedRoomId] = useState<number | "">("");
