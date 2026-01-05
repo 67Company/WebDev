@@ -5,13 +5,6 @@
   --card-text-color: #ffffff;
 }
 
-.dark-mode {
-  --bg-color: #121212;
-  --card-color: #a7a7a7;
-  --text-color: #ffffff;
-  --card-text-color: #121212;
-}
-
 .App-header {
   background: linear-gradient(135deg, #1e1e2f, #232342, #2b2b5c);
   background-size: 400% 400%;
@@ -92,13 +85,6 @@ body {
   margin: 0;
   text-align: center;
 }
-
-.footer-content .theme-toggle-wrapper {
-  position: absolute;
-  right: 0;                   /* place ThemeToggle to the right */
-  padding-bottom: 30px;
-}
-
 
 .App-Title {
   font-size: 24px;

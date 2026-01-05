@@ -89,11 +89,6 @@ public class ReservationService : IReservationService
             return (false, "Reservations can only be cancelled more than 24 hours in advance");
 
         _context.Reservations.Remove(reservation);
-        var employee = await _context.Employees.FirstOrDefaultAsync(e => e.Id == employeeId && !e.IsDeleted);
-        if (employee != null && employee.RoomsBooked > 0)
-        {
-            employee.RoomsBooked -= 1;
-        }
         await _context.SaveChangesAsync();
         
         // Decrement RoomsBooked
