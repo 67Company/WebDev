@@ -337,7 +337,7 @@ const OfficeAttendance: React.FC = () => {
             {attendanceRecords.map((record) => {
               const isExpanded = expandedCards.has(record.id);
               return (
-                <Grid size={{ xs: 12, sm: 6, md: 4 }} key={record.id}>
+                <Grid size={{ xs: 12 }} key={record.id}>
                   <Card className="attendance-card">
                     <CardContent className="attendance-card-content">
                       <Box className="attendance-card-header" onClick={() => handleExpandClick(record.id)}>
