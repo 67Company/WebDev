@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import "../styles/Achievements.css";
 import "../styles/Cards.css";
 import beericon from "../media/beer.png";
@@ -27,8 +28,15 @@ const getProgressInPercent = (Num: number, Goal: number): number => {
 const PAGE_SIZE = 6;
 
 const AchievementPage: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [sortMode, setSortMode] = useState<"high-low" | "low-high" | "high-low-completed-last">("high-low");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [currentPage, setCurrentPage] = useState(() => {
+    const pageParam = searchParams.get('page');
+    return pageParam ? parseInt(pageParam) : 1;
+  });
+  const [sortMode, setSortMode] = useState<"high-low" | "low-high" | "high-low-completed-last">(() => {
+    const sortParam = searchParams.get('sort') as "high-low" | "low-high" | "high-low-completed-last";
+    return sortParam || "high-low";
+  });
   const [achievements, setAchievements] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -118,8 +126,16 @@ const AchievementPage: React.FC = () => {
   const startIndex = (currentPage - 1) * PAGE_SIZE;
   const visibleAchievements = sortedAchievements.slice(startIndex, startIndex + PAGE_SIZE);
 
-  const nextPage = () => setCurrentPage((p) => Math.min(p + 1, totalPages));
-  const prevPage = () => setCurrentPage((p) => Math.max(p - 1, 1));
+  const nextPage = () => {
+    const newPage = Math.min(currentPage + 1, totalPages);
+    setCurrentPage(newPage);
+    setSearchParams({ sort: sortMode, page: newPage.toString() });
+  };
+  const prevPage = () => {
+    const newPage = Math.max(currentPage - 1, 1);
+    setCurrentPage(newPage);
+    setSearchParams({ sort: sortMode, page: newPage.toString() });
+  };
 
   return (
     <div className="achievement-page">
@@ -142,8 +158,10 @@ const AchievementPage: React.FC = () => {
               id="sort"
               value={sortMode}
               onChange={(e) => {
-                setSortMode(e.target.value as any);
+                const newSort = e.target.value as any;
+                setSortMode(newSort);
                 setCurrentPage(1);
+                setSearchParams({ sort: newSort, page: '1' });
               }}
             >
               <option value="high-low">High to Low</option>

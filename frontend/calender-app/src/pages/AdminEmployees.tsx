@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import "../styles/AdminPanel.css";
 import "../styles/Cards.css";
 import { Api, Employee, Company } from "../CalendarApi";
@@ -45,10 +45,14 @@ interface EmployeeFormData {
 }
 
 const AdminEmployees: React.FC = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [filteredEmployees, setFilteredEmployees] = useState<Employee[]>([]);
   const [companies, setCompanies] = useState<Company[]>([]);
-  const [selectedCompanyId, setSelectedCompanyId] = useState<number>(0);
+  const [selectedCompanyId, setSelectedCompanyId] = useState<number>(() => {
+    const companyParam = searchParams.get('companyId');
+    return companyParam ? parseInt(companyParam) : 0;
+  });
   const [loading, setLoading] = useState(true);
   const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -277,7 +281,15 @@ const AdminEmployees: React.FC = () => {
             <select 
               id="companySelect"
               value={selectedCompanyId} 
-              onChange={(e) => setSelectedCompanyId(parseInt(e.target.value))}
+              onChange={(e) => {
+                const companyId = parseInt(e.target.value);
+                setSelectedCompanyId(companyId);
+                if (companyId > 0) {
+                  setSearchParams({ companyId: companyId.toString() });
+                } else {
+                  setSearchParams({});
+                }
+              }}
             >
               <option value={0}>-- Select a Company --</option>
               {companies.map(company => (

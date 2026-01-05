@@ -23,6 +23,12 @@ public static class DatabaseSeeder
         SeedRooms(context, company.Id);
         SeedTimeslots(context);
         
+        // Seed timeslots (common for all companies)
+        SeedTimeslots(context);
+        
+        // Seed rooms for the company
+        SeedRooms(context, company.Id);
+        
         // Seed achievements for the company
         SeedAchievements(context, company.Id);
         

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import "../styles/Calendar.css";
 import CalendarDisplay from "../components/CalenderDisplay";
 import ActivitySidebar from "../components/ActivitySidebar";
@@ -103,12 +104,30 @@ async function fetchCompanyReservations(companyId: number) {
 }
 
 const Calendar: React.FC = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [calendarEvents, setCalendarEvents] = useState<Event[]>([]); // Events shown in calendar (joined only)
   const [allEvents, setAllEvents] = useState<Event[]>([]); // All company events for sidebar
   const [joinedEventIds, setJoinedEventIds] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(() => {
+    const dateParam = searchParams.get('date');
+    return dateParam ? new Date(dateParam) : null;
+  });
+  const [open, setOpen] = useState(false);
   const [currentEmployeeId, setCurrentEmployeeId] = useState<number | null>(null);
+
+  const handleDayClick = (date: Date | null) => {
+    setSelectedDate(date);
+    if (date) {
+      setSearchParams({ date: date.toISOString().split('T')[0] });
+    } else {
+      setSearchParams({});
+    }
+    setOpen(true);
+  };
+
+  const handleClose = () => setOpen(false);
   const [rooms, setRooms] = useState<Room[]>([]);
   const [timeslots, setTimeslots] = useState<Timeslot[]>([]);
   const [selectedRoomId, setSelectedRoomId] = useState<number | "">("");

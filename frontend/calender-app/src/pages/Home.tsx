@@ -16,6 +16,14 @@ const Home: React.FC = () => {
       </section>
 
       <section className="overview-card">
+        <h2>Office Attendance</h2>
+        <p>Register and manage your office attendance schedule.</p>
+        <Link to="/office-attendance">
+        <button className="button">Click for more</button>
+        </Link>
+      </section>
+
+      <section className="overview-card">
         <h2>Achievements</h2>
         <p>Need help? Reach out to our support team anytime.</p>
         <Link to="/Achievements">

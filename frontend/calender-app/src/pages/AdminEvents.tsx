@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import '../styles/AdminPanel.css';
 import '../styles/Cards.css';
 import { Api, Event, EventDTO, EmployeeDTO, Company } from '../CalendarApi';
