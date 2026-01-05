@@ -32,15 +32,12 @@ const Login: React.FC = () => {
       
       if (response.ok) {
         const data = response.data as any;
-        // Store user in localStorage for session persistence
-        localStorage.setItem('user', JSON.stringify({
-          id: data.employee.id,
-          email: data.employee.email,
-          companyId: data.employee.companyId,
-          isAdmin: data.isAdmin,
-        }));
-        // Notify App component that user has logged in
+        // Session is now stored on the server via cookies
+        // Wait a bit for cookie to be set, then notify App component
+        await new Promise(resolve => setTimeout(resolve, 100));
         window.dispatchEvent(new Event('userChanged'));
+        // Wait for the user state to update before navigating
+        await new Promise(resolve => setTimeout(resolve, 200));
         // Redirect based on admin status
         if (data.isAdmin) {
           navigate("/admin");

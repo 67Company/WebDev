@@ -5,10 +5,12 @@ using Microsoft.EntityFrameworkCore;
 public class EventService : IEventService
 {
     private readonly CalenderContext _context;
+    private readonly EmployeeService _employeeService;
 
     public EventService(CalenderContext context)
     {
         _context = context;
+        _employeeService = new EmployeeService(context);
     }
 
     public async Task<IEnumerable<Event>> GetAllEventsAsync(int companyId)
@@ -40,7 +42,12 @@ public class EventService : IEventService
 
     public async Task<Event?> GetEventByIdAsync(int id)
     {
-        Event? eventEntry = await _context.Events.FindAsync(id);
+        Event? eventEntry = await _context.Events
+            .Include(e => e.Attendees)
+                .ThenInclude(a => a.Employee)
+            .Include(e => e.Reviews)
+                .ThenInclude(r => r.Employee)
+            .FirstOrDefaultAsync(e => e.Id == id);
         return eventEntry;
     }
 
@@ -99,6 +106,19 @@ public class EventService : IEventService
 
         await _context.Attendees.AddAsync(attendee);
         await _context.SaveChangesAsync();
+        
+        // Increment EventsAttended
+        await _employeeService.IncrementEmployeeStatAsync("eventsattended", employeeId, 1);
+        
+        // Update LargestTeamSize if this event has more attendees
+        var employee = await _context.Employees.FindAsync(employeeId);
+        var updatedAttendeeCount = (eventEntry.Attendees?.Count ?? 0) + 1; // +1 for the attendee we just added
+        if (employee != null && updatedAttendeeCount > employee.LargestTeamSize)
+        {
+            employee.LargestTeamSize = updatedAttendeeCount;
+            await _context.SaveChangesAsync();
+        }
+        
         return true;
     }
 
@@ -121,6 +141,10 @@ public class EventService : IEventService
 
         _context.Attendees.Remove(attendee);
         await _context.SaveChangesAsync();
+        
+        // Decrement EventsAttended
+        await _employeeService.DecrementEmployeeStatAsync("eventsattended", employeeId, 1);
+        
         return true;
     }
 
@@ -144,5 +168,54 @@ public class EventService : IEventService
                 Email = a.Employee.Email
             })
             .ToListAsync();
+    }
+
+    public async Task<EventWithDetailsDTO?> GetEventWithDetailsAsync(int eventId)
+    {
+        var ev = await _context.Events
+            .Include(e => e.Attendees)
+                .ThenInclude(a => a.Employee)
+            .Include(e => e.Reviews)
+                .ThenInclude(r => r.Employee)
+            .FirstOrDefaultAsync(e => e.Id == eventId);
+
+        if (ev == null)
+            return null;
+
+        var attendees = ev.Attendees
+            .Select(a => new EmployeeDTO
+            {
+                Id = a.Employee!.Id,
+                Email = a.Employee.Email
+            })
+            .ToList();
+
+        var reviews = ev.Reviews
+            .Select(r => new ReviewWithEmployeeDTO
+            {
+                Id = r.Id,
+                EventId = r.EventId,
+                EmployeeId = r.EmployeeId,
+                EmployeeEmail = r.Employee!.Email,
+                Content = r.Content,
+                Rating = r.Rating,
+                CreatedAt = r.CreatedAt
+            })
+            .ToList();
+
+        return new EventWithDetailsDTO
+        {
+            Id = ev.Id,
+            Title = ev.Title,
+            Description = ev.Description,
+            Date = ev.Date,
+            StartTime = ev.StartTime,
+            EndTime = ev.EndTime,
+            Location = ev.Location,
+            Capacity = ev.Capacity,
+            CurrentAttendees = attendees.Count,
+            Attendees = attendees,
+            Reviews = reviews
+        };
     }
 }

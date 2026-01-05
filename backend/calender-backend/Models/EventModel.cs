@@ -13,6 +13,7 @@ public class Event
 
     public Company? Company { get; set; }
     public ICollection<Attendee> Attendees { get; set; } = new List<Attendee>();
+    public ICollection<Review> Reviews { get; set; } = new List<Review>();
 }
 
 public class EventDTO
@@ -39,4 +40,19 @@ public class EventWithCapacityDTO
     public int Capacity { get; set; }
     public int CurrentAttendees { get; set; }
     public bool IsFull { get; set; }
+}
+
+public class EventWithDetailsDTO
+{
+    public int Id { get; set; }
+    public string Title { get; set; } = "Title_Missing";
+    public string Description { get; set; } = "Description_Missing";
+    public DateTime Date { get; set; }
+    public DateTime StartTime { get; set; }
+    public DateTime EndTime { get; set; }
+    public string Location { get; set; } = "Location_Missing";
+    public int Capacity { get; set; }
+    public int CurrentAttendees { get; set; }
+    public IEnumerable<EmployeeDTO>? Attendees { get; set; }
+    public IEnumerable<ReviewWithEmployeeDTO>? Reviews { get; set; }
 }

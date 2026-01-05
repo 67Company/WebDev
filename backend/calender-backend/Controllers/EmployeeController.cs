@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using calender_backend.Models;
 using calender_backend.Data;
+using calender_backend.Filters;
 
 namespace calender_backend.Controllers;
 
@@ -50,6 +51,7 @@ public class EmployeeController : ControllerBase
 	}
 
 	[HttpPost]
+	[AdminOnly]
 	public async Task<ActionResult> Create([FromBody] Employee employee)
 	{
 		var result = await _employeeService.CreateEmployeeAsync(employee);
@@ -59,6 +61,7 @@ public class EmployeeController : ControllerBase
 	}
 
 	[HttpPut("{id}")]
+	[AdminOnly]
 	public async Task<ActionResult> Update(int id, [FromBody] Employee employee)
 	{
 		var result = await _employeeService.UpdateEmployeeAsync(id, employee);
@@ -68,6 +71,7 @@ public class EmployeeController : ControllerBase
 	}
 
 	[HttpDelete("soft/{id}")]
+	[AdminOnly]
 	public async Task<ActionResult> SoftDelete(int id)
 	{
 		var result = await _employeeService.SoftDeleteEmployeeAsync(id);
@@ -77,6 +81,7 @@ public class EmployeeController : ControllerBase
 	}
 
 	[HttpDelete("hard/{id}")]
+	[AdminOnly]
 	public async Task<ActionResult> HardDelete(int id)
 	{
 		var result = await _employeeService.HardDeleteEmployeeAsync(id);
@@ -86,6 +91,7 @@ public class EmployeeController : ControllerBase
 	}
 
 	[HttpPost("increment/{id}/{statName}")]
+	[AdminOnly]
 	public async Task<ActionResult> IncrementStat(int id, string statName)
 	{
 		var result = await _employeeService.IncrementEmployeeStatAsync(statName, id);
@@ -95,6 +101,7 @@ public class EmployeeController : ControllerBase
 	}
 
 	[HttpPost("decrement/{id}/{statName}")]
+	[AdminOnly]
 	public async Task<ActionResult> DecrementStat(int id, string statName)
 	{
 		var result = await _employeeService.DecrementEmployeeStatAsync(statName, id);

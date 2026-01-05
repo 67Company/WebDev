@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using calender_backend.Data;
 using calender_backend.Models;
+using calender_backend.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,18 @@ builder.Services.AddScoped<calender_backend.Interfaces.IAuthService, calender_ba
 builder.Services.AddScoped<calender_backend.Interfaces.IOfficeAttendanceService, calender_backend.Services.OfficeAttendanceService>();
 builder.Services.AddControllersWithViews();
 
+// Add session support
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromHours(24); // Session timeout
+    options.Cookie.HttpOnly = true; // Makes cookie inaccessible to JavaScript
+    options.Cookie.IsEssential = true; // Required for session to work
+    options.Cookie.SameSite = SameSiteMode.Lax; // Allow same-site requests
+    options.Cookie.SecurePolicy = CookieSecurePolicy.None; // Set to Always in production with HTTPS
+    options.Cookie.Name = ".CalendarApp.Session"; // Custom cookie name
+});
+
 // Add CORS
 builder.Services.AddCors(options =>
 {
@@ -18,7 +31,8 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins("http://localhost:3000", "http://localhost:3001", "http://localhost:5173")
               .AllowAnyMethod()
-              .AllowAnyHeader();
+              .AllowAnyHeader()
+              .AllowCredentials(); // Required for cookies
     });
 });
 
@@ -63,6 +77,12 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseCors("AllowFrontend");
+
+// Enable session middleware (must be before UseAuthorization)
+app.UseSession();
+
+// Require login for write operations (POST/PUT/PATCH/DELETE)
+app.UseMiddleware<SessionAuthMiddleware>();
 
 app.UseAuthorization();
 

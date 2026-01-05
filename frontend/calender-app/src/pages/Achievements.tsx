@@ -73,7 +73,10 @@ const AchievementPage: React.FC = () => {
         
         // transform API data and calculate progress based on employee stats
         const transformedData = achievementsData.map((achievement: any) => {
-          const statValue = (stats as any)[achievement.statToTrack] || 0;
+          const statKey = achievement.statToTrack
+            ? achievement.statToTrack.charAt(0).toLowerCase() + achievement.statToTrack.slice(1)
+            : "";
+          const statValue = (stats as any)[statKey] || 0;
           const progress = getProgressInPercent(statValue, achievement.threshold);
           
           return {
@@ -99,6 +102,13 @@ const AchievementPage: React.FC = () => {
     };
 
     loadAchievements();
+
+    // Dit is zodat de page automatisch refreshed every so often om nieuwe achievements te laden
+    const intervalId = setInterval(() => {
+      loadAchievements();
+    }, 60000); // Refresh 60 sec
+
+    return () => clearInterval(intervalId);
   }, []);
   
   const sortedAchievements = [...achievements].sort((a, b) => {

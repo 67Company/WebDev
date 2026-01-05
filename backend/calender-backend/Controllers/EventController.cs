@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using calender_backend.Models;
 using calender_backend.Data;
+using calender_backend.Filters;
 
 namespace calender_backend.Controllers;
 
@@ -38,7 +39,17 @@ public class EventController : ControllerBase
         return Ok(ev);
     }
 
+    [HttpGet("{id}/details")]
+    public async Task<ActionResult<EventWithDetailsDTO>> GetWithDetails(int id)
+    {
+        var ev = await _eventService.GetEventWithDetailsAsync(id);
+        if (ev == null)
+            return NotFound();
+        return Ok(ev);
+    }
+
     [HttpPost]
+    [AdminOnly]
     public async Task<ActionResult> Create([FromBody] EventDTO eventDto)
     {
         var ev = new Event
@@ -59,6 +70,7 @@ public class EventController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [AdminOnly]
     public async Task<ActionResult> Update(int id, [FromBody] EventDTO eventDto)
     {
         var ev = new Event
@@ -79,6 +91,7 @@ public class EventController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [AdminOnly]
     public async Task<ActionResult> Delete(int id)
     {
         var result = await _eventService.DeleteEventAsync(id);

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using calender_backend.Models;
 using calender_backend.Data;
+using calender_backend.Filters;
 
 namespace calender_backend.Controllers;
 
@@ -32,6 +33,7 @@ public class CompanyController : ControllerBase
 	}
 
 	[HttpPost]
+	[AdminOnly]
 	public async Task<ActionResult> Create([FromBody] CompanyDTO companyDto)
 	{
 		var company = new Company
@@ -46,6 +48,7 @@ public class CompanyController : ControllerBase
 	}
 
 	[HttpPut("{id}")]
+	[AdminOnly]
 	public async Task<ActionResult> Update(int id, [FromBody] CompanyDTO companyDto)
 	{
 		var company = new Company
@@ -60,6 +63,7 @@ public class CompanyController : ControllerBase
 	}
 
 	[HttpDelete("soft/{id}")]
+	[AdminOnly]
 	public async Task<ActionResult> SoftDelete(int id)
 	{
 		var result = await _companyService.SoftDeleteCompanyAsync(id);
@@ -69,6 +73,7 @@ public class CompanyController : ControllerBase
 	}
 
 	[HttpDelete("hard/{id}")]
+	[AdminOnly]
 	public async Task<ActionResult> HardDelete(int id)
 	{
 		var result = await _companyService.HardDeleteCompanyAsync(id);

@@ -17,6 +17,7 @@ public class CalenderContext : DbContext
     public DbSet<Event> Events { get; set; }
     public DbSet<Attendee> Attendees { get; set; }
     public DbSet<Reservation> Reservations { get; set; }
+    public DbSet<Review> Reviews { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

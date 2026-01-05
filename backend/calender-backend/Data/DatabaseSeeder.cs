@@ -18,6 +18,10 @@ public static class DatabaseSeeder
 
         // Seed company
         var company = SeedCompany(context);
+
+        // Seed supporting data for reservations
+        SeedRooms(context, company.Id);
+        SeedTimeslots(context);
         
         // Seed timeslots (common for all companies)
         SeedTimeslots(context);
@@ -33,7 +37,8 @@ public static class DatabaseSeeder
         
         // Seed events for the company
         SeedEvents(context, company.Id);
-
+        // Seed event attendees for testing
+        SeedEventAttendees(context);
         Console.WriteLine($"✓ Seeded company '{company.Name}' (ID: {company.Id})");
     }
 
@@ -52,92 +57,57 @@ public static class DatabaseSeeder
         return company;
     }
 
-    private static void SeedTimeslots(CalenderContext context)
+    private static void SeedRooms(CalenderContext context, int companyId)
     {
-        // Check if timeslots already exist
-        if (context.Timeslots.Any())
+        if (context.Rooms.Any(r => r.CompanyId == companyId))
         {
-            Console.WriteLine($"✓ Timeslots already exist ({context.Timeslots.Count()} found) - skipping");
+            Console.WriteLine("Rooms already exist - skipping room seed");
             return;
         }
 
-        var baseDate = DateTime.Today;
-        var timeslots = new List<Timeslot>();
-
-        // Create timeslots from 8:00 to 18:00 (8 AM to 6 PM) in 1-hour intervals
-        for (int hour = 8; hour < 18; hour++)
-        {
-            timeslots.Add(new Timeslot
-            {
-                StartTime = baseDate.AddHours(hour),
-                EndTime = baseDate.AddHours(hour + 1)
-            });
-        }
-
-        context.Timeslots.AddRange(timeslots);
-        context.SaveChanges();
-
-        Console.WriteLine($"✓ Seeded {timeslots.Count} timeslots (8:00 - 18:00)");
-    }
-
-    private static void SeedRooms(CalenderContext context, int companyId)
-    {
         var rooms = new List<Room>
         {
-            new Room
-            {
-                Name = "Open Workspace - Area A",
-                Capacity = 20,
-                CompanyId = companyId
-            },
-            new Room
-            {
-                Name = "Open Workspace - Area B",
-                Capacity = 20,
-                CompanyId = companyId
-            },
-            new Room
-            {
-                Name = "Quiet Zone",
-                Capacity = 10,
-                CompanyId = companyId
-            },
-            new Room
-            {
-                Name = "Collaboration Space",
-                Capacity = 15,
-                CompanyId = companyId
-            },
-            new Room
-            {
-                Name = "Meeting Room - Small",
-                Capacity = 6,
-                CompanyId = companyId
-            },
-            new Room
-            {
-                Name = "Meeting Room - Medium",
-                Capacity = 12,
-                CompanyId = companyId
-            },
-            new Room
-            {
-                Name = "Meeting Room - Large",
-                Capacity = 20,
-                CompanyId = companyId
-            },
-            new Room
-            {
-                Name = "Executive Area",
-                Capacity = 8,
-                CompanyId = companyId
-            }
+            new Room { Name = "Conference Room A", Capacity = 12, CompanyId = companyId },
+            new Room { Name = "Conference Room B", Capacity = 8, CompanyId = companyId },
+            new Room { Name = "Executive Boardroom", Capacity = 16, CompanyId = companyId },
+            new Room { Name = "Focus Room", Capacity = 4, CompanyId = companyId },
+            new Room { Name = "Training Lab", Capacity = 20, CompanyId = companyId }
         };
 
         context.Rooms.AddRange(rooms);
         context.SaveChanges();
 
-        Console.WriteLine($"✓ Seeded {rooms.Count} rooms/office areas");
+        Console.WriteLine($"✓ Seeded {rooms.Count} rooms");
+    }
+
+    private static void SeedTimeslots(CalenderContext context)
+    {
+        if (context.Timeslots.Any())
+        {
+            Console.WriteLine($"Timeslots already exist - skipping seed ({context.Timeslots.Count()} found)");
+            return;
+        }
+
+        var timeslots = new List<Timeslot>();
+        var start = DateTime.Today.Date.AddHours(8);
+        var end = DateTime.Today.Date.AddHours(18);
+
+        var current = start;
+        while (current < end)
+        {
+            timeslots.Add(new Timeslot
+            {
+                StartTime = current,
+                EndTime = current.AddMinutes(30)
+            });
+
+            current = current.AddMinutes(30);
+        }
+
+        context.Timeslots.AddRange(timeslots);
+        context.SaveChanges();
+
+        Console.WriteLine($"✓ Seeded {timeslots.Count} timeslots");
     }
 
     private static void SeedAchievements(CalenderContext context, int companyId)
@@ -402,5 +372,46 @@ public static class DatabaseSeeder
         context.SaveChanges();
 
         Console.WriteLine($"Seeded {events.Count} events");
+    }
+
+    private static void SeedEventAttendees(CalenderContext context)
+    {
+        // Check if attendees already exist
+        if (context.Attendees.Any())
+        {
+            Console.WriteLine($"Attendees already exist - skipping attendee seed ({context.Attendees.Count()} found)");
+            return;
+        }
+
+        // Get john's employee record
+        var john = context.Employees.FirstOrDefault(e => e.Email == "john.doe@techcorp.com");
+        if (john == null)
+        {
+            Console.WriteLine("John not found - skipping attendee seed");
+            return;
+        }
+
+        // Get the first event (Coffee & Code - on Jan 3)
+        var pastEvent = context.Events
+            .Where(e => e.Title == "Coffee & Code")
+            .FirstOrDefault();
+
+        if (pastEvent == null)
+        {
+            Console.WriteLine("Coffee & Code event not found - skipping attendee seed");
+            return;
+        }
+
+        // Add john as an attendee to the event
+        var attendee = new Attendee
+        {
+            EventId = pastEvent.Id,
+            EmployeeId = john.Id
+        };
+
+        context.Attendees.Add(attendee);
+        context.SaveChanges();
+
+        Console.WriteLine($"✓ Added John (ID: {john.Id}) as attendee to '{pastEvent.Title}' event");
     }
 }

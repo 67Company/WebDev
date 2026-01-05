@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Link, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import "./App.css";
 import Home from "./pages/Home";
@@ -13,18 +13,53 @@ import AdminEvents from "./pages/AdminEvents";
 import AdminAchievements from "./pages/AdminAchievements";
 import AdminEmployees from "./pages/AdminEmployees";
 import OfficeAttendance from "./pages/OfficeAttendance";
+import { Api } from "./CalendarApi";
 
-function App() {
+const API_BASE_URL = "http://localhost:5000";
+
+async function fetchCurrentSession() {
+  const api = new Api({ baseUrl: API_BASE_URL });
+  const response = await api.api.authSessionList();
+  return response;
+}
+
+async function logoutSession() {
+  const api = new Api({ baseUrl: API_BASE_URL });
+  await api.api.authLogoutCreate();
+}
+
+function AppContent() {
   const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
-  // Checkt localStorage eerste keer laden en luistert naar login/logout events
+  // Check server-side session on initial load and when user changes
   useEffect(() => {
-    const checkUser = () => {
-      const storedUser = localStorage.getItem('user');
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
-      } else {
+    const checkUser = async () => {
+      try {
+        const response = await fetchCurrentSession();
+        
+        if (response.status === 200 && response.data) {
+          const sessionData = response.data as any;
+          const userData = {
+            id: sessionData.id,
+            email: sessionData.email,
+            companyId: sessionData.companyId,
+            isAdmin: sessionData.isAdmin,
+          };
+          setUser(userData);
+          // Store in localStorage for other pages to access
+          localStorage.setItem('user', JSON.stringify(userData));
+        } else {
+          setUser(null);
+          localStorage.removeItem('user');
+        }
+      } catch (err: any) {
+        // No active session - this is expected when not logged in
         setUser(null);
+        localStorage.removeItem('user');
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -35,15 +70,24 @@ function App() {
     return () => window.removeEventListener('userChanged', checkUser);
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('user');
+  const handleLogout = async () => {
+    try {
+      await logoutSession();
+    } catch (err) {
+      // Logout failed silently
+    }
     setUser(null);
+    localStorage.removeItem('user'); // Clear cached user data
+    navigate('/');
     window.dispatchEvent(new Event('userChanged'));
   };
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
-    <Router>
-      <div className="App">
+    <div className="App">
         <header className="App-header">
           <Link to="/">
             <img className="Logoimg" src={adtjeKratje} alt="Logo" />
@@ -97,6 +141,13 @@ function App() {
       </footer>
 
       </div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <AppContent />
     </Router>
   );
 }
