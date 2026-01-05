@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using calender_backend.Models;
 using calender_backend.Data;
+using calender_backend.Filters;
 
 namespace calender_backend.Controllers;
 
@@ -16,6 +17,7 @@ public class EmployeeAchievementController : ControllerBase
     }
 
     [HttpPost("assign")]
+    [AdminOnly]
     public async Task<ActionResult> Assign([FromBody] EmployeeAchievementDTO dto)
     {
         var result = await _employeeAchievementService.AssignAchievementToEmployeeAsync(dto.EmployeeId, dto.AchievementId);
@@ -25,6 +27,7 @@ public class EmployeeAchievementController : ControllerBase
     }
 
     [HttpPost("remove")]
+    [AdminOnly]
     public async Task<ActionResult> Remove([FromBody] EmployeeAchievementDTO dto)
     {
         var result = await _employeeAchievementService.RemoveAchievementFromEmployeeAsync(dto.EmployeeId, dto.AchievementId);

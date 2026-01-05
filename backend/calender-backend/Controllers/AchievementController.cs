@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using calender_backend.Models;
 using calender_backend.Data;
+using calender_backend.Filters;
 
 namespace calender_backend.Controllers;
 
@@ -32,6 +33,7 @@ public class AchievementController : ControllerBase
     }
 
     [HttpPost]
+    [AdminOnly]
     public async Task<ActionResult> Create([FromBody] AchievementDTO achievementDto, int companyId)
     {
         var achievement = new Achievement
@@ -50,6 +52,7 @@ public class AchievementController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [AdminOnly]
     public async Task<ActionResult> Update(int id, [FromBody] AchievementDTO achievementDto)
     {
         var achievement = new Achievement
@@ -67,6 +70,7 @@ public class AchievementController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [AdminOnly]
     public async Task<ActionResult> Delete(int id)
     {
         var result = await _achievementService.DeleteAchievementAsync(id);
