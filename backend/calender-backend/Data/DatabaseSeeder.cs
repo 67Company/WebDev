@@ -19,6 +19,12 @@ public static class DatabaseSeeder
         // Seed company
         var company = SeedCompany(context);
         
+        // Seed timeslots (common for all companies)
+        SeedTimeslots(context);
+        
+        // Seed rooms for the company
+        SeedRooms(context, company.Id);
+        
         // Seed achievements for the company
         SeedAchievements(context, company.Id);
         
@@ -44,6 +50,94 @@ public static class DatabaseSeeder
         context.SaveChanges();
 
         return company;
+    }
+
+    private static void SeedTimeslots(CalenderContext context)
+    {
+        // Check if timeslots already exist
+        if (context.Timeslots.Any())
+        {
+            Console.WriteLine($"✓ Timeslots already exist ({context.Timeslots.Count()} found) - skipping");
+            return;
+        }
+
+        var baseDate = DateTime.Today;
+        var timeslots = new List<Timeslot>();
+
+        // Create timeslots from 8:00 to 18:00 (8 AM to 6 PM) in 1-hour intervals
+        for (int hour = 8; hour < 18; hour++)
+        {
+            timeslots.Add(new Timeslot
+            {
+                StartTime = baseDate.AddHours(hour),
+                EndTime = baseDate.AddHours(hour + 1)
+            });
+        }
+
+        context.Timeslots.AddRange(timeslots);
+        context.SaveChanges();
+
+        Console.WriteLine($"✓ Seeded {timeslots.Count} timeslots (8:00 - 18:00)");
+    }
+
+    private static void SeedRooms(CalenderContext context, int companyId)
+    {
+        var rooms = new List<Room>
+        {
+            new Room
+            {
+                Name = "Open Workspace - Area A",
+                Capacity = 20,
+                CompanyId = companyId
+            },
+            new Room
+            {
+                Name = "Open Workspace - Area B",
+                Capacity = 20,
+                CompanyId = companyId
+            },
+            new Room
+            {
+                Name = "Quiet Zone",
+                Capacity = 10,
+                CompanyId = companyId
+            },
+            new Room
+            {
+                Name = "Collaboration Space",
+                Capacity = 15,
+                CompanyId = companyId
+            },
+            new Room
+            {
+                Name = "Meeting Room - Small",
+                Capacity = 6,
+                CompanyId = companyId
+            },
+            new Room
+            {
+                Name = "Meeting Room - Medium",
+                Capacity = 12,
+                CompanyId = companyId
+            },
+            new Room
+            {
+                Name = "Meeting Room - Large",
+                Capacity = 20,
+                CompanyId = companyId
+            },
+            new Room
+            {
+                Name = "Executive Area",
+                Capacity = 8,
+                CompanyId = companyId
+            }
+        };
+
+        context.Rooms.AddRange(rooms);
+        context.SaveChanges();
+
+        Console.WriteLine($"✓ Seeded {rooms.Count} rooms/office areas");
     }
 
     private static void SeedAchievements(CalenderContext context, int companyId)

@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace calender_backend.Models;
 public class Reservation
 {
@@ -8,8 +10,10 @@ public class Reservation
     public int TimeslotId { get; set; }
     public int CompanyId { get; set; }
 
+    [JsonIgnore]
     public Employee? Employee { get; set; }
     public Room? Room { get; set; }
     public Timeslot? Timeslot { get; set; }
+    [JsonIgnore]
     public Company? Company { get; set; }
 }

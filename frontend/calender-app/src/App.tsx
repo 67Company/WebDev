@@ -12,6 +12,7 @@ import Admin from "./pages/Admin";
 import AdminEvents from "./pages/AdminEvents";
 import AdminAchievements from "./pages/AdminAchievements";
 import AdminEmployees from "./pages/AdminEmployees";
+import OfficeAttendance from "./pages/OfficeAttendance";
 
 function App() {
   const [user, setUser] = useState<any>(null);
@@ -71,6 +72,9 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/calendar" element={<Calendar />} />
+          <Route path="/office-attendance" element={
+            user ? <OfficeAttendance /> : <Navigate to="/login" replace />
+          } />
           <Route path="/settings" element={<Settings />} />
           <Route path="/achievements" element={<Achievements />} />
           <Route path="/admin" element={

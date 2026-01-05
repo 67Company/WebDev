@@ -18,10 +18,11 @@ public class OfficeAttendanceController : ControllerBase
     }
 
     /// <summary>
-    /// Get all office attendance reservations for the logged-in user
+    /// Get all office attendance records for the logged-in user
+    /// Allows users to view their upcoming and past office attendance
     /// </summary>
     /// <param name="employeeId">The ID of the logged-in employee</param>
-    /// <returns>List of reservations</returns>
+    /// <returns>List of office attendance records</returns>
     [HttpGet("my-attendance/{employeeId}")]
     public async Task<ActionResult<IEnumerable<Reservation>>> GetMyAttendance(int employeeId)
     {
@@ -36,11 +37,11 @@ public class OfficeAttendanceController : ControllerBase
     }
 
     /// <summary>
-    /// Get a specific attendance reservation by ID (only if owned by requesting user)
+    /// Get a specific office attendance record by ID (only if owned by requesting user)
     /// </summary>
-    /// <param name="reservationId">The reservation ID</param>
+    /// <param name="reservationId">The attendance record ID</param>
     /// <param name="employeeId">The ID of the requesting employee</param>
-    /// <returns>Reservation details</returns>
+    /// <returns>Office attendance record details</returns>
     [HttpGet("{reservationId}/employee/{employeeId}")]
     public async Task<ActionResult<Reservation>> GetAttendanceById(int reservationId, int employeeId)
     {
@@ -60,10 +61,12 @@ public class OfficeAttendanceController : ControllerBase
     }
 
     /// <summary>
-    /// Book office attendance for a specific date, room, and timeslot
+    /// Register office attendance for a specific date and timeslot
+    /// User specifies when they will be present in the office (room can optionally be specified for desk/area tracking)
+    /// Protected endpoint - users can only book attendance for themselves
     /// </summary>
-    /// <param name="bookingRequest">Booking details</param>
-    /// <returns>Created reservation</returns>
+    /// <param name="bookingRequest">Attendance registration details</param>
+    /// <returns>Created office attendance record</returns>
     [HttpPost("book")]
     public async Task<ActionResult<Reservation>> BookAttendance([FromBody] AttendanceBookingRequest bookingRequest)
     {
@@ -98,9 +101,10 @@ public class OfficeAttendanceController : ControllerBase
     }
 
     /// <summary>
-    /// Update an existing office attendance reservation
+    /// Update an existing office attendance record
+    /// Protected endpoint - users can only modify their own attendance
     /// </summary>
-    /// <param name="reservationId">The reservation ID to update</param>
+    /// <param name="reservationId">The attendance record ID to update</param>
     /// <param name="updateRequest">Update details</param>
     /// <returns>Success message</returns>
     [HttpPut("{reservationId}")]
@@ -133,9 +137,10 @@ public class OfficeAttendanceController : ControllerBase
     }
 
     /// <summary>
-    /// Cancel an office attendance reservation
+    /// Cancel an office attendance record
+    /// Protected endpoint - users can only cancel their own attendance
     /// </summary>
-    /// <param name="reservationId">The reservation ID to cancel</param>
+    /// <param name="reservationId">The attendance record ID to cancel</param>
     /// <param name="employeeId">The ID of the requesting employee</param>
     /// <returns>Success message</returns>
     [HttpDelete("{reservationId}/employee/{employeeId}")]

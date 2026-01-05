@@ -101,7 +101,14 @@ public class OfficeAttendanceService : IOfficeAttendanceService
         employee.RoomsBooked++;
         await _context.SaveChangesAsync();
 
-        return (true, "Office attendance booked successfully", reservation);
+        // Reload the reservation with only necessary navigation properties to avoid circular reference
+        var createdReservation = await _context.Reservations
+            .AsNoTracking()
+            .Include(r => r.Room)
+            .Include(r => r.Timeslot)
+            .FirstOrDefaultAsync(r => r.Id == reservation.Id);
+
+        return (true, "Office attendance booked successfully", createdReservation);
     }
 
     public async Task<(bool Success, string Message)> CancelAttendanceAsync(int reservationId, int requestingEmployeeId)
