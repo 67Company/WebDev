@@ -31,13 +31,6 @@ const Home: React.FC = () => {
         </Link>
       </section>
       
-      <section className="overview-card">
-        <h2>Settings</h2>
-        <p>Manage your preferences and configurations.</p>
-        <Link to="/Settings">
-        <button className="button">Click for more</button>
-        </Link>
-      </section>
     </main>
   );
 };

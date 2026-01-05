@@ -5,8 +5,6 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Calendar from "./pages/Calendar";
 import adtjeKratje from "./media/adtje_kratje.png";
-import Settings from "./pages/Settings";
-import ThemeToggle from "./components/ThemeToggle";
 import Achievements from "./pages/Achievements";
 import Admin from "./pages/Admin";
 import AdminEvents from "./pages/AdminEvents";
@@ -117,7 +115,6 @@ function AppContent() {
           <Route path="/login" element={<Login />} />
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/office-attendance" element={<OfficeAttendance />} />
-          <Route path="/settings" element={<Settings />} />
           <Route path="/achievements" element={<Achievements />} />
           <Route path="/admin" element={
             user && user.isAdmin ? <Admin /> : <Navigate to="/login" replace />
